@@ -1,0 +1,26 @@
+Package: shide
+Type: Package
+Title: Date/Time Classes Based on Jalali Calendar
+Version: 0.1.0
+Authors@R:
+    person("Mohsen", "Mollayi", role = c("aut", "cre"), email = "mmollayi@gmail.com")
+Description: Implements S3 classes for storing dates and date-times based on Jalali calendar. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+LinkingTo: 
+    cpp11,
+    tzdb
+SystemRequirements: C++11
+Depends: 
+    R (>= 4.2)
+Imports: 
+    lubridate,
+    methods,
+    rlang,
+    tzdb,
+    vctrs
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
