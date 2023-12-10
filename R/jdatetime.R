@@ -63,6 +63,12 @@ format.jdatetime <- function(x, format = NULL, ...) {
     format_jdatetime_cpp(x, format, ...)
 }
 
+#' @export
+obj_print_data.jdatetime <- function(x, ...) {
+    if (length(x) == 0) return()
+    print(format(x))
+}
+
 #' Current Jalali date and datetime
 #'
 #' System representation of the current time as jdate and jdatetime.

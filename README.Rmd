@@ -34,9 +34,9 @@ devtools::install_github("mmollayi/shide")
 ## Features
 
 - Conversion between Jalali and Gregorian calendars.
-- Parsing and formating of Jalali dates and date-times.
+- Parsing and formatting of Jalali dates and date-times.
 - Time zones and daylight saving times support via IANA time zone database. Access to IANA time zone database files is provided by `tzdb` package.
-- `jdate` and `jdatetime` are built upon numeric vectors, just like `Date` and `POSIXct`. So coversion between date classes (`jdate` and `Date`) and date-time classes (`jdatetime` and `POSIXct`) comes at zero cost.
+- `jdate` and `jdatetime` are built upon numeric vectors, just like `Date` and `POSIXct`. So conversion between date classes (`jdate` and `Date`) and date-time classes (`jdatetime` and `POSIXct`) comes at zero cost.
 - Both `jdate` and `jdatetime` can be used as column in a data frame.
 - Compatible with R's `difftime` class. For example, subtraction of two `jdate`s results a `difftime` object.
 

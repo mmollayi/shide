@@ -18,7 +18,7 @@ A generic function that converts other date/time classes to jdate.
 as_jdate(as.Date("2023-12-12"))
 
 # Unlike R's `as.Date.POSIXct()` method, `as_jdate` does not expose a time zone argument
-# and uses time zone attribute of input datetime for conversion
+# and uses time zone attribute of input datetime for conversion.
 as_jdate(jdatetime("1402-09-21 13:14:00", tzone = "Asia/Tehran"))
 as_jdate(as.POSIXct("2023-12-12 13:14:00", tz = "Asia/Tehran"))
 }

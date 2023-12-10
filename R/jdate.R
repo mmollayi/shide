@@ -3,6 +3,29 @@ new_jdate <- function(x = double()) {
     new_vctr(x, class = "jdate")
 }
 
+#' Jalali calendar dates
+#'
+#' `jdate` is an S3 class for representing Jalali calendar dates. It can be constructed
+#' from character and numeric vectors.
+#'
+#' @details `jdate` is stored internaly as a double vector and doesn’t have any attributes.
+#'    Its value represents the count of days since the Unix epoch (a negative value
+#'    if it represents a date prior to the epoch). This implementation coincides
+#'    with the implementation of `Date` class.
+#' @param x A vector of numeric or character objects.
+#' @param ... Arguments passed on to further methods.
+#' @param format Format argument for character method.
+#' @return A vector of `jdate` objects
+#' @examples
+#' jdate("1402-09-20")
+#' jdate("1402/09/20", format = "%Y/%m/%d")
+#' ## Will replace invalid date format with NA
+#' jdate("1402/09/20", format = "%Y-%m-%d")
+#' ## Invalid dates will be replaced with NA
+#' jdate("1402-12-30")
+#'## Jalali date corresponding to "1970-01-01"
+#' jdate(0)
+#'
 #' @export
 jdate <- function(x, ...) {
     UseMethod("jdate")
@@ -14,6 +37,7 @@ jdate.NULL <- function(x, ...) {
     new_jdate()
 }
 
+#' @rdname jdate
 #' @export
 jdate.numeric <- function(x, ...) {
     check_dots_empty()
@@ -21,14 +45,18 @@ jdate.numeric <- function(x, ...) {
     new_jdate(x)
 }
 
+#' @rdname jdate
 #' @export
-jdate.character <- function(x, ..., format = NULL) {
+jdate.character <- function(x, format = NULL, ...) {
     check_dots_empty()
     format <- format %||% "%Y-%m-%d"
     days_since_epoch <- jdate_parse_cpp(x, format)
     new_jdate(days_since_epoch)
 }
 
+#' is_jdate()
+#' `is_jdate()` checks whether an object is of class `jdate`.
+#'
 #' @export
 is_jdate <- function(x) {
     inherits(x, "jdate")
@@ -38,6 +66,12 @@ is_jdate <- function(x) {
 format.jdate <- function(x, format = NULL, ...) {
     format <- format %||% "%Y-%m-%d"
     format_jdate_cpp(x, format, ...)
+}
+
+#' @export
+obj_print_data.jdate <- function(x, ...) {
+    if (length(x) == 0) return()
+    print(format(x))
 }
 
 #' @rdname jdatetime_now
@@ -156,14 +190,14 @@ vec_cast.character.jdate <- function(x, to, ...) {
 #'
 #' @param x a vector of jdatetime, POSIXct or Date.
 #' @inheritParams rlang::args_dots_empty
-#' @export
 #' @examples
 #' as_jdate(as.Date("2023-12-12"))
 #'
 #' # Unlike R's `as.Date.POSIXct()` method, `as_jdate` does not expose a time zone argument
-#' # and uses time zone attribute of input datetime for conversion
+#' # and uses time zone attribute of input datetime for conversion.
 #' as_jdate(jdatetime("1402-09-21 13:14:00", tzone = "Asia/Tehran"))
 #' as_jdate(as.POSIXct("2023-12-12 13:14:00", tz = "Asia/Tehran"))
+#' @export
 as_jdate <- function(x, ...) {
     UseMethod("as_jdate")
 }
