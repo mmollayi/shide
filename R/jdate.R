@@ -65,7 +65,7 @@ is_jdate <- function(x) {
 #' @export
 format.jdate <- function(x, format = NULL, ...) {
     format <- format %||% "%Y-%m-%d"
-    format_jdate_cpp(x, format, ...)
+    format_jdate_cpp(x, format)
 }
 
 #' @export
@@ -307,5 +307,9 @@ vec_arith.difftime.jdate <- function(op, x, y, ...) {
 
 #' @export
 vec_math.jdate <- function(.fn, .x, ...) {
-    rlang::abort("unsupported operation.")
+    switch(.fn,
+           is.finite = vec_math_base(.fn, .x, ...),
+           is.infinite = vec_math_base(.fn, .x, ...),
+           rlang::abort("unsupported operation.")
+    )
 }
