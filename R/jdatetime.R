@@ -13,14 +13,14 @@ new_jdatetime <- function(x = double(), tzone = "") {
 }
 
 #' @export
-jdatetime <- function(x, ...) {
-    UseMethod("jdatetime")
+jdatetime <- function(x, tzone = "",...) {
+    UseMethod("jdatetime", rlang::maybe_missing(x, NULL))
 }
 
 #' @export
-jdatetime.NULL <- function(x, ...) {
+jdatetime.NULL <- function(x, tzone = "", ...) {
     check_dots_empty()
-    new_jdatetime()
+    new_jdatetime(tzone = tzone)
 }
 
 #' @export
