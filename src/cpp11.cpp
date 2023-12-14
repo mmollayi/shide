@@ -61,11 +61,19 @@ extern "C" SEXP _shide_local_days_from_sys_seconds_cpp(SEXP x, SEXP tzone) {
     return cpp11::as_sexp(local_days_from_sys_seconds_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone)));
   END_CPP11
 }
+// zone.cpp
+cpp11::writable::strings get_zone_info(const cpp11::strings& x, const cpp11::strings& tzone);
+extern "C" SEXP _shide_get_zone_info(SEXP x, SEXP tzone) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_zone_info(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_shide_format_jdate_cpp",                (DL_FUNC) &_shide_format_jdate_cpp,                2},
     {"_shide_format_jdatetime_cpp",            (DL_FUNC) &_shide_format_jdatetime_cpp,            2},
+    {"_shide_get_zone_info",                   (DL_FUNC) &_shide_get_zone_info,                   2},
     {"_shide_jdate_make_cpp",                  (DL_FUNC) &_shide_jdate_make_cpp,                  1},
     {"_shide_jdate_parse_cpp",                 (DL_FUNC) &_shide_jdate_parse_cpp,                 2},
     {"_shide_jdatetime_make_cpp",              (DL_FUNC) &_shide_jdatetime_make_cpp,              2},

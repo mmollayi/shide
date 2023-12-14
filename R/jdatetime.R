@@ -12,6 +12,34 @@ new_jdatetime <- function(x = double(), tzone = "") {
     new_vctr(x, class = "jdatetime", tzone = tzone)
 }
 
+#' Date-time based on Jalali calendar
+#'
+#' `jdatetime` is an S3 class for representing date-times with Jalali calendar dates.
+#'  It can be constructed from character and numeric vectors.
+#'
+#' @details `jdatetime` is stored internaly as a double vector and has a single
+#'    attribute: the timezone (tzone). Its value represents the count of seconds
+#'    since the Unix epoch (a negative value if it represents an instant prior to the epoch).
+#'    This implementation coincides with that of `POSIXct` class, except that `POSIXct`
+#'    may not have `tzone` attribute. But for `jdatetime`, `tzone` is not optional.
+#'
+#' @param x A vector of numeric or character objects.
+#' @param tzone A time zone name. Default value represents local time zone.
+#' @param ... Arguments passed on to further methods.
+#' @param format Format argument for character method.
+#' @return A vector of `jdatetime` objects
+#' @examples
+#' ## default time zone and format
+#' jdatetime("1402-09-20 18:57:09")
+#' jdatetime("1402/09/20 18:57:09", tzone = "UTC", format = "%Y/%m/%d %H:%M:%S")
+#' ## Will replace invalid format with NA
+#' jdatetime("1402/09/20 18:57:09", format = "%Y-%m-%d %H:%M:%S")
+#' ## nonexistent time will be replaced with NA
+#' jdatetime("1401-01-02 00:30:00", tzone = "Asia/Tehran")
+#' ## ambiguous time will be replaced with NA
+#' jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran")
+#' ## Jalali date-time in Iran time zone, corresponding to Unix epoch
+#' jdatetime(0, "Iran")
 #' @export
 jdatetime <- function(x, tzone = "",...) {
     UseMethod("jdatetime", rlang::maybe_missing(x, NULL))

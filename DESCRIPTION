@@ -12,7 +12,6 @@ RoxygenNote: 7.2.3
 LinkingTo: 
     cpp11,
     tzdb
-SystemRequirements: C++11
 Depends: 
     R (>= 4.2)
 Imports: 

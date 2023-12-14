@@ -96,6 +96,18 @@ cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const 
         ls = date::local_seconds{ date::days{ days_since_epoch } +
             hours{ hour[i] } + minutes{ minute[i] } + seconds{ second[i] } };
         tzdb::get_local_info(ls, tz, info);
+        switch (info.result)
+        {
+        case date::local_info::unique:
+            break;
+        case date::local_info::nonexistent:
+            out[i] = NA_REAL;
+            continue;
+        case date::local_info::ambiguous:
+            out[i] = NA_REAL;
+            continue;
+        }
+
         seconds_since_epoch = ls.time_since_epoch() - info.first.offset;
         out[i] = static_cast<double>(seconds_since_epoch.count());
     }

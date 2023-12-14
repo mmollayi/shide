@@ -23,7 +23,7 @@ new_jdate <- function(x = double()) {
 #' jdate("1402/09/20", format = "%Y-%m-%d")
 #' ## Invalid dates will be replaced with NA
 #' jdate("1402-12-30")
-#'## Jalali date corresponding to "1970-01-01"
+#' ## Jalali date corresponding to "1970-01-01"
 #' jdate(0)
 #'
 #' @export

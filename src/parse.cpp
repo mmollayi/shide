@@ -136,6 +136,18 @@ jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format, const
         days_since_epoch = ymd_to_day(year, month, day) - jd_unix_epoch;
         ls = date::local_seconds{ date::days{ days_since_epoch } + fds.tod.to_duration() };
         tzdb::get_local_info(ls, tz, info);
+        switch (info.result)
+        {
+        case date::local_info::unique:
+            break;
+        case date::local_info::nonexistent:
+            out[i] = NA_REAL;
+            continue;
+        case date::local_info::ambiguous:
+            out[i] = NA_REAL;
+            continue;
+        }
+
         seconds_since_epoch = ls.time_since_epoch() - info.first.offset;
         out[i] = static_cast<double>(seconds_since_epoch.count());
     }
