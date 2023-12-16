@@ -2,13 +2,32 @@
 % Please edit documentation in R/jdatetime.R
 \name{as_jdatetime}
 \alias{as_jdatetime}
-\title{Convert an object to a jdatetime}
+\title{Convert an object to a \code{jdatetime}}
 \usage{
 as_jdatetime(x, tzone, ...)
 }
 \arguments{
-\item{x}{a vector of jdate, POSIXct or Date.}
+\item{x}{a vector of \code{jdate}, \code{POSIXct} or \code{Date}.}
+
+\item{tzone}{A time zone name.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+}
+\value{
+A vector of \code{jdatetime} objects with the same length as x.
 }
 \description{
-A generic function that converts other date/time classes to jdatetime
+A generic function that converts other date/time classes to \code{jdatetime}.
+}
+\details{
+If \code{tzone} is missing (default), time zone attribute of input object is used for conversion.
+If the input object does not have time zone attribute (e.g. \code{jdate}), and no value is supplied
+for \code{tzone}, local time zone is assumed for conversion.
+}
+\examples{
+## The time will be set to midnight when converting from `jdate` or `Date`
+as_jdatetime(jdate_now())
+as_jdatetime(Sys.Date())
+## We can change time zone of a `jdatetime` to a new time zone
+as_jdatetime(jdatetime_now(tzone = "Iran"), tzone = "Asia/Tokyo")
 }

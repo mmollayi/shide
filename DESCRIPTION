@@ -3,9 +3,11 @@ Type: Package
 Title: Date/Time Classes Based on Jalali Calendar
 Version: 0.1.0
 Authors@R:
-    person("Mohsen", "Mollayi", role = c("aut", "cre"), email = "mmollayi@gmail.com")
+    person("Mohsen", "Mollayi", role = c("aut", "cre", "cph"), email = "mmollayi@gmail.com")
 Description: Implements S3 classes for storing dates and date-times based on Jalali calendar. 
 License: MIT + file LICENSE
+URL: https://github.com/mmollayi/shide
+BugReports: https://github.com/mmollayi/shide/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
@@ -23,3 +25,4 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)

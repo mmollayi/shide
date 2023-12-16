@@ -26,8 +26,7 @@ new_jdatetime <- function(x = double(), tzone = "") {
 #' @param x A vector of numeric or character objects.
 #' @param tzone A time zone name. Default value represents local time zone.
 #' @param ... Arguments passed on to further methods.
-#' @param format Format argument for character method.
-#' @return A vector of `jdatetime` objects
+#' @return A vector of `jdatetime` objects.
 #' @examples
 #' ## default time zone and format
 #' jdatetime("1402-09-20 18:57:09")
@@ -58,6 +57,8 @@ jdatetime.numeric <- function(x, tzone = "", ...) {
     new_jdatetime(x, tzone)
 }
 
+#' @rdname jdatetime
+#' @param format Format argument for character method.
 #' @export
 jdatetime.character <- function(x, tzone = "", format = NULL, ...) {
     check_dots_empty()
@@ -80,6 +81,7 @@ jdatetime.character <- function(x, tzone = "", format = NULL, ...) {
     new_jdatetime(seconds_since_epoch, tzone)
 }
 
+#' @rdname is_jdate
 #' @export
 is_jdatetime <- function(x) {
     inherits(x, "jdatetime")
@@ -125,12 +127,30 @@ jdatetime_now <- function(tzone = "") {
     new_jdatetime(vec_data(Sys.time()), tzone)
 }
 
-#' Construct jdatetime objects from from individual components
+#' Construct Jalali date-time objects from individual components
 #'
+#' * `jdate_make()` creates a `jdate` object from individual components.
+#' * `jdatetime_make()` creates a `jdatetime` object from individual components.
+#'
+#' @details Numeric components are recycled to their common size using
+#' [tidyverse recycling rules][vctrs::vector_recycling_rules].
+#' @param year Numeric year.
+#' @param month Numeric month.
+#' @param day Numeric day.
+#' @param hour Numeric hour.
+#' @param minute Numeric minute.
+#' @param second Numeric second.
+#' @param tzone A time zone name. Default value represents local time zone.
+#' @inheritParams rlang::args_dots_empty
+#' @examples
+#' ## At least 'year' must be supplied
+#' jdate_make(year = 1401)
+#' ## Components are recycled
+#' jdatetime_make(year = 1399:1400, month = 12, day = c(30, 29), hour = 12, tzone = "UTC")
 #' @export
 jdatetime_make <- function(year, month = 1L, day = 1L,
                            hour = 0L, minute = 0L, second = 0L, tzone = "", ...) {
-    check_dots_empty(...)
+    check_dots_empty()
 
     if (rlang::is_missing(year)) {
         stop("argument \"year\" is missing, with no default")
@@ -177,6 +197,7 @@ vec_ptype_abbr.jdatetime <- function(x, ...) {
 
 # Coerce ------------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export vec_ptype2.jdatetime
 #' @method vec_ptype2 jdatetime
 #' @export
@@ -198,6 +219,7 @@ vec_ptype2.jdatetime.jdate <- function(x, y, ...) {
 
 # Cast --------------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export vec_cast.jdatetime
 #' @method vec_cast jdatetime
 #' @export
@@ -262,11 +284,25 @@ vec_cast.character.jdatetime <- function(x, to, ...) {
     format(x)
 }
 
-#' Convert an object to a jdatetime
+#' Convert an object to a `jdatetime`
 #'
-#' A generic function that converts other date/time classes to jdatetime
+#' A generic function that converts other date/time classes to `jdatetime`.
 #'
-#' @param x a vector of jdate, POSIXct or Date.
+#' @details
+#' If `tzone` is missing (default), time zone attribute of input object is used for conversion.
+#' If the input object does not have time zone attribute (e.g. `jdate`), and no value is supplied
+#' for `tzone`, local time zone is assumed for conversion.
+#'
+#' @param x a vector of `jdate`, `POSIXct` or `Date`.
+#' @param tzone A time zone name.
+#' @inheritParams rlang::args_dots_empty
+#' @return A vector of `jdatetime` objects with the same length as x.
+#' @examples
+#' ## The time will be set to midnight when converting from `jdate` or `Date`
+#' as_jdatetime(jdate_now())
+#' as_jdatetime(Sys.Date())
+#' ## We can change time zone of a `jdatetime` to a new time zone
+#' as_jdatetime(jdatetime_now(tzone = "Iran"), tzone = "Asia/Tokyo")
 #' @export
 as_jdatetime <- function(x, tzone, ...) {
     UseMethod("as_jdatetime")
@@ -283,6 +319,7 @@ as_jdatetime.default <- function(x, tzone, ...) {
 
 # Arithmetic --------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export vec_arith.jdatetime
 #' @method vec_arith jdatetime
 #' @export
@@ -363,6 +400,7 @@ vec_arith.difftime.jdatetime <- function(op, x, y, ...) {
 
 # Math --------------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export
 vec_math.jdatetime <- function(.fn, .x, ...) {
     switch(.fn,
@@ -371,3 +409,6 @@ vec_math.jdatetime <- function(.fn, .x, ...) {
            rlang::abort("unsupported operation.")
     )
 }
+
+#' @export
+chooseOpsMethod.jdatetime <- function(x, y, mx, my, cl, reverse) TRUE

@@ -2,23 +2,27 @@
 % Please edit documentation in R/jdate.R
 \name{as_jdate}
 \alias{as_jdate}
-\title{Convert an object to a jdate}
+\title{Convert an object to a \code{jdate}}
 \usage{
 as_jdate(x, ...)
 }
 \arguments{
-\item{x}{a vector of jdatetime, POSIXct or Date.}
+\item{x}{a vector of \code{jdatetime}, \code{POSIXct} or \code{Date}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 }
+\value{
+A vector of \code{jdate} objects with the same length as x.
+}
 \description{
-A generic function that converts other date/time classes to jdate.
+A generic function that converts other date/time classes to \code{jdate}.
+}
+\details{
+Unlike R's \code{as.Date.POSIXct()} method, \code{as_jdate} does not expose a time zone argument
+and uses time zone attribute of input datetime object for conversion.
 }
 \examples{
 as_jdate(as.Date("2023-12-12"))
-
-# Unlike R's `as.Date.POSIXct()` method, `as_jdate` does not expose a time zone argument
-# and uses time zone attribute of input datetime for conversion.
 as_jdate(jdatetime("1402-09-21 13:14:00", tzone = "Asia/Tehran"))
 as_jdate(as.POSIXct("2023-12-12 13:14:00", tz = "Asia/Tehran"))
 }

@@ -20,17 +20,17 @@ jdate(x, ...)
 \item{format}{Format argument for character method.}
 }
 \value{
-A vector of `jdate` objects
+A vector of \code{jdate} objects.
 }
 \description{
-`jdate` is an S3 class for representing Jalali calendar dates. It can be constructed
+\code{jdate} is an S3 class for representing Jalali calendar dates. It can be constructed
 from character and numeric vectors.
 }
 \details{
-`jdate` is stored internaly as a double vector and doesn’t have any attributes.
-   Its value represents the count of days since the Unix epoch (a negative value
-   if it represents a date prior to the epoch). This implementation coincides
-   with the implementation of `Date` class.
+\code{jdate} is stored internaly as a double vector and doesn’t have any attributes.
+Its value represents the count of days since the Unix epoch (a negative value
+if it represents a date prior to the epoch). This implementation coincides
+with the implementation of \code{Date} class.
 }
 \examples{
 jdate("1402-09-20")

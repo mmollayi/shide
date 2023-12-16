@@ -15,7 +15,7 @@ new_jdate <- function(x = double()) {
 #' @param x A vector of numeric or character objects.
 #' @param ... Arguments passed on to further methods.
 #' @param format Format argument for character method.
-#' @return A vector of `jdate` objects
+#' @return A vector of `jdate` objects.
 #' @examples
 #' jdate("1402-09-20")
 #' jdate("1402/09/20", format = "%Y/%m/%d")
@@ -54,9 +54,15 @@ jdate.character <- function(x, format = NULL, ...) {
     new_jdate(days_since_epoch)
 }
 
-#' is_jdate()
-#' `is_jdate()` checks whether an object is of class `jdate`.
+#' Check an object for its class
 #'
+#' * `is_jdate()` checks whether an object is of class `jdate`.
+#' * `is_jdatetime()` checks whether an object is of class `jdatetime`.
+#' @param x An object to test.
+#' @return `TRUE` or `FALSE`.
+#' @examples
+#' is_jdate(jdate_now() + 1) # TRUE
+#' is_jdatetime(jdatetime_now() + as.difftime(2, units = "hours")) # TRUE
 #' @export
 is_jdate <- function(x) {
     inherits(x, "jdate")
@@ -80,7 +86,7 @@ jdate_now <- function(tzone = "") {
     as_jdate(jdatetime_now(tzone))
 }
 
-#' Construct jdate objects from individual components
+#' @rdname jdatetime_make
 #' @export
 jdate_make <- function(year, month = 1L, day = 1L, ...) {
     check_dots_empty()
@@ -110,6 +116,7 @@ vec_ptype_abbr.jdate <- function(x, ...) {
 
 # Coerce ------------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export vec_ptype2.jdate
 #' @method vec_ptype2 jdate
 #' @export
@@ -129,6 +136,7 @@ vec_ptype2.jdate.jdatetime <- function(x, y, ...) {
 
 # Cast --------------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export vec_cast.jdate
 #' @method vec_cast jdate
 #' @export
@@ -184,17 +192,17 @@ vec_cast.character.jdate <- function(x, to, ...) {
     format(x)
 }
 
-#' Convert an object to a jdate
+#' Convert an object to a `jdate`
 #'
-#' A generic function that converts other date/time classes to jdate.
+#' A generic function that converts other date/time classes to `jdate`.
 #'
-#' @param x a vector of jdatetime, POSIXct or Date.
+#' @details Unlike R's `as.Date.POSIXct()` method, `as_jdate` does not expose a time zone argument
+#'     and uses time zone attribute of input datetime object for conversion.
+#' @param x a vector of `jdatetime`, `POSIXct` or `Date`.
 #' @inheritParams rlang::args_dots_empty
+#' @return A vector of `jdate` objects with the same length as x.
 #' @examples
 #' as_jdate(as.Date("2023-12-12"))
-#'
-#' # Unlike R's `as.Date.POSIXct()` method, `as_jdate` does not expose a time zone argument
-#' # and uses time zone attribute of input datetime for conversion.
 #' as_jdate(jdatetime("1402-09-21 13:14:00", tzone = "Asia/Tehran"))
 #' as_jdate(as.POSIXct("2023-12-12 13:14:00", tz = "Asia/Tehran"))
 #' @export
@@ -209,6 +217,7 @@ as_jdate.default <- function(x, ...) {
 
 # Arithmetic --------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export vec_arith.jdate
 #' @method vec_arith jdate
 #' @export
@@ -305,6 +314,7 @@ vec_arith.difftime.jdate <- function(op, x, y, ...) {
 
 # Math --------------------------------------------------------------------
 
+#' @rdname shide-vctrs
 #' @export
 vec_math.jdate <- function(.fn, .x, ...) {
     switch(.fn,
@@ -313,3 +323,6 @@ vec_math.jdate <- function(.fn, .x, ...) {
            rlang::abort("unsupported operation.")
     )
 }
+
+#' @export
+chooseOpsMethod.jdate <- function(x, y, mx, my, cl, reverse) TRUE

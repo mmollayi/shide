@@ -13,9 +13,10 @@ jdatetime_now(tzone = "")
 \item{tzone}{Time zone to get the current time for.}
 }
 \value{
-- `jdate_now()` a jdate object.
-
-- `jdatetime_now()` a jdatetime object.
+\itemize{
+\item \code{jdate_now()} a jdate object.
+\item \code{jdatetime_now()} a jdatetime object.
+}
 }
 \description{
 System representation of the current time as jdate and jdatetime.

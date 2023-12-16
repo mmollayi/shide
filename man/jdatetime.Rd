@@ -2,9 +2,12 @@
 % Please edit documentation in R/jdatetime.R
 \name{jdatetime}
 \alias{jdatetime}
+\alias{jdatetime.character}
 \title{Date-time based on Jalali calendar}
 \usage{
 jdatetime(x, tzone = "", ...)
+
+\method{jdatetime}{character}(x, tzone = "", format = NULL, ...)
 }
 \arguments{
 \item{x}{A vector of numeric or character objects.}
@@ -16,18 +19,18 @@ jdatetime(x, tzone = "", ...)
 \item{format}{Format argument for character method.}
 }
 \value{
-A vector of `jdatetime` objects
+A vector of \code{jdatetime} objects.
 }
 \description{
-`jdatetime` is an S3 class for representing date-times with Jalali calendar dates.
- It can be constructed from character and numeric vectors.
+\code{jdatetime} is an S3 class for representing date-times with Jalali calendar dates.
+It can be constructed from character and numeric vectors.
 }
 \details{
-`jdatetime` is stored internaly as a double vector and has a single
-   attribute: the timezone (tzone). Its value represents the count of seconds
-   since the Unix epoch (a negative value if it represents an instant prior to the epoch).
-   This implementation coincides with that of `POSIXct` class, except that `POSIXct`
-   may not have `tzone` attribute. But for `jdatetime`, `tzone` is not optional.
+\code{jdatetime} is stored internaly as a double vector and has a single
+attribute: the timezone (tzone). Its value represents the count of seconds
+since the Unix epoch (a negative value if it represents an instant prior to the epoch).
+This implementation coincides with that of \code{POSIXct} class, except that \code{POSIXct}
+may not have \code{tzone} attribute. But for \code{jdatetime}, \code{tzone} is not optional.
 }
 \examples{
 ## default time zone and format

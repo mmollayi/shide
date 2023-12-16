@@ -8,8 +8,16 @@
 \description{
 Implements S3 classes for storing dates and date-times based on Jalali calendar.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mmollayi/shide}
+  \item Report bugs at \url{https://github.com/mmollayi/shide/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Mohsen Mollayi \email{mmollayi@gmail.com}
+\strong{Maintainer}: Mohsen Mollayi \email{mmollayi@gmail.com} [copyright holder]
 
 }
 \keyword{internal}
