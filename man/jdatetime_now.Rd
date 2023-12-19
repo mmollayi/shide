@@ -14,8 +14,8 @@ jdatetime_now(tzone = "")
 }
 \value{
 \itemize{
-\item \code{jdate_now()} a jdate object.
-\item \code{jdatetime_now()} a jdatetime object.
+\item \code{jdate_now()} A jdate object.
+\item \code{jdatetime_now()} A jdatetime object.
 }
 }
 \description{

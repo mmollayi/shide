@@ -35,6 +35,12 @@ jdatetime_make(
 
 \item{tzone}{A time zone name. Default value represents local time zone.}
 }
+\value{
+\itemize{
+\item \code{jdate_make()} A vector of jdate object.
+\item \code{jdatetime_make()} A vector of jdatetime object.
+}
+}
 \description{
 \itemize{
 \item \code{jdate_make()} creates a \code{jdate} object from individual components.

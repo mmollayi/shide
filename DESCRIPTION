@@ -5,6 +5,8 @@ Version: 0.1.0
 Authors@R:
     person("Mohsen", "Mollayi", role = c("aut", "cre", "cph"), email = "mmollayi@gmail.com")
 Description: Implements S3 classes for storing dates and date-times based on Jalali calendar. 
+    The main design goal of 'shide' is consistency with base R's 'Date' and 'POSIXct'.
+    It provide features such as: date-time parsing, formatting and arithmetic.
 License: MIT + file LICENSE
 URL: https://github.com/mmollayi/shide
 BugReports: https://github.com/mmollayi/shide/issues
@@ -17,7 +19,6 @@ LinkingTo:
 Depends: 
     R (>= 4.2)
 Imports: 
-    lubridate,
     methods,
     rlang,
     tzdb,

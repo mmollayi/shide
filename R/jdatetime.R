@@ -106,9 +106,8 @@ obj_print_data.jdatetime <- function(x, ...) {
 #' @param tzone Time zone to get the current time for.
 #'
 #' @return
-#' - `jdate_now()` a jdate object.
-#'
-#' - `jdatetime_now()` a jdatetime object.
+#' * `jdate_now()` A jdate object.
+#' * `jdatetime_now()` A jdatetime object.
 #'
 #' @examples
 #' # Current Jalali date in the local time zone
@@ -142,6 +141,9 @@ jdatetime_now <- function(tzone = "") {
 #' @param second Numeric second.
 #' @param tzone A time zone name. Default value represents local time zone.
 #' @inheritParams rlang::args_dots_empty
+#' @return
+#' * `jdate_make()` A vector of jdate object.
+#' * `jdatetime_make()` A vector of jdatetime object.
 #' @examples
 #' ## At least 'year' must be supplied
 #' jdate_make(year = 1401)

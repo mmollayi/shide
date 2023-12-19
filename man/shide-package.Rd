@@ -6,7 +6,7 @@
 \alias{shide-package}
 \title{shide: Date/Time Classes Based on Jalali Calendar}
 \description{
-Implements S3 classes for storing dates and date-times based on Jalali calendar.
+Implements S3 classes for storing dates and date-times based on Jalali calendar. The main design goal of 'shide' is consistency with base R's 'Date' and 'POSIXct'. It provide features such as: date-time parsing, formatting and arithmetic.
 }
 \seealso{
 Useful links:
