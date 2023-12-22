@@ -12,9 +12,9 @@ new_jdatetime <- function(x = double(), tzone = "") {
     new_vctr(x, class = "jdatetime", tzone = tzone)
 }
 
-#' Date-time based on Jalali calendar
+#' Date-time based on the Jalali calendar
 #'
-#' `jdatetime` is an S3 class for representing date-times with Jalali calendar dates.
+#' `jdatetime` is an S3 class for representing date-times with the Jalali calendar dates.
 #'  It can be constructed from character and numeric vectors.
 #'
 #' @details `jdatetime` is stored internaly as a double vector and has a single
@@ -199,12 +199,17 @@ vec_ptype_abbr.jdatetime <- function(x, ...) {
 
 # Coerce ------------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' Coercion
+#'
+#' Double dispatch methods to support [vctrs::vec_ptype2()].
+#'
+#' @inheritParams vctrs::vec_ptype2
+#'
 #' @export vec_ptype2.jdatetime
 #' @method vec_ptype2 jdatetime
 #' @export
-vec_ptype2.jdatetime <- function(x, y, ...) {
-    UseMethod("vec_ptype2.jdatetime")
+vec_ptype2.jdatetime <- function(x, y, ..., x_arg = "", y_arg = "") {
+    UseMethod("vec_ptype2.jdatetime", y)
 }
 
 #' @method vec_ptype2.jdatetime jdatetime
@@ -221,7 +226,12 @@ vec_ptype2.jdatetime.jdate <- function(x, y, ...) {
 
 # Cast --------------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' Cast an object to a `jdatetime` object
+#'
+#' @inheritParams vctrs::vec_cast
+#' @return A vector of `jdatetime` objects.
+#' @seealso [as_jdatetime] is a convenience function that makes use of the casts that
+#'     are defined for `vec_cast.jdatetime()` methods.
 #' @export vec_cast.jdatetime
 #' @method vec_cast jdatetime
 #' @export
@@ -286,7 +296,7 @@ vec_cast.character.jdatetime <- function(x, to, ...) {
     format(x)
 }
 
-#' Convert an object to a `jdatetime`
+#' Cast an object to a `jdatetime` object
 #'
 #' A generic function that converts other date/time classes to `jdatetime`.
 #'
@@ -321,7 +331,7 @@ as_jdatetime.default <- function(x, tzone, ...) {
 
 # Arithmetic --------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' @rdname shide-arithmetic
 #' @export vec_arith.jdatetime
 #' @method vec_arith jdatetime
 #' @export
@@ -402,7 +412,7 @@ vec_arith.difftime.jdatetime <- function(op, x, y, ...) {
 
 # Math --------------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' @rdname shide-math
 #' @export
 vec_math.jdatetime <- function(.fn, .x, ...) {
     switch(.fn,

@@ -23,7 +23,7 @@ jdate(x, ...)
 A vector of \code{jdate} objects.
 }
 \description{
-\code{jdate} is an S3 class for representing Jalali calendar dates. It can be constructed
+\code{jdate} is an S3 class for representing the Jalali calendar dates. It can be constructed
 from character and numeric vectors.
 }
 \details{

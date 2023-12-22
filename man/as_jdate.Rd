@@ -2,12 +2,12 @@
 % Please edit documentation in R/jdate.R
 \name{as_jdate}
 \alias{as_jdate}
-\title{Convert an object to a \code{jdate}}
+\title{Cast an object to a \code{jdate} object}
 \usage{
 as_jdate(x, ...)
 }
 \arguments{
-\item{x}{a vector of \code{jdatetime}, \code{POSIXct} or \code{Date}.}
+\item{x}{A vector of \code{jdatetime}, \code{POSIXct} or \code{Date}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 }

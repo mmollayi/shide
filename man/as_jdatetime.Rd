@@ -2,7 +2,7 @@
 % Please edit documentation in R/jdatetime.R
 \name{as_jdatetime}
 \alias{as_jdatetime}
-\title{Convert an object to a \code{jdatetime}}
+\title{Cast an object to a \code{jdatetime} object}
 \usage{
 as_jdatetime(x, tzone, ...)
 }

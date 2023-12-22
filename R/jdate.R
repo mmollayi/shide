@@ -5,7 +5,7 @@ new_jdate <- function(x = double()) {
 
 #' Jalali calendar dates
 #'
-#' `jdate` is an S3 class for representing Jalali calendar dates. It can be constructed
+#' `jdate` is an S3 class for representing the Jalali calendar dates. It can be constructed
 #' from character and numeric vectors.
 #'
 #' @details `jdate` is stored internaly as a double vector and doesn’t have any attributes.
@@ -116,12 +116,17 @@ vec_ptype_abbr.jdate <- function(x, ...) {
 
 # Coerce ------------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' Coercion
+#'
+#' Double dispatch methods to support [vctrs::vec_ptype2()].
+#'
+#' @inheritParams vctrs::vec_ptype2
+#'
 #' @export vec_ptype2.jdate
 #' @method vec_ptype2 jdate
 #' @export
-vec_ptype2.jdate <- function(x, y, ...) {
-    UseMethod("vec_ptype2.jdate")
+vec_ptype2.jdate <- function(x, y, ..., x_arg = "", y_arg = "") {
+    UseMethod("vec_ptype2.jdate", y)
 }
 
 #' @method vec_ptype2.jdate jdate
@@ -136,7 +141,12 @@ vec_ptype2.jdate.jdatetime <- function(x, y, ...) {
 
 # Cast --------------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' Cast an object to a `jdate` object
+#'
+#' @inheritParams vctrs::vec_cast
+#' @return A vector of `jdate` objects.
+#' @seealso [as_jdate] is a convenience function that makes use of the casts that
+#'     are defined for `vec_cast.jdate()` methods.
 #' @export vec_cast.jdate
 #' @method vec_cast jdate
 #' @export
@@ -192,13 +202,13 @@ vec_cast.character.jdate <- function(x, to, ...) {
     format(x)
 }
 
-#' Convert an object to a `jdate`
+#' Cast an object to a `jdate` object
 #'
 #' A generic function that converts other date/time classes to `jdate`.
 #'
 #' @details Unlike R's `as.Date.POSIXct()` method, `as_jdate` does not expose a time zone argument
 #'     and uses time zone attribute of input datetime object for conversion.
-#' @param x a vector of `jdatetime`, `POSIXct` or `Date`.
+#' @param x A vector of `jdatetime`, `POSIXct` or `Date`.
 #' @inheritParams rlang::args_dots_empty
 #' @return A vector of `jdate` objects with the same length as x.
 #' @examples
@@ -217,7 +227,29 @@ as_jdate.default <- function(x, ...) {
 
 # Arithmetic --------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' Arithmetic operations for `jdate` and `jdatetime`
+#'
+#' @details
+#' Supported operations:
+#' * Difference between two `jdate` objects results a `difftime` object with `units = "days"`.
+#' * Difference between two `jdatetime` objects results a `difftime` object with `units = "seconds"`.
+#' * A numeric vector can be added to or subtracted from a `jdate` or `jdatetime`.
+#' * A `difftime` vector can be added to or subtracted from a `jdate` only if it has
+#'   resolution bigger than "days".
+#' * A `difftime` vector can be added to or subtracted from a `jdatetime`.
+#' * A `jdate` object can be subtracted from a `jdatetime` and vice versa.
+#' @param op An arithmetic operator as a string.
+#' @param x,y A pair of vectors.
+#' @inheritParams rlang::args_dots_empty
+#' @return The binary operator result of `x` and `y`. See
+#'     Details for more information on operator behaviors.
+#' @name shide-arithmetic
+#' @examples
+#' jdatetime_now() - jdate_now()
+#' jdate_now() - as.difftime(1, units ="weeks" ) - as.difftime(1, units = "days")
+NULL
+
+#' @rdname shide-arithmetic
 #' @export vec_arith.jdate
 #' @method vec_arith jdate
 #' @export
@@ -230,7 +262,6 @@ vec_arith.jdate <- function(op, x, y, ...) {
 vec_arith.jdate.default <- function(op, x, y, ...) {
     stop_incompatible_op(op, x, y)
 }
-
 
 #' @method vec_arith.jdate jdate
 #' @export
@@ -314,7 +345,29 @@ vec_arith.difftime.jdate <- function(op, x, y, ...) {
 
 # Math --------------------------------------------------------------------
 
-#' @rdname shide-vctrs
+#' Mathematical operations for `jdate` and `jdatetime`
+#'
+#' Math and Summary group of functions for `jdate` and `jdatetime` objects.
+#' Only methods for `is.finite()` and `is.infinite()` are provided and other functions from
+#' the groups, such as `mean()`, `median()` and `summary()` are not implemented.
+#'
+#' @details
+#' `vctrs` implementation of `Date` and `POSIXct` does not include methods for
+#' `is.finite()` and `is.infinite()`. But these method are implemented in `shide`
+#' so that `jdate` and `jdatetime` vectors could be used as `ggplot` scales.
+#'
+#' @param .fn A mathematical function from the base package, as a string.
+#' @param .x A vector of `jdate` or `jdatetime` objects.
+#' @param ... Additional arguments passed to .fn.
+#' @return For `is.finite()` and `is.infinite()`, a logical vector of the same length as x.
+#'     Using all the other math and summary group generics will signal an error.
+#' @name shide-math
+#' @examples
+#' # Unlike a `Date` vector, `mean()` is not defined for a `jdate` vector
+#' try(mean(c(jdate_now(), jdate_now() + 2)))
+NULL
+
+#' @rdname shide-math
 #' @export
 vec_math.jdate <- function(.fn, .x, ...) {
     switch(.fn,

@@ -3,7 +3,7 @@
 \name{jdatetime}
 \alias{jdatetime}
 \alias{jdatetime.character}
-\title{Date-time based on Jalali calendar}
+\title{Date-time based on the Jalali calendar}
 \usage{
 jdatetime(x, tzone = "", ...)
 
@@ -22,7 +22,7 @@ jdatetime(x, tzone = "", ...)
 A vector of \code{jdatetime} objects.
 }
 \description{
-\code{jdatetime} is an S3 class for representing date-times with Jalali calendar dates.
+\code{jdatetime} is an S3 class for representing date-times with the Jalali calendar dates.
 It can be constructed from character and numeric vectors.
 }
 \details{
