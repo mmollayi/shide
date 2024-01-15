@@ -19,7 +19,7 @@
 }
 \value{
 The binary operator result of \code{x} and \code{y}. See
-Details for more information on operator behaviors.
+details for more information on operator behaviors.
 }
 \description{
 Arithmetic operations for \code{jdate} and \code{jdatetime}

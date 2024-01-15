@@ -199,12 +199,7 @@ vec_ptype_abbr.jdatetime <- function(x, ...) {
 
 # Coerce ------------------------------------------------------------------
 
-#' Coercion
-#'
-#' Double dispatch methods to support [vctrs::vec_ptype2()].
-#'
-#' @inheritParams vctrs::vec_ptype2
-#'
+#' @rdname shide-coercion
 #' @export vec_ptype2.jdatetime
 #' @method vec_ptype2 jdatetime
 #' @export

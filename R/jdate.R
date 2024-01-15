@@ -120,8 +120,23 @@ vec_ptype_abbr.jdate <- function(x, ...) {
 #'
 #' Double dispatch methods to support [vctrs::vec_ptype2()].
 #'
+#' @details
+#' Coercion rules for `jdate` and `jdatetime`:
+#' * Combining a `jdate` and `jdatetime` yields a `jdatetime`.
+#' * When combining two `jdatetime` objects, the timezone is taken from the first non-local timezone.
 #' @inheritParams vctrs::vec_ptype2
-#'
+#' @return An object prototype if x and y can be safely coerced to the same prototype;
+#'     otherwise it returns an error. See details for more information on
+#'     coercion hierarchy for `jdate` and `jdatetime`.
+#' @name shide-coercion
+#' @examples
+#' # jdate and jdatetime are compatible
+#' c(jdate(), jdatetime(), jdatetime(tzone = "UTC"))
+#' # jdate and Date are incompatible
+#' try(c(jdate(), as.Date(NULL)))
+NULL
+
+#' @rdname shide-coercion
 #' @export vec_ptype2.jdate
 #' @method vec_ptype2 jdate
 #' @export
@@ -242,7 +257,7 @@ as_jdate.default <- function(x, ...) {
 #' @param x,y A pair of vectors.
 #' @inheritParams rlang::args_dots_empty
 #' @return The binary operator result of `x` and `y`. See
-#'     Details for more information on operator behaviors.
+#'     details for more information on operator behaviors.
 #' @name shide-arithmetic
 #' @examples
 #' jdatetime_now() - jdate_now()

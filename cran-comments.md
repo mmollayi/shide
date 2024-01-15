@@ -1,3 +1,11 @@
+## Resubmission 2
+
+This is a resubmission. In this version I have:
+    * removed vec_ptype2.jdate.Rd and vec_ptype2.jdatetime.Rd.
+    * added shide-coercion.Rd that describes coercion mechanism that is implemented. This file
+      explains vec_ptype2.jdate() and vec_ptype2.jdatetime() generics and provides examples about
+      how automatic coercion works for classes that are implemented in `shide`.
+      
 ## Resubmission
 
 There are no references describing the methods in the package.
