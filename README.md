@@ -15,8 +15,13 @@ implemented based on the infrastructure provided by the `vctrs` package.
 
 ## Installation
 
-You can install the development version of shide from
-[GitHub](https://github.com/) with:
+You can install shide from CRAN with:
+
+``` r
+install.packages("shide")
+```
+
+Or you can install the development version from GitHub:
 
 ``` r
 # install.packages("devtools")
@@ -102,8 +107,8 @@ is possible with `as_jdate()` and `as_jdatetime()` respectively:
 ``` r
 as_jdate(Sys.Date())
 #> <jdate[1]>
-#> [1] "1402-09-19"
+#> [1] "1402-11-03"
 as_jdatetime(Sys.time())
 #> <jdatetime<local>[1]>
-#> [1] "1402-09-19 17:12:47"
+#> [1] "1402-11-03 13:38:39"
 ```
