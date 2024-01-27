@@ -16,3 +16,8 @@ test_that("safe casts work as expected", {
 test_that("can cast NA", {
     expect_equal(vec_cast(NA, new_jdate()), new_jdate(NA_real_))
 })
+
+test_that("Date <-> jdate conversion works as expected", {
+    expect_identical(as_jdate(as.Date("2024-01-23")), jdate("1402-11-03"))
+    expect_identical(as.Date(jdate("1402-11-03")), as.Date("2024-01-23"))
+})
