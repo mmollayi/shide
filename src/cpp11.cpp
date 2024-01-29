@@ -5,6 +5,20 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// accessors.cpp
+cpp11::writable::list jdate_get_fields(const cpp11::sexp x);
+extern "C" SEXP _shide_jdate_get_fields(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(jdate_get_fields(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x)));
+  END_CPP11
+}
+// accessors.cpp
+cpp11::writable::list jdatetime_get_fields(const cpp11::sexp x);
+extern "C" SEXP _shide_jdatetime_get_fields(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(jdatetime_get_fields(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x)));
+  END_CPP11
+}
 // format.cpp
 cpp11::writable::strings format_jdate_cpp(const cpp11::doubles x, const cpp11::strings& format);
 extern "C" SEXP _shide_format_jdate_cpp(SEXP x, SEXP format) {
@@ -74,8 +88,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_format_jdate_cpp",                (DL_FUNC) &_shide_format_jdate_cpp,                2},
     {"_shide_format_jdatetime_cpp",            (DL_FUNC) &_shide_format_jdatetime_cpp,            2},
     {"_shide_get_zone_info",                   (DL_FUNC) &_shide_get_zone_info,                   2},
+    {"_shide_jdate_get_fields",                (DL_FUNC) &_shide_jdate_get_fields,                1},
     {"_shide_jdate_make_cpp",                  (DL_FUNC) &_shide_jdate_make_cpp,                  1},
     {"_shide_jdate_parse_cpp",                 (DL_FUNC) &_shide_jdate_parse_cpp,                 2},
+    {"_shide_jdatetime_get_fields",            (DL_FUNC) &_shide_jdatetime_get_fields,            1},
     {"_shide_jdatetime_make_cpp",              (DL_FUNC) &_shide_jdatetime_make_cpp,              2},
     {"_shide_jdatetime_parse_cpp",             (DL_FUNC) &_shide_jdatetime_parse_cpp,             3},
     {"_shide_local_days_from_sys_seconds_cpp", (DL_FUNC) &_shide_local_days_from_sys_seconds_cpp, 2},
