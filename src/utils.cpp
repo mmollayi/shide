@@ -19,7 +19,7 @@ sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tz
     date::local_info info;
 
     for (R_xlen_t i = 0; i < size; ++i) {
-        if (x[i] == NA_REAL) {
+        if (std::isnan(x[i])) {
             out[i] = NA_REAL;
             continue;
         }
@@ -31,6 +31,17 @@ sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tz
     }
 
     return out;
+}
+
+date::local_days
+local_days_from_sys_seconds(const std::chrono::seconds& ds, const date::time_zone* tz)
+{
+    const date::sys_seconds ss{ ds };
+    date::sys_info info;
+    tzdb::get_sys_info(ss, tz, info);
+    const date::local_seconds ls{ (ss + info.offset).time_since_epoch() };
+    const date::local_days ld{ date::floor<date::days>(ls) };
+    return ld;
 }
 
 [[cpp11::register]]
@@ -47,21 +58,15 @@ local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tz
 
     const R_xlen_t size = x.size();
     cpp11::writable::doubles out(size);
-    date::local_seconds ls;
-    date::sys_seconds ss;
     date::local_days ld;
-    date::sys_info info;
 
     for (R_xlen_t i = 0; i < size; ++i) {
-        if (x[i] == NA_REAL) {
+        if (std::isnan(x[i])) {
             out[i] = NA_REAL;
             continue;
         }
 
-        ss = date::sys_seconds{ std::chrono::seconds{ static_cast<int>(x[i]) }};
-        tzdb::get_sys_info(ss, tz, info);
-        ls = date::local_seconds{(ss + info.offset).time_since_epoch()};
-        ld = date::floor<date::days>(ls);
+        ld = local_days_from_sys_seconds(std::chrono::seconds{ static_cast<int>(x[i]) }, tz);
         out[i] = static_cast<double>(ld.time_since_epoch().count());
     }
 
