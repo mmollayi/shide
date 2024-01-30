@@ -3,7 +3,7 @@
 std::string get_current_tzone_cpp();
 
 int
-local_ydays(const sh_year_month_day& ymd)
+sh_doy(const sh_year_month_day& ymd)
 {
     static const int month_data_cum[12] = {0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336};
     int m{static_cast<int>(unsigned{ ymd.month() })};
@@ -111,7 +111,7 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
 
 [[cpp11::register]]
 cpp11::writable::integers
-jdate_get_yday_cpp(const cpp11::sexp x)
+jdate_get_doy_cpp(const cpp11::sexp x)
 {
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
@@ -127,7 +127,7 @@ jdate_get_yday_cpp(const cpp11::sexp x)
         }
 
         ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
-        out[i] = local_ydays(ymd);
+        out[i] = sh_doy(ymd);
     }
 
     return out;
