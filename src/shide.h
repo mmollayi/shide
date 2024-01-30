@@ -7,6 +7,7 @@
 #include <cpp11.hpp>
 #include <R.h>
 #include <Rinternals.h>
+#include "sh_year_month_day.h"
 
 const int jd_unix_epoch{ 2440588 };
 
