@@ -6,11 +6,11 @@ test_that("jdates have informative types", {
 # cast: ---------------------------------------------------------------------
 
 test_that("safe casts work as expected", {
-    date <- jdate("1402-09-15")
+    d <- jdate("1402-09-15")
 
-    expect_equal(vec_cast(NULL, date), NULL)
-    expect_equal(vec_cast(date, date), date)
-    expect_equal(vec_cast(as_jdatetime(date), date), date)
+    expect_equal(vec_cast(NULL, d), NULL)
+    expect_equal(vec_cast(d, d), d)
+    expect_equal(vec_cast(as_jdatetime(d), d), d)
 })
 
 test_that("can cast NA", {
