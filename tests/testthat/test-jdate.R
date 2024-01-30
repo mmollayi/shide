@@ -21,3 +21,8 @@ test_that("Date <-> jdate conversion works as expected", {
     expect_identical(as_jdate(as.Date("2024-01-23")), jdate("1402-11-03"))
     expect_identical(as.Date(jdate("1402-11-03")), as.Date("2024-01-23"))
 })
+
+test_that("jdate <-> jdatetime conversion works as expected", {
+    expect_identical(jdate(NA_real_), as_jdate(jdatetime(NA_real_)))
+    expect_identical(jdatetime(NA_real_), as_jdatetime(jdate(NA_real_)))
+})
