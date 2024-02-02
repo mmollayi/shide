@@ -36,6 +36,14 @@ jdatetime_parse_cpp <- function(x, format, tzone) {
   .Call(`_shide_jdatetime_parse_cpp`, x, format, tzone)
 }
 
+jdate_seq_by_month_cpp <- function(x, dm) {
+  .Call(`_shide_jdate_seq_by_month_cpp`, x, dm)
+}
+
+jdate_seq_by_year_cpp <- function(x, dy) {
+  .Call(`_shide_jdate_seq_by_year_cpp`, x, dy)
+}
+
 sys_seconds_from_local_days_cpp <- function(x, tzone) {
   .Call(`_shide_sys_seconds_from_local_days_cpp`, x, tzone)
 }

@@ -68,6 +68,20 @@ extern "C" SEXP _shide_jdatetime_parse_cpp(SEXP x, SEXP format, SEXP tzone) {
     return cpp11::as_sexp(jdatetime_parse_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(format), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone)));
   END_CPP11
 }
+// seq.cpp
+cpp11::writable::doubles jdate_seq_by_month_cpp(const cpp11::sexp& x, const cpp11::integers& dm);
+extern "C" SEXP _shide_jdate_seq_by_month_cpp(SEXP x, SEXP dm) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(jdate_seq_by_month_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(dm)));
+  END_CPP11
+}
+// seq.cpp
+cpp11::writable::doubles jdate_seq_by_year_cpp(const cpp11::sexp& x, const cpp11::integers& dy);
+extern "C" SEXP _shide_jdate_seq_by_year_cpp(SEXP x, SEXP dy) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(jdate_seq_by_year_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp&>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(dy)));
+  END_CPP11
+}
 // utils.cpp
 cpp11::writable::doubles sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tzone);
 extern "C" SEXP _shide_sys_seconds_from_local_days_cpp(SEXP x, SEXP tzone) {
@@ -99,6 +113,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_jdate_get_fields_cpp",            (DL_FUNC) &_shide_jdate_get_fields_cpp,            1},
     {"_shide_jdate_make_cpp",                  (DL_FUNC) &_shide_jdate_make_cpp,                  1},
     {"_shide_jdate_parse_cpp",                 (DL_FUNC) &_shide_jdate_parse_cpp,                 2},
+    {"_shide_jdate_seq_by_month_cpp",          (DL_FUNC) &_shide_jdate_seq_by_month_cpp,          2},
+    {"_shide_jdate_seq_by_year_cpp",           (DL_FUNC) &_shide_jdate_seq_by_year_cpp,           2},
     {"_shide_jdatetime_get_fields_cpp",        (DL_FUNC) &_shide_jdatetime_get_fields_cpp,        1},
     {"_shide_jdatetime_make_cpp",              (DL_FUNC) &_shide_jdatetime_make_cpp,              2},
     {"_shide_jdatetime_parse_cpp",             (DL_FUNC) &_shide_jdatetime_parse_cpp,             3},
