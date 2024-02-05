@@ -77,6 +77,7 @@ jdatetime.character <- function(x, tzone = "", format = NULL, ...) {
 
     format <- format %||% "%Y-%m-%d %H:%M:%S"
     seconds_since_epoch <- jdatetime_parse_cpp(x, format, tzone)
+    names(seconds_since_epoch) <- names(x)
     if (local_tz) tzone <- ""
     new_jdatetime(seconds_since_epoch, tzone)
 }
@@ -90,7 +91,9 @@ is_jdatetime <- function(x) {
 #' @export
 format.jdatetime <- function(x, format = NULL, ...) {
     format <- format %||% "%Y-%m-%d %H:%M:%S"
-    format_jdatetime_cpp(x, format)
+    out <- format_jdatetime_cpp(x, format)
+    names(out) <- names(x)
+    out
 }
 
 #' @export
@@ -258,6 +261,7 @@ vec_cast.jdatetime.jdate <- function(x, to, ...) {
     }
 
     ss <- sys_seconds_from_local_days_cpp(vec_data(x), tz)
+    names(ss) <- names(x)
 
     if (local_tz) {
         tz <- ""
