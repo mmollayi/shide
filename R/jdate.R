@@ -83,6 +83,11 @@ obj_print_data.jdate <- function(x, ...) {
     print(format(x))
 }
 
+#' @export
+is.numeric.jdate <- function(x) {
+    FALSE
+}
+
 #' @rdname jdatetime_now
 #' @export
 jdate_now <- function(tzone = "") {

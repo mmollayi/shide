@@ -97,6 +97,11 @@ format.jdatetime <- function(x, format = NULL, ...) {
 }
 
 #' @export
+is.numeric.jdatetime <- function(x) {
+    FALSE
+}
+
+#' @export
 obj_print_data.jdatetime <- function(x, ...) {
     if (length(x) == 0) return()
     print(format(x))
