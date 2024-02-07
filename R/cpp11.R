@@ -20,6 +20,10 @@ format_jdatetime_cpp <- function(x, format) {
   .Call(`_shide_format_jdatetime_cpp`, x, format)
 }
 
+year_is_leap_cpp <- function(x) {
+  .Call(`_shide_year_is_leap_cpp`, x)
+}
+
 jdate_make_cpp <- function(fields) {
   .Call(`_shide_jdate_make_cpp`, fields)
 }

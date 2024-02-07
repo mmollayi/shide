@@ -180,3 +180,11 @@ bool year_month_day_ok(const int year, const int month, const int day)
 
     return true;
 }
+
+bool year_is_in_range(const int year)
+{
+    if (!(LOWER_PERSIAN_YEAR < year && year < UPPER_PERSIAN_YEAR))
+        return false;
+
+    return true;
+}

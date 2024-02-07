@@ -40,6 +40,13 @@ extern "C" SEXP _shide_format_jdatetime_cpp(SEXP x, SEXP format) {
     return cpp11::as_sexp(format_jdatetime_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(format)));
   END_CPP11
 }
+// leap_years.cpp
+cpp11::writable::logicals year_is_leap_cpp(const cpp11::integers& x);
+extern "C" SEXP _shide_year_is_leap_cpp(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(year_is_leap_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::integers&>>(x)));
+  END_CPP11
+}
 // make.cpp
 cpp11::doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields);
 extern "C" SEXP _shide_jdate_make_cpp(SEXP fields) {
@@ -120,6 +127,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_jdatetime_parse_cpp",             (DL_FUNC) &_shide_jdatetime_parse_cpp,             3},
     {"_shide_local_days_from_sys_seconds_cpp", (DL_FUNC) &_shide_local_days_from_sys_seconds_cpp, 2},
     {"_shide_sys_seconds_from_local_days_cpp", (DL_FUNC) &_shide_sys_seconds_from_local_days_cpp, 2},
+    {"_shide_year_is_leap_cpp",                (DL_FUNC) &_shide_year_is_leap_cpp,                1},
     {NULL, NULL, 0}
 };
 }
