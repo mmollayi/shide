@@ -32,8 +32,18 @@ sh_day <- function(x) {
 }
 
 #' @export
-sh_doy <- function(x) {
-    UseMethod("sh_doy")
+sh_wday <- function(x) {
+    UseMethod("sh_wday")
+}
+
+#' @export
+sh_qday <- function(x) {
+    UseMethod("sh_qday")
+}
+
+#' @export
+sh_yday <- function(x) {
+    UseMethod("sh_yday")
 }
 
 #' @export
@@ -82,15 +92,43 @@ sh_day.jdatetime <- function(x) {
 }
 
 #' @export
-sh_doy.jdate <- function(x) {
-    out <- jdate_get_doy_cpp(x)
+sh_wday.jdate <- function(x) {
+    out <- jdate_get_wday_cpp(x)
     names(out) <- names(x)
     out
 }
 
 #' @export
-sh_doy.jdatetime <- function(x) {
-    out <- jdate_get_doy_cpp(as_jdate(x))
+sh_wday.jdatetime <- function(x) {
+    out <- jdate_get_wday_cpp(as_jdate(x))
+    names(out) <- names(x)
+    out
+}
+
+#' @export
+sh_qday.jdate <- function(x) {
+    out <- jdate_get_qday_cpp(x)
+    names(out) <- names(x)
+    out
+}
+
+#' @export
+sh_qday.jdatetime <- function(x) {
+    out <- jdate_get_qday_cpp(as_jdate(x))
+    names(out) <- names(x)
+    out
+}
+
+#' @export
+sh_yday.jdate <- function(x) {
+    out <- jdate_get_yday_cpp(x)
+    names(out) <- names(x)
+    out
+}
+
+#' @export
+sh_yday.jdatetime <- function(x) {
+    out <- jdate_get_yday_cpp(as_jdate(x))
     names(out) <- names(x)
     out
 }

@@ -8,8 +8,16 @@ jdatetime_get_fields_cpp <- function(x) {
   .Call(`_shide_jdatetime_get_fields_cpp`, x)
 }
 
-jdate_get_doy_cpp <- function(x) {
-  .Call(`_shide_jdate_get_doy_cpp`, x)
+jdate_get_yday_cpp <- function(x) {
+  .Call(`_shide_jdate_get_yday_cpp`, x)
+}
+
+jdate_get_wday_cpp <- function(x) {
+  .Call(`_shide_jdate_get_wday_cpp`, x)
+}
+
+jdate_get_qday_cpp <- function(x) {
+  .Call(`_shide_jdate_get_qday_cpp`, x)
 }
 
 format_jdate_cpp <- function(x, format) {

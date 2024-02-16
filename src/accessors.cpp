@@ -3,12 +3,21 @@
 std::string get_current_tzone_cpp();
 
 int
-sh_doy(const sh_year_month_day& ymd)
+sh_yday(const sh_year_month_day& ymd)
 {
     static const int month_data_cum[12] = {0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336};
     int m{static_cast<int>(unsigned{ ymd.month() })};
     int d{static_cast<int>(unsigned{ ymd.day() })};
     return month_data_cum[m-1] + d;
+}
+
+int
+sh_qday(const sh_year_month_day& ymd)
+{
+    static const int quarter_data[12] = {0, 31, 62, 0, 31, 62, 0, 30, 60, 0, 30, 60};
+    int m{static_cast<int>(unsigned{ ymd.month() })};
+    int d{static_cast<int>(unsigned{ ymd.day() })};
+    return quarter_data[m-1] + d;
 }
 
 [[cpp11::register]]
@@ -111,7 +120,7 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
 
 [[cpp11::register]]
 cpp11::writable::integers
-jdate_get_doy_cpp(const cpp11::sexp x)
+jdate_get_yday_cpp(const cpp11::sexp x)
 {
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
@@ -127,7 +136,55 @@ jdate_get_doy_cpp(const cpp11::sexp x)
         }
 
         ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
-        out[i] = sh_doy(ymd);
+        out[i] = sh_yday(ymd);
+    }
+
+    return out;
+}
+
+[[cpp11::register]]
+cpp11::writable::integers
+jdate_get_wday_cpp(const cpp11::sexp x)
+{
+    const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
+    const R_xlen_t size = xx.size();
+    cpp11::writable::integers out(size);
+    date::weekday wd{};
+
+    for (R_xlen_t i = 0; i < size; ++i)
+    {
+        if (std::isnan(xx[i]))
+        {
+            out[i] = NA_INTEGER;
+            continue;
+        }
+
+        wd = date::weekday{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
+        out[i] = static_cast<int>((wd.c_encoding() + 1) % 7 + 1);
+    }
+
+    return out;
+}
+
+[[cpp11::register]]
+cpp11::writable::integers
+jdate_get_qday_cpp(const cpp11::sexp x)
+{
+    const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
+    const R_xlen_t size = xx.size();
+    cpp11::writable::integers out(size);
+    sh_year_month_day ymd{};
+
+    for (R_xlen_t i = 0; i < size; ++i)
+    {
+        if (std::isnan(xx[i]))
+        {
+            out[i] = NA_INTEGER;
+            continue;
+        }
+
+        ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
+        out[i] = sh_qday(ymd);
     }
 
     return out;
