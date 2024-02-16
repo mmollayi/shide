@@ -1,3 +1,7 @@
+tzone <- function(x) {
+    attr(x, "tzone")[[1]] %||% ""
+}
+
 # borrowed from vctrs
 tzone_is_local <- function(x) {
     identical(tzone(x), "")

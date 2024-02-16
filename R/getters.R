@@ -1,7 +1,3 @@
-tzone <- function(x) {
-    attr(x, "tzone")[[1]] %||% ""
-}
-
 jdate_get_field <- function(x, field) {
     fields <- jdate_get_fields_cpp(x)
     out <- fields[[field]]
@@ -59,6 +55,11 @@ sh_minute <- function(x) {
 #' @export
 sh_second <- function(x) {
     UseMethod("sh_second")
+}
+
+#' @export
+sh_tzone <- function(x) {
+    UseMethod("sh_tzone")
 }
 
 #' @export
@@ -147,3 +148,9 @@ sh_minute.jdatetime <- function(x) {
 sh_second.jdatetime <- function(x) {
     jdatetime_get_field(x, "second")
 }
+
+#' @export
+sh_tzone.jdatetime <- function(x) {
+    attr(x, "tzone")
+}
+

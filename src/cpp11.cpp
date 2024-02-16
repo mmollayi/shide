@@ -20,10 +20,24 @@ extern "C" SEXP _shide_jdatetime_get_fields_cpp(SEXP x) {
   END_CPP11
 }
 // accessors.cpp
-cpp11::writable::integers jdate_get_doy_cpp(const cpp11::sexp x);
-extern "C" SEXP _shide_jdate_get_doy_cpp(SEXP x) {
+cpp11::writable::integers jdate_get_yday_cpp(const cpp11::sexp x);
+extern "C" SEXP _shide_jdate_get_yday_cpp(SEXP x) {
   BEGIN_CPP11
-    return cpp11::as_sexp(jdate_get_doy_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x)));
+    return cpp11::as_sexp(jdate_get_yday_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x)));
+  END_CPP11
+}
+// accessors.cpp
+cpp11::writable::integers jdate_get_wday_cpp(const cpp11::sexp x);
+extern "C" SEXP _shide_jdate_get_wday_cpp(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(jdate_get_wday_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x)));
+  END_CPP11
+}
+// accessors.cpp
+cpp11::writable::integers jdate_get_qday_cpp(const cpp11::sexp x);
+extern "C" SEXP _shide_jdate_get_qday_cpp(SEXP x) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(jdate_get_qday_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x)));
   END_CPP11
 }
 // format.cpp
@@ -116,8 +130,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_format_jdate_cpp",                (DL_FUNC) &_shide_format_jdate_cpp,                2},
     {"_shide_format_jdatetime_cpp",            (DL_FUNC) &_shide_format_jdatetime_cpp,            2},
     {"_shide_get_zone_info",                   (DL_FUNC) &_shide_get_zone_info,                   2},
-    {"_shide_jdate_get_doy_cpp",               (DL_FUNC) &_shide_jdate_get_doy_cpp,               1},
     {"_shide_jdate_get_fields_cpp",            (DL_FUNC) &_shide_jdate_get_fields_cpp,            1},
+    {"_shide_jdate_get_qday_cpp",              (DL_FUNC) &_shide_jdate_get_qday_cpp,              1},
+    {"_shide_jdate_get_wday_cpp",              (DL_FUNC) &_shide_jdate_get_wday_cpp,              1},
+    {"_shide_jdate_get_yday_cpp",              (DL_FUNC) &_shide_jdate_get_yday_cpp,              1},
     {"_shide_jdate_make_cpp",                  (DL_FUNC) &_shide_jdate_make_cpp,                  1},
     {"_shide_jdate_parse_cpp",                 (DL_FUNC) &_shide_jdate_parse_cpp,                 2},
     {"_shide_jdate_seq_by_month_cpp",          (DL_FUNC) &_shide_jdate_seq_by_month_cpp,          2},
