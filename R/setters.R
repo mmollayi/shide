@@ -42,6 +42,11 @@ jdatetime_set_field <- function(x, value, field) {
 }
 
 #' @export
+"sh_mday<-" <- function(x, value) {
+    UseMethod("sh_day<-")
+}
+
+#' @export
 "sh_hour<-" <- function(x, value) {
     UseMethod("sh_hour<-")
 }

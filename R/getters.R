@@ -33,6 +33,11 @@ sh_wday <- function(x) {
 }
 
 #' @export
+sh_mday <- function(x) {
+    UseMethod("sh_day")
+}
+
+#' @export
 sh_qday <- function(x) {
     UseMethod("sh_qday")
 }
