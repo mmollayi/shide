@@ -9,7 +9,7 @@ vec_cast.Date.jdate <- function(x, to, ...) {
 vec_cast.Date.jdatetime <- function(x, to, ...) {
     as.Date(as.POSIXct(x), tz = tzone(x))
 }
-#
+
 #' @method as.Date jdate
 #' @export
 as.Date.jdate <- function(x, ...) {
