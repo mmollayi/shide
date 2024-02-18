@@ -11,6 +11,16 @@ using month = date::month;
 using year = date::year;
 using local_days = date::local_days;
 
+class sh_year_month_day;
+class sh_year_month_day_last;
+
+inline
+bool
+year_is_leap(const date::year& y)
+{
+    return year_is_leap(int{ y });
+}
+
 class sh_year_month_day
 {
     year  y_;
@@ -21,6 +31,7 @@ public:
     sh_year_month_day() = default;
     constexpr sh_year_month_day(const date::year& y, const date::month& m,
                                 const date::day& d) NOEXCEPT;
+    constexpr sh_year_month_day(const sh_year_month_day_last& ymdl) NOEXCEPT;
 
     constexpr sh_year_month_day(const date::year_month_day& ymd) NOEXCEPT;
     explicit sh_year_month_day(local_days dp) NOEXCEPT;
@@ -195,5 +206,175 @@ operator-(const sh_year_month_day& ymd, const years& dy) NOEXCEPT
     return ymd + (-dy);
 }
 
+class sh_year_month_day_last
+{
+    date::year           y_;
+    date::month_day_last mdl_;
+
+public:
+    constexpr sh_year_month_day_last(const date::year& y,
+                                     const date::month_day_last& mdl) NOEXCEPT;
+
+    constexpr sh_year_month_day_last& operator+=(const months& m) NOEXCEPT;
+    constexpr sh_year_month_day_last& operator-=(const months& m) NOEXCEPT;
+    constexpr sh_year_month_day_last& operator+=(const years& y)  NOEXCEPT;
+    constexpr sh_year_month_day_last& operator-=(const years& y)  NOEXCEPT;
+
+    constexpr date::year           year()           const NOEXCEPT;
+    constexpr date::month          month()          const NOEXCEPT;
+    constexpr date::month_day_last month_day_last() const NOEXCEPT;
+    constexpr date::day            day()            const NOEXCEPT;
+
+    explicit operator local_days() const NOEXCEPT;
+    constexpr bool ok() const NOEXCEPT;
+};
+
+constexpr sh_year_month_day_last operator+(const sh_year_month_day_last& ymdl, const months& dm) NOEXCEPT;
+constexpr sh_year_month_day_last operator+(const months& dm, const sh_year_month_day_last& ymdl) NOEXCEPT;
+constexpr sh_year_month_day_last operator+(const sh_year_month_day_last& ymdl, const years& dy) NOEXCEPT;
+constexpr sh_year_month_day_last operator+(const years& dy, const sh_year_month_day_last& ymdl) NOEXCEPT;
+constexpr sh_year_month_day_last operator-(const sh_year_month_day_last& ymdl, const months& dm) NOEXCEPT;
+constexpr sh_year_month_day_last operator-(const sh_year_month_day_last& ymdl, const years& dy) NOEXCEPT;
+
+constexpr
+inline
+sh_year_month_day_last::sh_year_month_day_last(const date::year& y,
+                                               const date::month_day_last& mdl) NOEXCEPT
+: y_(y)
+    , mdl_(mdl)
+                                               {}
+
+constexpr
+inline
+sh_year_month_day_last&
+    sh_year_month_day_last::operator+=(const months& m) NOEXCEPT
+    {
+        *this = *this + m;
+        return *this;
+    }
+
+constexpr
+inline
+sh_year_month_day_last&
+    sh_year_month_day_last::operator-=(const months& m) NOEXCEPT
+    {
+        *this = *this - m;
+        return *this;
+    }
+
+constexpr
+inline
+sh_year_month_day_last&
+    sh_year_month_day_last::operator+=(const years& y) NOEXCEPT
+    {
+        *this = *this + y;
+        return *this;
+    }
+
+constexpr
+inline
+sh_year_month_day_last&
+    sh_year_month_day_last::operator-=(const years& y) NOEXCEPT
+    {
+        *this = *this - y;
+        return *this;
+    }
+
+constexpr inline year sh_year_month_day_last::year() const NOEXCEPT { return y_; }
+constexpr inline month sh_year_month_day_last::month() const NOEXCEPT { return mdl_.month(); }
+
+constexpr
+inline
+date::month_day_last
+sh_year_month_day_last::month_day_last() const NOEXCEPT
+{
+    return mdl_;
+}
+
+constexpr
+inline
+day
+sh_year_month_day_last::day() const NOEXCEPT
+{
+    constexpr date::day d[] =
+        {
+        date::day(31), date::day(31), date::day(31),
+        date::day(31), date::day(31), date::day(31),
+        date::day(30), date::day(30), date::day(30),
+        date::day(30), date::day(30), date::day(29)
+        };
+    return (month() != date::month(12) || !year_is_leap(y_)) && mdl_.ok() ?
+    d[static_cast<unsigned>(month()) - 1] : date::day{ 30 };
+}
+
+inline
+sh_year_month_day_last::operator local_days() const NOEXCEPT
+{
+    return local_days(sh_year_month_day{ year(),  month(), day() });
+}
+
+constexpr
+inline
+bool
+sh_year_month_day_last::ok() const NOEXCEPT
+{
+    return y_.ok() && mdl_.ok();
+}
+
+constexpr
+inline
+sh_year_month_day_last
+operator+(const sh_year_month_day_last& ymdl, const months& dm) NOEXCEPT
+{
+    return sh_year_month_day_last{ ymdl.year(), date::month_day_last{ ymdl.month() + dm } };
+}
+
+constexpr
+inline
+sh_year_month_day_last
+operator+(const months& dm, const sh_year_month_day_last& ymdl) NOEXCEPT
+{
+    return ymdl + dm;
+}
+
+constexpr
+inline
+sh_year_month_day_last
+operator-(const sh_year_month_day_last& ymdl, const months& dm) NOEXCEPT
+{
+    return ymdl + (-dm);
+}
+
+constexpr
+inline
+sh_year_month_day_last
+operator+(const sh_year_month_day_last& ymdl, const years& dy) NOEXCEPT
+{
+    return { ymdl.year() + dy, ymdl.month_day_last() };
+}
+
+constexpr
+inline
+sh_year_month_day_last
+operator+(const years& dy, const sh_year_month_day_last& ymdl) NOEXCEPT
+{
+    return ymdl + dy;
+}
+
+constexpr
+inline
+sh_year_month_day_last
+operator-(const sh_year_month_day_last& ymdl, const years& dy) NOEXCEPT
+{
+    return ymdl + (-dy);
+}
+
+constexpr
+inline
+sh_year_month_day::sh_year_month_day(const sh_year_month_day_last& ymdl) NOEXCEPT
+: y_(ymdl.year())
+    , m_(ymdl.month())
+    , d_(ymdl.day())
+{}
 
 #endif
