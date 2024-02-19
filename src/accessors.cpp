@@ -2,8 +2,7 @@
 
 std::string get_current_tzone_cpp();
 
-int
-sh_yday(const sh_year_month_day& ymd)
+int sh_yday(const sh_year_month_day& ymd)
 {
     static const int month_data_cum[12] = {0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336};
     int m{static_cast<int>(unsigned{ ymd.month() })};
@@ -11,13 +10,18 @@ sh_yday(const sh_year_month_day& ymd)
     return month_data_cum[m-1] + d;
 }
 
-int
-sh_qday(const sh_year_month_day& ymd)
+int sh_qday(const sh_year_month_day& ymd)
 {
     static const int quarter_data[12] = {0, 31, 62, 0, 31, 62, 0, 30, 60, 0, 30, 60};
     int m{static_cast<int>(unsigned{ ymd.month() })};
     int d{static_cast<int>(unsigned{ ymd.day() })};
     return quarter_data[m-1] + d;
+}
+
+int sh_wday(const date::local_days& ld)
+{
+    date::weekday wd{ ld };
+    return static_cast<int>((wd.c_encoding() + 1) % 7 + 1);
 }
 
 [[cpp11::register]]
@@ -149,7 +153,7 @@ jdate_get_wday_cpp(const cpp11::sexp x)
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
     cpp11::writable::integers out(size);
-    date::weekday wd{};
+    date::local_days ld{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -159,8 +163,8 @@ jdate_get_wday_cpp(const cpp11::sexp x)
             continue;
         }
 
-        wd = date::weekday{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
-        out[i] = static_cast<int>((wd.c_encoding() + 1) % 7 + 1);
+        ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
+        out[i] = sh_wday(ld);
     }
 
     return out;
