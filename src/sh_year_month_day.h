@@ -326,7 +326,9 @@ inline
 sh_year_month_day_last
 operator+(const sh_year_month_day_last& ymdl, const months& dm) NOEXCEPT
 {
-    return sh_year_month_day_last{ ymdl.year(), date::month_day_last{ ymdl.month() + dm } };
+    date::year_month ym{ymdl.year(), ymdl.month()};
+    ym += dm;
+    return sh_year_month_day_last{ ym.year(), date::month_day_last{ ym.month() } };
 }
 
 constexpr
