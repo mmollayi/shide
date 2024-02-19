@@ -48,6 +48,14 @@ jdatetime_parse_cpp <- function(x, format, tzone) {
   .Call(`_shide_jdatetime_parse_cpp`, x, format, tzone)
 }
 
+jdate_ceiling_cpp <- function(x, unit_name) {
+  .Call(`_shide_jdate_ceiling_cpp`, x, unit_name)
+}
+
+jdate_floor_cpp <- function(x, unit_name) {
+  .Call(`_shide_jdate_floor_cpp`, x, unit_name)
+}
+
 jdate_seq_by_month_cpp <- function(x, dm) {
   .Call(`_shide_jdate_seq_by_month_cpp`, x, dm)
 }
