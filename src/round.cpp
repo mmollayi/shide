@@ -36,17 +36,17 @@ jdate_ceiling(const date::local_days& ld, const Unit& unit)
     {
     case Unit::year:
         ymdl = { ymdl.year(), date::month_day_last{ date::month(12)} };
-        ld_out = date::local_days{ ymdl };
+        ld_out = date::local_days{ ymdl } + date::days{ 1 };
         break;
     case Unit::quarter:
         ymdl += date::months{ (3 - static_cast<unsigned>(ymdl.month()) % 3) % 3 };
-        ld_out = date::local_days{ ymdl };
+        ld_out = date::local_days{ ymdl } + date::days{ 1 };
         break;
     case Unit::month:
-        ld_out = date::local_days{ ymdl };
+        ld_out = date::local_days{ ymdl } + date::days{ 1 };
         break;
     case Unit::week:
-        ld_out = ld + date::days{7 - sh_wday(ld)};
+        ld_out = ld + date::days{7 - sh_wday(ld)} + date::days{ 1 };
         break;
     case Unit::day:
         break;
