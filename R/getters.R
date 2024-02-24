@@ -18,6 +18,11 @@ sh_year <- function(x) {
 }
 
 #' @export
+sh_quarter <- function(x) {
+    (sh_month(x) - 1) %/% 3L + 1
+}
+
+#' @export
 sh_month <- function(x) {
     UseMethod("sh_month")
 }
