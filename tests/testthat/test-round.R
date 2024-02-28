@@ -40,3 +40,10 @@ test_that("sh_round works as expected for dates that are exactly halfway between
     expect_identical(sh_round(jdate("1403-06-29"), "year"), jdate("1404-01-01"))
 })
 
+test_that("rounding works correctly for dates around the origin", {
+    d <- jdate(c("1348-10-10", "1348-10-11", "1348-10-16"))
+    expect_identical(sh_floor(d, "month"), vec_rep(jdate(c("1348-10-01")), 3))
+    expect_identical(sh_ceiling(d, "month"), vec_rep(jdate(c("1348-11-01")), 3))
+    expect_identical(sh_floor(d, "year"), vec_rep(jdate(c("1348-01-01")), 3))
+})
+
