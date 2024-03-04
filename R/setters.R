@@ -1,31 +1,3 @@
-jdate_set_field <- function(x, value, field) {
-    fields <- jdate_get_fields_cpp(x)
-    fields[[field]] <- vec_cast(value, integer())
-    fields <- vec_recycle_common(!!!fields)
-    fields <- df_list_propagate_missing(fields)
-    out <- jdate(jdate_make_cpp(fields))
-    names(out) <- names(x)
-    out
-}
-
-jdatetime_set_field <- function(x, value, field) {
-    tz <- tzone(x)
-    local_tz <- identical(tz, "")
-    if (local_tz) {
-        tz <- get_current_tzone()
-    }
-
-    fields <- jdatetime_get_fields_cpp(x)
-    fields[[field]] <- vec_cast(value, integer())
-    fields <- vec_recycle_common(!!!fields)
-    fields <- df_list_propagate_missing(fields)
-    out <- jdatetime_make_cpp(fields, tz)
-    if (local_tz) tz = ""
-    out <- jdatetime(out, tz)
-    names(out) <- names(x)
-    out
-}
-
 #' @export
 "sh_year<-" <- function(x, value) {
     UseMethod("sh_year<-")
@@ -63,45 +35,45 @@ jdatetime_set_field <- function(x, value, field) {
 
 #' @export
 "sh_year<-.jdate" <- function(x, value) {
-    jdate_set_field(x, value, "year")
+    jdate_update(x, list(year = value))
 }
 
 #' @export
 "sh_year<-.jdatetime" <- function(x, value) {
-    jdatetime_set_field(x, value, "year")
+    jdatetime_update(x, list(year = value))
 }
 
 #' @export
 "sh_month<-.jdate" <- function(x, value) {
-    jdate_set_field(x, value, "month")
+    jdate_update(x, list(month = value))
 }
 
 #' @export
 "sh_month<-.jdatetime" <- function(x, value) {
-    jdatetime_set_field(x, value, "month")
+    jdatetime_update(x, list(month = value))
 }
 
 #' @export
 "sh_day<-.jdate" <- function(x, value) {
-    jdate_set_field(x, value, "day")
+    jdate_update(x, list(day = value))
 }
 
 #' @export
 "sh_day<-.jdatetime" <- function(x, value) {
-    jdatetime_set_field(x, value, "day")
+    jdatetime_update(x, list(day = value))
 }
 
 #' @export
 "sh_hour<-.jdatetime" <- function(x, value) {
-    jdatetime_set_field(x, value, "hour")
+    jdatetime_update(x, list(hour = value))
 }
 
 #' @export
 "sh_minute<-.jdatetime" <- function(x, value) {
-    jdatetime_set_field(x, value, "minute")
+    jdatetime_update(x, list(minute = value))
 }
 
 #' @export
 "sh_second<-.jdatetime" <- function(x, value) {
-    jdatetime_set_field(x, value, "second")
+    jdatetime_update(x, list(second = value))
 }

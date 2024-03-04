@@ -50,9 +50,9 @@ jdate.numeric <- function(x, ...) {
 jdate.character <- function(x, format = NULL, ...) {
     check_dots_empty()
     format <- format %||% "%Y-%m-%d"
-    days_since_epoch <- jdate_parse_cpp(x, format)
-    names(days_since_epoch) <- names(x)
-    new_jdate(days_since_epoch)
+    out <- jdate_parse_cpp(x, format)
+    names(out) <- names(x)
+    new_jdate(out)
 }
 
 #' Check an object for its class

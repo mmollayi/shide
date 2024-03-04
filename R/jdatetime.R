@@ -76,10 +76,10 @@ jdatetime.character <- function(x, tzone = "", format = NULL, ...) {
     }
 
     format <- format %||% "%Y-%m-%d %H:%M:%S"
-    seconds_since_epoch <- jdatetime_parse_cpp(x, format, tzone)
-    names(seconds_since_epoch) <- names(x)
+    out <- jdatetime_parse_cpp(x, format, tzone)
+    names(out) <- names(x)
     if (local_tz) tzone <- ""
-    new_jdatetime(seconds_since_epoch, tzone)
+    new_jdatetime(out, tzone)
 }
 
 #' @rdname is_jdate
@@ -187,9 +187,9 @@ jdatetime_make <- function(year, month = 1L, day = 1L,
     fields <- vec_recycle_common(!!!fields)
     fields <- df_list_propagate_missing(fields)
 
-    seconds_since_epoch <- jdatetime_make_cpp(fields, tzone)
+    out <- jdatetime_make_cpp(fields, tzone)
     if (local_tz) tzone = ""
-    new_jdatetime(seconds_since_epoch, tzone)
+    new_jdatetime(out, tzone)
 }
 
 # Print ------------------------------------------------------------------
