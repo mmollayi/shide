@@ -10,11 +10,13 @@
     UseMethod("sh_month<-")
 }
 
+#' @rdname sh_day
 #' @export
 "sh_day<-" <- function(x, value) {
     UseMethod("sh_day<-")
 }
 
+#' @rdname sh_day
 #' @export
 "sh_mday<-" <- function(x, value) {
     UseMethod("sh_day<-")
@@ -62,11 +64,13 @@
     jdatetime_update(x, list(month = value))
 }
 
+#' @rdname sh_day
 #' @export
 "sh_day<-.jdate" <- function(x, value) {
     jdate_update(x, list(day = value))
 }
 
+#' @rdname sh_day
 #' @export
 "sh_day<-.jdatetime" <- function(x, value) {
     jdatetime_update(x, list(day = value))

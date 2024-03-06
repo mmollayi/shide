@@ -51,26 +51,52 @@ sh_month <- function(x) {
     UseMethod("sh_month")
 }
 
+#' Get/set the days components of Jalali date-time objects
+#'
+#' * `sh_day()` and `sh_day<-()` retrieves and replaces the day of the month respectively.
+#' * `mday()` and `m⁠day<-()`⁠ are aliases for `day()` and ⁠`day<-()⁠`.
+#' * `sh_wday()` retrieves the day of the week.
+#' * `sh_qday()` retrieves the day of the quarter.
+#' * `sh_yday()` retrieves the day of the year.
+#'
+#' @details
+#' For assignment, `x` and `value` are recycled to their common size using
+#' [tidyverse recycling rules][vctrs::vector_recycling_rules].
+#' @param x A vector of `jdate` or `jdatetime` objects.
+#' @param value A numeric vector.
+#' @return The days component of x as an integer.
+#' @examples
+#' x <- jdate("1402-12-14")
+#' sh_day(x)
+#' sh_mday(x)
+#' sh_qday(x)
+#' sh_wday(x)
+#' sh_yday(x)
+#' sh_mday(x) <- 12:13
 #' @export
 sh_day <- function(x) {
     UseMethod("sh_day")
 }
 
-#' @export
-sh_wday <- function(x) {
-    UseMethod("sh_wday")
-}
-
+#' @rdname sh_day
 #' @export
 sh_mday <- function(x) {
     UseMethod("sh_day")
 }
 
+#' @rdname sh_day
+#' @export
+sh_wday <- function(x) {
+    UseMethod("sh_wday")
+}
+
+#' @rdname sh_day
 #' @export
 sh_qday <- function(x) {
     UseMethod("sh_qday")
 }
 
+#' @rdname sh_day
 #' @export
 sh_yday <- function(x) {
     UseMethod("sh_yday")
@@ -136,16 +162,19 @@ sh_month.jdatetime <- function(x) {
     jdatetime_get_field(x, "month")
 }
 
+#' @rdname sh_day
 #' @export
 sh_day.jdate <- function(x) {
     jdate_get_field(x, "day")
 }
 
+#' @rdname sh_day
 #' @export
 sh_day.jdatetime <- function(x) {
     jdatetime_get_field(x, "day")
 }
 
+#' @rdname sh_day
 #' @export
 sh_wday.jdate <- function(x) {
     out <- jdate_get_wday_cpp(x)
@@ -153,6 +182,7 @@ sh_wday.jdate <- function(x) {
     out
 }
 
+#' @rdname sh_day
 #' @export
 sh_wday.jdatetime <- function(x) {
     out <- jdate_get_wday_cpp(as_jdate(x))
@@ -160,6 +190,7 @@ sh_wday.jdatetime <- function(x) {
     out
 }
 
+#' @rdname sh_day
 #' @export
 sh_qday.jdate <- function(x) {
     out <- jdate_get_qday_cpp(x)
@@ -167,6 +198,7 @@ sh_qday.jdate <- function(x) {
     out
 }
 
+#' @rdname sh_day
 #' @export
 sh_qday.jdatetime <- function(x) {
     out <- jdate_get_qday_cpp(as_jdate(x))
@@ -174,6 +206,7 @@ sh_qday.jdatetime <- function(x) {
     out
 }
 
+#' @rdname sh_day
 #' @export
 sh_yday.jdate <- function(x) {
     out <- jdate_get_yday_cpp(x)
@@ -181,6 +214,7 @@ sh_yday.jdate <- function(x) {
     out
 }
 
+#' @rdname sh_day
 #' @export
 sh_yday.jdatetime <- function(x) {
     out <- jdate_get_yday_cpp(as_jdate(x))
