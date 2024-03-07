@@ -8,6 +8,12 @@
 \alias{sh_yday}
 \alias{sh_day.jdate}
 \alias{sh_day.jdatetime}
+\alias{sh_wday.jdate}
+\alias{sh_wday.jdatetime}
+\alias{sh_qday.jdate}
+\alias{sh_qday.jdatetime}
+\alias{sh_yday.jdate}
+\alias{sh_yday.jdatetime}
 \alias{sh_day<-}
 \alias{sh_mday<-}
 \alias{sh_day<-.jdate}
@@ -27,6 +33,18 @@ sh_yday(x)
 \method{sh_day}{jdate}(x)
 
 \method{sh_day}{jdatetime}(x)
+
+\method{sh_wday}{jdate}(x)
+
+\method{sh_wday}{jdatetime}(x)
+
+\method{sh_qday}{jdate}(x)
+
+\method{sh_qday}{jdatetime}(x)
+
+\method{sh_yday}{jdate}(x)
+
+\method{sh_yday}{jdatetime}(x)
 
 sh_day(x) <- value
 

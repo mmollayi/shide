@@ -29,6 +29,13 @@ sh_year <- function(x) {
     UseMethod("sh_year")
 }
 
+#' Get the quarter of Jalali date-time objects
+#'
+#' @param x A vector of `jdate` or `jdatetime` objects.
+#' @return An integer vector of `1` to `4`.
+#' @examples
+#' x <- jdate("1402-12-14")
+#' sh_quarter(x)
 #' @export
 sh_quarter <- function(x) {
     (sh_month(x) - 1) %/% 3L + 1
@@ -133,6 +140,15 @@ sh_second <- function(x) {
     UseMethod("sh_second")
 }
 
+#' Get the time zone component of `jdatetime` objects
+#'
+#' @details
+#' This function is only valid for `jdatetime` objects. `jdate` objects do not have time zone attribute.
+#' @param x A vector of `jdatetime` objects.
+#' @return A character vector of length 1. An empty string represents the current local time zone.
+#' @examples
+#' x <- jdatetime("1402-12-14 19:13:31", tzone = "Iran")
+#' sh_tzone(x)
 #' @export
 sh_tzone <- function(x) {
     UseMethod("sh_tzone")
@@ -240,6 +256,7 @@ sh_second.jdatetime <- function(x) {
     jdatetime_get_field(x, "second")
 }
 
+#' @rdname sh_tzone
 #' @export
 sh_tzone.jdatetime <- function(x) {
     attr(x, "tzone")

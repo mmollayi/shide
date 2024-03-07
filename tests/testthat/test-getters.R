@@ -66,7 +66,7 @@ test_that("sh_second extracts correct second", {
     expect_error(sh_second(d))
 })
 
-test_that("sh_tz accessor works as expected", {
+test_that("sh_tzone accessor works as expected", {
     dt1 <- jdatetime("1402-12-24 14:32:15", tz = "Asia/Tehran")
     dt2 <- jdatetime("1402-12-24 14:32:15", tz = "UTC")
     d1 <- as_jdate(dt1)
