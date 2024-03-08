@@ -34,3 +34,23 @@ test_that("setter functions work as expected", {
     expect_equal(sh_year(d), c(1367, 1403))
     expect_equal(sh_year(dt), c(1367, 1403))
 })
+
+test_that("setter functions return NA for NA input values", {
+    dt <- jdatetime(c("1402-12-07 15:03:15", "1402-12-17 11:07:07"), tz = "Asia/Tehran")
+    d <- as_jdate(dt)
+
+    sh_hour(dt[1]) <- NA
+    sh_year(d[1]) <- NA
+    expect_equal(d, vec_c(NA, d[2]))
+    expect_equal(dt,vec_c(NA, dt[2]))
+})
+
+test_that("setter functions return NA for invalid input values", {
+    dt <- jdatetime(c("1402-12-07 15:03:15", "1402-12-17 11:07:07"), tz = "Asia/Tehran")
+    d <- as_jdate(dt)
+
+    sh_hour(dt[1]) <- 24
+    sh_month(d[1]) <- 13
+    expect_equal(d, vec_c(NA, d[2]))
+    expect_equal(dt,vec_c(NA, dt[2]))
+})
