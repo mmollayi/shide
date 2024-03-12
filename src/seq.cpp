@@ -4,7 +4,9 @@ bool year_is_leap(const int year);
 
 sh_year_month_day
 first_day_next_month(const sh_year_month_day& ymd) {
-    return sh_year_month_day{ ymd.year(), ymd.month() + months(1), day(1)};
+    date::year_month ym{ ymd.year(), ymd.month() };
+    ym += date::months{ 1 };
+    return sh_year_month_day{ ym.year(), ym.month(), date::day{ 1 } };
 }
 
 bool sh_date_is_leap(const sh_year_month_day& ymd) {
