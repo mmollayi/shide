@@ -54,6 +54,7 @@ jdatetime.NULL <- function(x, tzone = "", ...) {
 jdatetime.numeric <- function(x, tzone = "", ...) {
     check_dots_empty()
     x <- vec_cast(x, double())
+    x <- trunc(x)
     new_jdatetime(x, tzone)
 }
 

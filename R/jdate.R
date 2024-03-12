@@ -42,6 +42,7 @@ jdate.NULL <- function(x, ...) {
 jdate.numeric <- function(x, ...) {
     check_dots_empty()
     x <- vec_cast(x, double())
+    x <- trunc(x)
     new_jdate(x)
 }
 
