@@ -1,6 +1,6 @@
-#' Sequence of Jalali dates
+#' Generate regular sequences of Jalali dates
 #'
-#' The method for [seq] for objects of class `jdate`. This method is a wrapper around `base::seq.Date()`
+#' The method for [seq] for objects of class `jdate`.
 #'
 #' @inheritParams base::seq.Date
 #' @details
@@ -11,19 +11,41 @@
 #'   This can optionally be preceded by a (positive or negative) integer
 #'   and a space, or followed by "s".
 #'
+#' @section Comparison with `seq.Date()`:
+#' The source code of `seq.jdate()` is a modified version of the code used in `base::seq.Date()`.
+#' But a few behaviors of the latter are changed:
+#' * In base R, invalid dates resolve by overflowing according to the number of days that the
+#'   date is invalid by. But `seq.jdate()` resolves invalid dates by rolling forward to the
+#'   first day of the next month.
+#'
+#' * If usage of `to` and `length.out` results in a fractional sequence between `from` and `to`,
+#'   base R keeps the fraction in the underlying data of the output `Date` object. But since
+#'   `jdate` is built upon whole numbers, the fractional part is dropped in the output.
+#'
+#' These differences are illustrated in the examples.
+#'
 #' @return A vector of `jdate` objects.
+#' @seealso [base::seq.Date()]
 #' @examples
-#' ## by days
+#' # by days
 #' seq(jdate("1402-01-01"), jdate("1402-01-10"), 1)
-#' ## by 2 weeks
+#' # by 2 weeks
 #' seq(jdate("1402-01-01"), jdate("1402-04-01"), "2 weeks")
-#' ## first days of years
+#' # first days of years
 #' seq(jdate("1390-01-01"), jdate("1399-01-01"), "years")
-#' ## by month
+#' # by month
 #' seq(jdate("1400-01-01"), by = "month", length.out = 12)
-#' ## quarters
+#' # quarters
 #' seq(jdate("1400-01-01"), jdate("1403-01-01"), by = "quarter")
-##' @export
+#'
+#' # fractional dates are allowed in `seq.Date()`, but not in `seq.jdate()`
+#' unclass(seq(as.Date(0), as.Date(3), length.out = 3))
+#' unclass(seq(jdate(0), jdate(2), length.out = 3))
+#'
+#' # resloving strategy for invalid dates is different in 'seq.jdate()' compared to 'seq.Date()'
+#' seq(as.Date("2021-01-31"), by = "months", length.out = 2)
+#' seq(jdate("1402-06-31"), by = "6 months", length.out = 2)
+#' @export
 seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
     check_dots_empty()
 
