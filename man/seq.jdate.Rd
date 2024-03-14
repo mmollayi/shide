@@ -38,13 +38,14 @@ and a space, or followed by "s".
 \section{Comparison with \code{seq.Date()}}{
 
 The source code of \code{seq.jdate()} is a modified version of the code used in \code{base::seq.Date()}.
-But a few behaviours of the latter are changed:
+But a few behaviors of the latter are changed:
 \itemize{
-\item In base R, invalid dates resolve by overflowing by the number of days that the date is invalid by.
-But \code{seq.jdate()} resolves invalid dates by rolling forward to the first day of the next month.
+\item In base R, invalid dates resolve by overflowing according to the number of days that the
+date is invalid by. But \code{seq.jdate()} resolves invalid dates by rolling forward to the
+first day of the next month.
 \item If usage of \code{to} and \code{length.out} results in a fractional sequence between \code{from} and \code{to},
 base R keeps the fraction in the underlying data of the output \code{Date} object. But since
-\code{jdate} is built upon whole numbers, the fractional part is droped in the output.
+\code{jdate} is built upon whole numbers, the fractional part is dropped in the output.
 }
 
 These differences are illustrated in the examples.
