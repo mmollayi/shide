@@ -6,9 +6,6 @@
 using days = date::days;
 using months = date::months;
 using years = date::years;
-using day = date::day;
-using month = date::month;
-using year = date::year;
 using local_days = date::local_days;
 
 class sh_year_month_day;
@@ -23,9 +20,9 @@ year_is_leap(const date::year& y)
 
 class sh_year_month_day
 {
-    year  y_;
-    month m_;
-    day   d_;
+    date::year  y_;
+    date::month m_;
+    date::day   d_;
 
 public:
     sh_year_month_day() = default;
@@ -41,9 +38,9 @@ public:
     constexpr sh_year_month_day& operator+=(const years& y)  NOEXCEPT;
     constexpr sh_year_month_day& operator-=(const years& y)  NOEXCEPT;
 
-    constexpr year  year()  const NOEXCEPT;
-    constexpr month month() const NOEXCEPT;
-    constexpr day   day()   const NOEXCEPT;
+    constexpr date::year  year()  const NOEXCEPT;
+    constexpr date::month month() const NOEXCEPT;
+    constexpr date::day   day()   const NOEXCEPT;
 
     explicit operator local_days() const NOEXCEPT;
     bool ok() const NOEXCEPT;
@@ -82,9 +79,9 @@ sh_year_month_day::sh_year_month_day(local_days dp) NOEXCEPT
 : sh_year_month_day(from_days(dp.time_since_epoch()))
 {}
 
-constexpr inline year sh_year_month_day::year() const NOEXCEPT { return y_; }
-constexpr inline month sh_year_month_day::month() const NOEXCEPT { return m_; }
-constexpr inline day sh_year_month_day::day() const NOEXCEPT { return d_; }
+constexpr inline date::year sh_year_month_day::year() const NOEXCEPT { return y_; }
+constexpr inline date::month sh_year_month_day::month() const NOEXCEPT { return m_; }
+constexpr inline date::day sh_year_month_day::day() const NOEXCEPT { return d_; }
 
 inline
 bool
@@ -280,8 +277,8 @@ sh_year_month_day_last&
         return *this;
     }
 
-constexpr inline year sh_year_month_day_last::year() const NOEXCEPT { return y_; }
-constexpr inline month sh_year_month_day_last::month() const NOEXCEPT { return mdl_.month(); }
+constexpr inline date::year sh_year_month_day_last::year() const NOEXCEPT { return y_; }
+constexpr inline date::month sh_year_month_day_last::month() const NOEXCEPT { return mdl_.month(); }
 
 constexpr
 inline
@@ -293,7 +290,7 @@ sh_year_month_day_last::month_day_last() const NOEXCEPT
 
 constexpr
 inline
-day
+date::day
 sh_year_month_day_last::day() const NOEXCEPT
 {
     constexpr date::day d[] =
