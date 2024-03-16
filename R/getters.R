@@ -61,7 +61,7 @@ sh_month <- function(x) {
 #' Get/set the days components of Jalali date-time objects
 #'
 #' * `sh_day()` and `sh_day<-()` retrieves and replaces the day of the month respectively.
-#' * `mday()` and `m⁠day<-()`⁠ are aliases for `day()` and ⁠`day<-()⁠`.
+#' * `mday()` and `mday<-()` are aliases for `day()` and `day<-()`.
 #' * `sh_wday()` retrieves the day of the week.
 #' * `sh_qday()` retrieves the day of the quarter.
 #' * `sh_yday()` retrieves the day of the year.

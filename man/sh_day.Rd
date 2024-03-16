@@ -65,7 +65,7 @@ The days component of x as an integer.
 \description{
 \itemize{
 \item \code{sh_day()} and \verb{sh_day<-()} retrieves and replaces the day of the month respectively.
-\item \code{mday()} and \verb{m⁠day<-()}⁠ are aliases for \code{day()} and ⁠\verb{day<-()⁠}.
+\item \code{mday()} and \verb{mday<-()} are aliases for \code{day()} and \verb{day<-()}.
 \item \code{sh_wday()} retrieves the day of the week.
 \item \code{sh_qday()} retrieves the day of the quarter.
 \item \code{sh_yday()} retrieves the day of the year.

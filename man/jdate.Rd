@@ -27,7 +27,7 @@ A vector of \code{jdate} objects.
 from character and numeric vectors.
 }
 \details{
-\code{jdate} is stored internaly as a double vector and doesn’t have any attributes.
+\code{jdate} is stored internaly as a double vector and doesn't have any attributes.
 Its value represents the count of days since the Unix epoch (a negative value
 if it represents a date prior to the epoch). This implementation coincides
 with the implementation of \code{Date} class.

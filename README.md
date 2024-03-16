@@ -107,8 +107,8 @@ is possible with `as_jdate()` and `as_jdatetime()` respectively:
 ``` r
 as_jdate(Sys.Date())
 #> <jdate[1]>
-#> [1] "1402-11-03"
+#> [1] "1402-12-24"
 as_jdatetime(Sys.time())
 #> <jdatetime<local>[1]>
-#> [1] "1402-11-03 13:38:39"
+#> [1] "1402-12-24 14:43:41"
 ```

@@ -8,7 +8,7 @@ new_jdate <- function(x = double()) {
 #' `jdate` is an S3 class for representing the Jalali calendar dates. It can be constructed
 #' from character and numeric vectors.
 #'
-#' @details `jdate` is stored internaly as a double vector and doesn’t have any attributes.
+#' @details `jdate` is stored internaly as a double vector and doesn't have any attributes.
 #'    Its value represents the count of days since the Unix epoch (a negative value
 #'    if it represents a date prior to the epoch). This implementation coincides
 #'    with the implementation of `Date` class.
