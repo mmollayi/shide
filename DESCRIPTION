@@ -1,7 +1,7 @@
 Package: shide
 Type: Package
 Title: Date/Time Classes Based on Jalali Calendar
-Version: 0.1.3.9000
+Version: 0.2.0
 Authors@R:
     person("Mohsen", "Mollayi", role = c("aut", "cre", "cph"), email = "mmollayi@gmail.com")
 Description: Implements S3 classes for storing dates and date-times based on the Jalali calendar. 

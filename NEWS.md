@@ -1,4 +1,4 @@
-# shide (development version)
+# shide 0.2.0
 
 * New `sh_year_is_leap()` determines if a Jalali year is a leap year.
 
