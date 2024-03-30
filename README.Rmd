@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # shide
 
 <!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/mmollayi/shide/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mmollayi/shide?branch=master)
 <!-- badges: end -->
 
 ## Overview

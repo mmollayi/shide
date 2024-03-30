@@ -4,6 +4,9 @@
 # shide
 
 <!-- badges: start -->
+
+[![Codecov test
+coverage](https://codecov.io/gh/mmollayi/shide/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mmollayi/shide?branch=master)
 <!-- badges: end -->
 
 ## Overview
@@ -107,8 +110,8 @@ is possible with `as_jdate()` and `as_jdatetime()` respectively:
 ``` r
 as_jdate(Sys.Date())
 #> <jdate[1]>
-#> [1] "1402-12-24"
+#> [1] "1403-01-11"
 as_jdatetime(Sys.time())
 #> <jdatetime<local>[1]>
-#> [1] "1402-12-24 14:43:41"
+#> [1] "1403-01-11 13:12:15"
 ```

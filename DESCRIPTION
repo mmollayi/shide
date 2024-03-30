@@ -24,6 +24,7 @@ Imports:
     tzdb,
     vctrs
 Suggests: 
+    covr,
     lubridate,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
