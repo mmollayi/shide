@@ -1,5 +1,6 @@
 #include "shide.h"
 #include <map>
+#include <stdlib.h>
 
 int sh_qday(const sh_year_month_day& ymd);
 int sh_yday(const sh_year_month_day& ymd);
@@ -137,5 +138,33 @@ jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name)
         out[i] = static_cast<double>(days_since_epoch.count());
     }
 
+    return out;
+}
+
+[[cpp11::register]]
+cpp11::writable::list
+parse_unit_cpp(const cpp11::strings& unit) {
+    const std::string unit_(unit[0]);
+    const char* unit_char{unit_.c_str()};
+    char* end;
+    double d{strtod(unit_char, &end)};
+
+    if (unit_char == end)
+    {
+        d = 1;
+    }
+
+    const char* ws = " \t\n\r\f\v";
+    std::string s{end};
+    // trim from beginning of string
+    s.erase(0, s.find_first_not_of(ws));
+    // trim from end of string (right)
+    s.erase(s.find_last_not_of(ws) + 1);
+
+    cpp11::writable::list out({
+        cpp11::writable::doubles{d},
+        cpp11::writable::strings{s}
+    });
+    out.names() = {"n", "unit"};
     return out;
 }

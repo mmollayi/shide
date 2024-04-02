@@ -103,6 +103,13 @@ extern "C" SEXP _shide_jdate_floor_cpp(SEXP x, SEXP unit_name) {
     return cpp11::as_sexp(jdate_floor_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(unit_name)));
   END_CPP11
 }
+// round.cpp
+cpp11::writable::list parse_unit_cpp(const cpp11::strings& unit);
+extern "C" SEXP _shide_parse_unit_cpp(SEXP unit) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(parse_unit_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(unit)));
+  END_CPP11
+}
 // seq.cpp
 cpp11::writable::doubles jdate_seq_by_month_cpp(const cpp11::sexp& x, const cpp11::integers& dm);
 extern "C" SEXP _shide_jdate_seq_by_month_cpp(SEXP x, SEXP dm) {
@@ -158,6 +165,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_jdatetime_make_cpp",              (DL_FUNC) &_shide_jdatetime_make_cpp,              2},
     {"_shide_jdatetime_parse_cpp",             (DL_FUNC) &_shide_jdatetime_parse_cpp,             3},
     {"_shide_local_days_from_sys_seconds_cpp", (DL_FUNC) &_shide_local_days_from_sys_seconds_cpp, 2},
+    {"_shide_parse_unit_cpp",                  (DL_FUNC) &_shide_parse_unit_cpp,                  1},
     {"_shide_sys_seconds_from_local_days_cpp", (DL_FUNC) &_shide_sys_seconds_from_local_days_cpp, 2},
     {"_shide_year_is_leap_cpp",                (DL_FUNC) &_shide_year_is_leap_cpp,                1},
     {NULL, NULL, 0}

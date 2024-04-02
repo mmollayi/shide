@@ -56,6 +56,10 @@ jdate_floor_cpp <- function(x, unit_name) {
   .Call(`_shide_jdate_floor_cpp`, x, unit_name)
 }
 
+parse_unit_cpp <- function(unit) {
+  .Call(`_shide_parse_unit_cpp`, unit)
+}
+
 jdate_seq_by_month_cpp <- function(x, dm) {
   .Call(`_shide_jdate_seq_by_month_cpp`, x, dm)
 }

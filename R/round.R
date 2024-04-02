@@ -67,6 +67,22 @@ sh_ceiling.jdate <- function(x, unit = NULL, ...) {
     jdate(jdate_ceiling_cpp(x, unit))
 }
 
+parse_unit <- function(unit) {
+    nu <- parse_unit_cpp(unit)
+    i <- match(nu$unit, jdate_rounding_units())
+
+    if (is.na(i)) {
+        i <- match(nu$unit, paste0(jdate_rounding_units(), "s"))
+    }
+
+    if (is.na(i)) {
+        cli::cli_abort("Invalid unit specification.")
+    }
+
+    nu$unit <- jdate_rounding_units()[i]
+    nu
+}
+
 jdate_rounding_units <- function() {
     c("day", "week", "month", "quarter", "year")
 }
