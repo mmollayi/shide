@@ -68,6 +68,10 @@ sh_ceiling.jdate <- function(x, unit = NULL, ...) {
 }
 
 parse_unit <- function(unit) {
+    if (!rlang::is_scalar_character(unit)) {
+        cli::cli_abort("{.var unit} must be a scalar character.")
+    }
+
     nu <- parse_unit_cpp(unit)
     i <- match(nu$unit, jdate_rounding_units())
 
@@ -77,6 +81,10 @@ parse_unit <- function(unit) {
 
     if (is.na(i)) {
         cli::cli_abort("Invalid unit specification.")
+    }
+
+    if (trunc(nu$n) != nu$n) {
+        cli::cli_abort("Fractional units are not supported.")
     }
 
     nu$unit <- jdate_rounding_units()[i]

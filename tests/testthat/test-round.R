@@ -47,3 +47,19 @@ test_that("rounding works correctly for dates around the origin", {
     expect_identical(sh_floor(d, "year"), vec_rep(jdate(c("1348-01-01")), 3))
 })
 
+test_that("parse_unit works as expected", {
+    expect_identical(
+        lapply(
+            c("day", "days", "1day", "1days", "1.days", "1 day", "1 days", " 1 days "),
+            parse_unit
+        ),
+        rep(list(list(n = 1, unit = "day")), 8)
+    )
+
+})
+
+test_that("parse_unit errors as expected", {
+    expect_error(parse_unit("1d"))
+    expect_error(parse_unit(c("days", "months")))
+    expect_error(parse_unit("1"))
+})
