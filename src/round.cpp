@@ -6,6 +6,15 @@ int sh_qday(const sh_year_month_day& ymd);
 int sh_yday(const sh_year_month_day& ymd);
 int sh_wday(const date::local_days& ld);
 
+constexpr int floor_component1(const int x, const int n)
+{
+    return (x / n) * n;
+}
+constexpr int floor_component2(const int x, const int n)
+{
+    return ((x - 1) / n) * n + 1;
+}
+
 enum class Unit {year, quarter, month, week, day};
 
 Unit string_to_unit(const std::string& unit_name) {
@@ -57,32 +66,39 @@ jdate_ceiling(const date::local_days& ld, const Unit& unit)
 }
 
 date::local_days
-jdate_floor(const date::local_days& ld, const Unit& unit)
+jdate_floor(const date::local_days& ld, const Unit& unit, const int n)
 {
     sh_year_month_day ymd{ ld };
-    date::local_days ld_out{ ld };
+    sh_year_month_day ymd2{};
+    date::local_days ld_out{};
+    int y, m, d;
 
     switch (unit)
     {
     case Unit::year:
-        ld_out = ld - date::days(sh_yday(ymd) - 1);
+        y = floor_component1(static_cast<int>(ymd.year()), n);
+        ymd2 = sh_year_month_day{ date::year(y), date::month(1), date::day(1) };
         break;
     case Unit::quarter:
-        ld_out = ld - date::days(sh_qday(ymd) - 1);
+        m = floor_component2(static_cast<unsigned>(ymd.month()), n * 3);
+        ymd2 = sh_year_month_day{ ymd.year(), date::month(m), date::day(1) };
         break;
     case Unit::month:
-        ld_out = ld - date::days(static_cast<unsigned>(ymd.day()) - 1);
+        m = floor_component2(static_cast<unsigned>(ymd.month()), n);
+        ymd2 = sh_year_month_day{ ymd.year(), date::month(m), date::day(1) };
         break;
     case Unit::week:
         ld_out = ld - date::days(sh_wday(ld) - 1);
-        break;
+        return ld_out;
     case Unit::day:
+        d = floor_component2(static_cast<unsigned>(ymd.day()), n);
+        ymd2 = sh_year_month_day{ ymd.year(), ymd.month(), date::day(d)};
         break;
     }
 
+    ld_out = date::local_days{ ymd2 };
     return ld_out;
 }
-
 [[cpp11::register]]
 cpp11::writable::doubles
 jdate_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name)
@@ -114,7 +130,7 @@ jdate_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name)
 
 [[cpp11::register]]
 cpp11::writable::doubles
-jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name)
+jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int n)
 {
     const auto unit{ string_to_unit(unit_name) };
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
@@ -133,7 +149,7 @@ jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name)
         }
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
-        ld_out = jdate_floor(ld, unit);
+        ld_out = jdate_floor(ld, unit, n);
         days_since_epoch = ld_out.time_since_epoch();
         out[i] = static_cast<double>(days_since_epoch.count());
     }

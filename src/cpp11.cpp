@@ -97,10 +97,10 @@ extern "C" SEXP _shide_jdate_ceiling_cpp(SEXP x, SEXP unit_name) {
   END_CPP11
 }
 // round.cpp
-cpp11::writable::doubles jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name);
-extern "C" SEXP _shide_jdate_floor_cpp(SEXP x, SEXP unit_name) {
+cpp11::writable::doubles jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int n);
+extern "C" SEXP _shide_jdate_floor_cpp(SEXP x, SEXP unit_name, SEXP n) {
   BEGIN_CPP11
-    return cpp11::as_sexp(jdate_floor_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(unit_name)));
+    return cpp11::as_sexp(jdate_floor_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::sexp>>(x), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(unit_name), cpp11::as_cpp<cpp11::decay_t<const int>>(n)));
   END_CPP11
 }
 // round.cpp
@@ -152,7 +152,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_format_jdatetime_cpp",            (DL_FUNC) &_shide_format_jdatetime_cpp,            2},
     {"_shide_get_zone_info",                   (DL_FUNC) &_shide_get_zone_info,                   2},
     {"_shide_jdate_ceiling_cpp",               (DL_FUNC) &_shide_jdate_ceiling_cpp,               2},
-    {"_shide_jdate_floor_cpp",                 (DL_FUNC) &_shide_jdate_floor_cpp,                 2},
+    {"_shide_jdate_floor_cpp",                 (DL_FUNC) &_shide_jdate_floor_cpp,                 3},
     {"_shide_jdate_get_fields_cpp",            (DL_FUNC) &_shide_jdate_get_fields_cpp,            1},
     {"_shide_jdate_get_qday_cpp",              (DL_FUNC) &_shide_jdate_get_qday_cpp,              1},
     {"_shide_jdate_get_wday_cpp",              (DL_FUNC) &_shide_jdate_get_wday_cpp,              1},

@@ -52,8 +52,8 @@ jdate_ceiling_cpp <- function(x, unit_name) {
   .Call(`_shide_jdate_ceiling_cpp`, x, unit_name)
 }
 
-jdate_floor_cpp <- function(x, unit_name) {
-  .Call(`_shide_jdate_floor_cpp`, x, unit_name)
+jdate_floor_cpp <- function(x, unit_name, n) {
+  .Call(`_shide_jdate_floor_cpp`, x, unit_name, n)
 }
 
 parse_unit_cpp <- function(unit) {

@@ -26,7 +26,7 @@ sh_round <- function(x, unit = NULL, ...) {
 sh_round.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- arg_match(unit, jdate_rounding_units())
+    unit <- arg_match(unit, jdate_rounding_units)
 
     upper <- vec_data(sh_ceiling(x, unit))
     lower <- vec_data(sh_floor(x, unit))
@@ -47,9 +47,8 @@ sh_floor <- function(x, unit = NULL, ...) {
 sh_floor.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- arg_match(unit, jdate_rounding_units())
-
-    jdate(jdate_floor_cpp(x, unit))
+    unit <- parse_unit(unit)
+    jdate(jdate_floor_cpp(x, unit$unit, unit$n))
 }
 
 #' @rdname sh_round
@@ -62,7 +61,7 @@ sh_ceiling <- function(x, unit = NULL, ...) {
 sh_ceiling.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- arg_match(unit, jdate_rounding_units())
+    unit <- arg_match(unit, jdate_rounding_units)
 
     jdate(jdate_ceiling_cpp(x, unit))
 }
@@ -73,24 +72,35 @@ parse_unit <- function(unit) {
     }
 
     nu <- parse_unit_cpp(unit)
-    i <- match(nu$unit, jdate_rounding_units())
+    i <- match(nu$unit, jdate_rounding_units)
 
     if (is.na(i)) {
-        i <- match(nu$unit, paste0(jdate_rounding_units(), "s"))
-    }
+        i <- match(nu$unit, paste0(jdate_rounding_units, "s"))
 
-    if (is.na(i)) {
-        cli::cli_abort("Invalid unit specification.")
+        if (is.na(i)) {
+            cli::cli_abort("Invalid unit specification.")
+        } else {
+            nu$unit <- jdate_rounding_units[i]
+        }
     }
 
     if (trunc(nu$n) != nu$n) {
         cli::cli_abort("Fractional units are not supported.")
     }
 
-    nu$unit <- jdate_rounding_units()[i]
+    if (nu$n < 1) {
+        cli::cli_abort("Unit coefficient must be larger than 1.")
+    }
+
+    if (nu$n > unit_upper_limits[i]) {
+        cli::cli_abort("Rounding with {nu$unit} > {unit_upper_limits[i]} is not supported.")
+    }
+
     nu
 }
 
-jdate_rounding_units <- function() {
-    c("day", "week", "month", "quarter", "year")
-}
+unit_upper_limits <- c(
+    day = 31, week = 1, month = 12, quarter = 4, year = 2326
+)
+
+jdate_rounding_units <- c("day", "week", "month", "quarter", "year")
