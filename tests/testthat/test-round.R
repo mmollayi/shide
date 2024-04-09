@@ -1,10 +1,21 @@
 test_that("sh_floor works as expected for each unit", {
     d <- jdate(c("1367-09-06", "1371-03-13"))
+    expect_identical(sh_floor(d), jdate(c("1367-09-06", "1371-03-13")))
     expect_identical(sh_floor(d, "day"), jdate(c("1367-09-06", "1371-03-13")))
     expect_identical(sh_floor(d, "week"), jdate(c("1367-09-05", "1371-03-09")))
     expect_identical(sh_floor(d, "month"), jdate(c("1367-09-01", "1371-03-01")))
     expect_identical(sh_floor(d, "quarter"), jdate(c("1367-07-01", "1371-01-01")))
     expect_identical(sh_floor(d, "year"), jdate(c("1367-01-01", "1371-01-01")))
+})
+
+test_that("sh_floor works as expected for multi-units", {
+    d <- jdate(c("1367-09-06", "1371-03-13"))
+    expect_identical(sh_floor(d, "2 days"), jdate(c("1367-09-05", "1371-03-13")))
+    expect_identical(sh_floor(d, "10 days"), jdate(c("1367-09-01", "1371-03-11")))
+    expect_identical(sh_floor(d, "4 months"), jdate(c("1367-09-01", "1371-01-01")))
+    expect_identical(sh_floor(d, "2 quarters"), jdate(c("1367-07-01", "1371-01-01")))
+    expect_identical(sh_floor(d, "2 years"), jdate(c("1366-01-01", "1370-01-01")))
+    expect_identical(sh_floor(d, "3 years"), jdate(c("1365-01-01", "1371-01-01")))
 })
 
 test_that("sh_ceiling works as expected for each unit", {
@@ -62,4 +73,8 @@ test_that("parse_unit errors as expected", {
     expect_error(parse_unit("1d"))
     expect_error(parse_unit(c("days", "months")))
     expect_error(parse_unit("1"))
+    expect_error(parse_unit("1.5 days"))
+    expect_error(parse_unit("0 days"))
+    expect_error(parse_unit("2327 years"))
+    expect_error(parse_unit("2 weeks"))
 })
