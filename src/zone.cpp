@@ -1,6 +1,8 @@
 #include "shide.h"
 #include "jalali.h"
 
+std::string get_current_tzone_cpp();
+
 [[cpp11::register]]
 cpp11::writable::strings
 get_zone_info(const cpp11::strings& x, const cpp11::strings& tzone)
@@ -56,5 +58,58 @@ get_zone_info(const cpp11::strings& x, const cpp11::strings& tzone)
     }
 
     SET_STRING_ELT(out, 0, Rf_mkCharLenCE(res.c_str(), res.size(), CE_UTF8));
+    return out;
+}
+
+[[cpp11::register]]
+cpp11::writable::list
+get_sys_info_cpp(const cpp11::sexp x)
+{
+    const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
+    const cpp11::strings tz_name_ =  cpp11::as_cpp<cpp11::strings>(x.attr("tzone"));
+    std::string tz_name(tz_name_[0]);
+    const date::time_zone* tz{};
+
+    if (!tz_name.size())
+    {
+        tz_name = get_current_tzone_cpp();
+    }
+
+    if (!tzdb::locate_zone(tz_name, tz))
+    {
+        cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
+    }
+
+    const R_xlen_t size = xx.size();
+    cpp11::writable::doubles dst(size);
+    cpp11::writable::doubles offset(size);
+    cpp11::writable::strings abbreviation(size);
+    date::sys_seconds ss;
+    date::sys_info info;
+
+    for (R_xlen_t i = 0; i < size; ++i)
+    {
+        if (std::isnan(xx[i]))
+        {
+            dst[i] = NA_INTEGER;
+            offset[i] = NA_INTEGER;
+            SET_STRING_ELT(abbreviation, i, NA_STRING);
+            continue;
+        }
+
+        ss = date::sys_seconds{ std::chrono::seconds{ static_cast<int>(xx[0]) } };
+        tzdb::get_sys_info(ss, tz, info);
+        dst[i] = static_cast<double>(info.save.count());
+        offset[i] = static_cast<double>(info.offset.count());
+        SET_STRING_ELT(abbreviation, i, Rf_mkCharLenCE(info.abbrev.c_str(), info.abbrev.size(), CE_UTF8));
+    }
+
+    cpp11::writable::list out({
+        cpp11::writable::strings{tz_name},
+        offset,
+        dst,
+        abbreviation
+    });
+    out.names() = {"name", "offset", "dst", "abbreviation"};
     return out;
 }
