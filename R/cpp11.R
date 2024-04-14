@@ -76,8 +76,8 @@ local_days_from_sys_seconds_cpp <- function(x, tzone) {
   .Call(`_shide_local_days_from_sys_seconds_cpp`, x, tzone)
 }
 
-get_zone_info <- function(x, tzone) {
-  .Call(`_shide_get_zone_info`, x, tzone)
+get_local_info_cpp <- function(x, tzone) {
+  .Call(`_shide_get_local_info_cpp`, x, tzone)
 }
 
 get_sys_info_cpp <- function(x) {

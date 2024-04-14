@@ -4,60 +4,90 @@
 std::string get_current_tzone_cpp();
 
 [[cpp11::register]]
-cpp11::writable::strings
-get_zone_info(const cpp11::strings& x, const cpp11::strings& tzone)
+cpp11::writable::list
+get_local_info_cpp(const cpp11::strings& x, const cpp11::strings& tzone)
 {
     const date::time_zone* tz{};
-    const std::string tz_name(tzone[0]);
+    std::string tz_name(tzone[0]);
+
+    if (!tz_name.size())
+    {
+        tz_name = get_current_tzone_cpp();
+    }
 
     if (!tzdb::locate_zone(tz_name, tz))
     {
         cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
     }
 
-    cpp11::writable::strings out(1);
-    date::local_info info;
     std::istringstream is;
-    const SEXP elt = x[0];
-
-    // if (elt == NA_STRING)
-    // {
-    //     out[i] = NA_REAL;
-    //     continue;
-    // }
-
-    const char* p_elt = Rf_translateCharUTF8(elt);
-    is.str(p_elt);
     const char* fmt{ "%Y-%m-%d %H:%M:%S" };
     std::chrono::minutes offset{};
     date::fields<std::chrono::seconds> fds{};
     fds.has_tod = true;
     std::string* tz_name_{};
-    date::from_stream(is, fmt, fds, tz_name_, &offset);
-
-    int year = static_cast<int>(fds.ymd.year());
-    int month = static_cast<int>(static_cast<unsigned>(fds.ymd.month()));
-    int day = static_cast<int>(static_cast<unsigned>(fds.ymd.day()));
-
-    int days_since_epoch = ymd_to_day(year, month, day) - jd_unix_epoch;
-    auto ls = date::local_seconds{ date::days{ days_since_epoch } + fds.tod.to_duration() };
-    tzdb::get_local_info(ls, tz, info);
-
     std::string res;
-    switch (info.result)
+
+    const R_xlen_t size = x.size();
+    cpp11::writable::strings type(size);
+    cpp11::writable::doubles first_dst(size);
+    cpp11::writable::doubles first_offset(size);
+    cpp11::writable::strings first_abbreviation(size);
+    cpp11::writable::doubles second_dst(size);
+    cpp11::writable::doubles second_offset(size);
+    cpp11::writable::strings second_abbreviation(size);
+    date::local_info info;
+
+    for (R_xlen_t i = 0; i < size; ++i)
     {
-    case date::local_info::nonexistent:
-        res = "nonexistent";
-        break;
-    case date::local_info::unique:
-        res = "unique";
-        break;
-    case date::local_info::ambiguous:
-        res = "ambiguous";
-        break;
+        SEXP elt = x[i];
+        const char* p_elt = Rf_translateCharUTF8(elt);
+        is.str(p_elt);
+        date::from_stream(is, fmt, fds, tz_name_, &offset);
+
+        auto ymd = sh_year_month_day{ fds.ymd };
+        auto ld = date::local_days{ ymd };
+        auto ls = ld + fds.tod.to_duration();
+        tzdb::get_local_info(ls, tz, info);
+
+        switch (info.result)
+        {
+        case date::local_info::nonexistent:
+            res = "nonexistent";
+            second_dst[i] = static_cast<double>(info.second.save.count());
+            second_offset[i] = static_cast<double>(info.second.offset.count());
+            SET_STRING_ELT(second_abbreviation, i,
+                           Rf_mkCharLenCE(info.second.abbrev.c_str(), info.second.abbrev.size(), CE_UTF8));
+            break;
+        case date::local_info::unique:
+            res = "unique";
+            second_dst[i] = NA_REAL;
+            second_offset[i] = NA_REAL;
+            SET_STRING_ELT(second_abbreviation, i, NA_STRING);
+            break;
+        case date::local_info::ambiguous:
+            res = "ambiguous";
+            second_dst[i] = static_cast<double>(info.second.save.count());
+            second_offset[i] = static_cast<double>(info.second.offset.count());
+            SET_STRING_ELT(second_abbreviation, i,
+                           Rf_mkCharLenCE(info.second.abbrev.c_str(), info.second.abbrev.size(), CE_UTF8));
+            break;
+        }
+
+        SET_STRING_ELT(type, i, Rf_mkCharLenCE(res.c_str(), res.size(), CE_UTF8));
+        first_dst[i] = static_cast<double>(info.first.save.count());
+        first_offset[i] = static_cast<double>(info.first.offset.count());
+        SET_STRING_ELT(first_abbreviation, i,
+                       Rf_mkCharLenCE(info.first.abbrev.c_str(), info.first.abbrev.size(), CE_UTF8));
     }
 
-    SET_STRING_ELT(out, 0, Rf_mkCharLenCE(res.c_str(), res.size(), CE_UTF8));
+    cpp11::writable::list out({
+        cpp11::writable::strings{tz_name},
+        type,
+        cpp11::writable::list{first_offset, first_dst, first_abbreviation},
+        cpp11::writable::list{second_offset, second_dst, second_abbreviation}
+    });
+    out.names() = {"name", "type", "first", "second"};
     return out;
 }
 
@@ -91,8 +121,8 @@ get_sys_info_cpp(const cpp11::sexp x)
     {
         if (std::isnan(xx[i]))
         {
-            dst[i] = NA_INTEGER;
-            offset[i] = NA_INTEGER;
+            dst[i] = NA_REAL;
+            offset[i] = NA_REAL;
             SET_STRING_ELT(abbreviation, i, NA_STRING);
             continue;
         }
