@@ -41,6 +41,11 @@ get_local_info_cpp(const cpp11::strings& x, const cpp11::strings& tzone)
     for (R_xlen_t i = 0; i < size; ++i)
     {
         SEXP elt = x[i];
+        if (elt == NA_STRING)
+        {
+            cpp11::stop("NA is not allowed");
+        }
+
         const char* p_elt = Rf_translateCharUTF8(elt);
         is.str(p_elt);
         date::from_stream(is, fmt, fds, tz_name_, &offset);
@@ -81,11 +86,16 @@ get_local_info_cpp(const cpp11::strings& x, const cpp11::strings& tzone)
                        Rf_mkCharLenCE(info.first.abbrev.c_str(), info.first.abbrev.size(), CE_UTF8));
     }
 
+    cpp11::writable::list first{first_offset, first_dst, first_abbreviation};
+    first.names() = {"offset", "dst", "abbreviation"};
+    cpp11::writable::list second{second_offset, second_dst, second_abbreviation};
+    second.names() = {"offset", "dst", "abbreviation"};
+
     cpp11::writable::list out({
         cpp11::writable::strings{tz_name},
         type,
-        cpp11::writable::list{first_offset, first_dst, first_abbreviation},
-        cpp11::writable::list{second_offset, second_dst, second_abbreviation}
+        first,
+        second
     });
     out.names() = {"name", "type", "first", "second"};
     return out;
