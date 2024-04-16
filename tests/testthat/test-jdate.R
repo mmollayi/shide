@@ -28,3 +28,13 @@ test_that("jdate <-> jdatetime conversion works as expected", {
     expect_identical(jdate(NA_real_), as_jdate(jdatetime(NA_real_)))
     expect_identical(jdatetime(NA_real_), as_jdatetime(jdate(NA_real_)))
 })
+
+test_that("jdate parser works as expected", {
+    sd <- 19829
+    expect_equal(vec_data(jdate("1403 01 28", format = "%Y %m %d")), sd)
+    expect_equal(vec_data(jdate("1403 01 28", format = "%Y %m %e")), sd)
+    expect_equal(vec_data(jdate("1403-01-28", format = "%F")), sd)
+    expect_equal(vec_data(jdate("1403 1 28", format = "%Y %m %d")), sd)
+    expect_equal(vec_data(jdate("1403 1 28", format = "%Y %m %e")), sd)
+    expect_equal(vec_data(jdate("1403 32", format = "%Y %j")), sd + 4)
+})
