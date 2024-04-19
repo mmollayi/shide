@@ -53,7 +53,6 @@ cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const 
     using std::chrono::minutes;
     using std::chrono::seconds;
 
-    date::days days_since_epoch;
     const date::time_zone* tz{};
     date::local_info info;
     sh_year_month_day ymd{};
@@ -97,9 +96,7 @@ cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const 
             continue;
         }
 
-        days_since_epoch = local_days(ymd).time_since_epoch();
-        ls = date::local_seconds{ date::days{ days_since_epoch } +
-            hours{ hour[i] } + minutes{ minute[i] } + seconds{ second[i] } };
+        ls = local_days(ymd) + hours{ hour[i] } + minutes{ minute[i] } + seconds{ second[i] };
         tzdb::get_local_info(ls, tz, info);
         switch (info.result)
         {
