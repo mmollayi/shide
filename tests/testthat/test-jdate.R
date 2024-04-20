@@ -45,3 +45,12 @@ test_that("jdate parser works as expected", {
     expect_equal(vec_data(jdate("1403-01-28", format = "%t%F")), sd)
     expect_equal(vec_data(jdate(" 1403-01-28", format = "%t%F")), sd)
 })
+
+test_that("jdate parser fails as expected", {
+    expect_identical(jdate("1403-10-31"), jdate(NA_real_))
+    expect_identical(jdate("1403 10 31", format = "%Y %m %e"), jdate(NA_real_))
+    expect_identical(jdate("1403 13 1", format = "%Y %m %d"), jdate(NA_real_))
+    expect_identical(jdate("1403-02-01", format = "%n%F"), jdate(NA_real_))
+    expect_identical(jdate("  1403-02-01", format = "%n%F"), jdate(NA_real_))
+    expect_identical(jdate("  1403-02-01", format = "%t%F"), jdate(NA_real_))
+})

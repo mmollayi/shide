@@ -42,3 +42,17 @@ test_that("jdatetime parser works as expected", {
     )
 })
 
+test_that("jdatetime parser fails as expected", {
+    tz <- "Asia/Tehran"
+    expect_identical(jdatetime("1403-02-01 24", tz, format = "%F %H"), jdatetime(NA_real_, tz))
+    expect_identical(jdatetime("1403-02-01 60", tz, format = "%F %M"), jdatetime(NA_real_, tz))
+    expect_identical(jdatetime("1403-02-01 60", tz, format = "%F %S"), jdatetime(NA_real_, tz))
+    expect_identical(jdatetime("1403-02-01 24:11:19", tz, format = "%F %T"),
+                     jdatetime(NA_real_, tz))
+
+    expect_identical(jdatetime("1403-02-01 16:60:19", tz, format = "%F %T"),
+                     jdatetime(NA_real_, tz))
+
+    expect_identical(jdatetime("1403-02-01 16:11:60", tz, format = "%F %T"),
+                     jdatetime(NA_real_, tz))
+})
