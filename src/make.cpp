@@ -1,4 +1,24 @@
 #include "shide.h"
+#include <map>
+
+enum class choose { earliest, latest, NA, error };
+choose string_to_choose(const std::string& choose_str) {
+    static const std::map<std::string, choose> choose_map{
+        {"earliest", choose::earliest},
+        {"latest", choose::latest},
+        {"NA", choose::NA},
+        {"error", choose::error},
+    };
+
+    auto it = choose_map.find(choose_str);
+    if (it != choose_map.end()) {
+        return it->second;
+    }
+    else {
+        cpp11::stop("Invalid ambiguous relolution strategy: (%s)", choose_str.c_str());
+    }
+}
+
 
 bool hour_minute_second_ok(const int hour, const int minute, const int second)
 {
