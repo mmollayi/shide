@@ -61,8 +61,11 @@ jdatetime.numeric <- function(x, tzone = "", ...) {
 #' @rdname jdatetime
 #' @param format Format argument for character method.
 #' @export
-jdatetime.character <- function(x, tzone = "", format = NULL, ...) {
+jdatetime.character <- function(x, tzone = "", format = NULL, ..., ambiguous = NULL) {
     check_dots_empty()
+
+    ambiguous <- ambiguous <- validate_ambiguous(ambiguous)
+
     if (is.null(tzone)) {
         tzone <- ""
     }
@@ -77,7 +80,7 @@ jdatetime.character <- function(x, tzone = "", format = NULL, ...) {
     }
 
     format <- format %||% "%Y-%m-%d %H:%M:%S"
-    out <- jdatetime_parse_cpp(x, format, tzone)
+    out <- jdatetime_parse_cpp(x, format, tzone, ambiguous)
     names(out) <- names(x)
     if (local_tz) tzone <- ""
     new_jdatetime(out, tzone)
@@ -160,12 +163,15 @@ jdatetime_now <- function(tzone = "") {
 #' jdatetime_make(year = 1399:1400, month = 12, day = c(30, 29), hour = 12, tzone = "UTC")
 #' @export
 jdatetime_make <- function(year, month = 1L, day = 1L,
-                           hour = 0L, minute = 0L, second = 0L, tzone = "", ...) {
+                           hour = 0L, minute = 0L, second = 0L, tzone = "", ...,
+                           ambiguous = NULL) {
     check_dots_empty()
 
     if (rlang::is_missing(year)) {
         stop("argument \"year\" is missing, with no default")
     }
+
+    ambiguous <- validate_ambiguous(ambiguous)
 
     if (is.null(tzone)) {
         tzone <- ""
@@ -188,7 +194,7 @@ jdatetime_make <- function(year, month = 1L, day = 1L,
     fields <- vec_recycle_common(!!!fields)
     fields <- df_list_propagate_missing(fields)
 
-    out <- jdatetime_make_cpp(fields, tzone)
+    out <- jdatetime_make_cpp(fields, tzone, ambiguous)
     if (local_tz) tzone = ""
     new_jdatetime(out, tzone)
 }

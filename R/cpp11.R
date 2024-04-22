@@ -36,16 +36,16 @@ jdate_make_cpp <- function(fields) {
   .Call(`_shide_jdate_make_cpp`, fields)
 }
 
-jdatetime_make_cpp <- function(fields, tzone) {
-  .Call(`_shide_jdatetime_make_cpp`, fields, tzone)
+jdatetime_make_cpp <- function(fields, tzone, ambiguous) {
+  .Call(`_shide_jdatetime_make_cpp`, fields, tzone, ambiguous)
 }
 
 jdate_parse_cpp <- function(x, format) {
   .Call(`_shide_jdate_parse_cpp`, x, format)
 }
 
-jdatetime_parse_cpp <- function(x, format, tzone) {
-  .Call(`_shide_jdatetime_parse_cpp`, x, format, tzone)
+jdatetime_parse_cpp <- function(x, format, tzone, ambiguous) {
+  .Call(`_shide_jdatetime_parse_cpp`, x, format, tzone, ambiguous)
 }
 
 jdate_ceiling_cpp <- function(x, unit_name) {

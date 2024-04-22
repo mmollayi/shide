@@ -15,7 +15,8 @@ jdatetime_make(
   minute = 0L,
   second = 0L,
   tzone = "",
-  ...
+  ...,
+  ambiguous = NULL
 )
 }
 \arguments{

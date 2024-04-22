@@ -7,7 +7,7 @@
 \usage{
 jdatetime(x, tzone = "", ...)
 
-\method{jdatetime}{character}(x, tzone = "", format = NULL, ...)
+\method{jdatetime}{character}(x, tzone = "", format = NULL, ..., ambiguous = NULL)
 }
 \arguments{
 \item{x}{A vector of numeric or character objects.}

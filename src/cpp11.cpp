@@ -69,10 +69,10 @@ extern "C" SEXP _shide_jdate_make_cpp(SEXP fields) {
   END_CPP11
 }
 // make.cpp
-cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const cpp11::strings& tzone);
-extern "C" SEXP _shide_jdatetime_make_cpp(SEXP fields, SEXP tzone) {
+cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const cpp11::strings& tzone, const std::string& ambiguous);
+extern "C" SEXP _shide_jdatetime_make_cpp(SEXP fields, SEXP tzone, SEXP ambiguous) {
   BEGIN_CPP11
-    return cpp11::as_sexp(jdatetime_make_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::integers>>>(fields), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone)));
+    return cpp11::as_sexp(jdatetime_make_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::list_of<cpp11::integers>>>(fields), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(ambiguous)));
   END_CPP11
 }
 // parse.cpp
@@ -83,10 +83,10 @@ extern "C" SEXP _shide_jdate_parse_cpp(SEXP x, SEXP format) {
   END_CPP11
 }
 // parse.cpp
-cpp11::writable::doubles jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format, const cpp11::strings& tzone);
-extern "C" SEXP _shide_jdatetime_parse_cpp(SEXP x, SEXP format, SEXP tzone) {
+cpp11::writable::doubles jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format, const cpp11::strings& tzone, const std::string& ambiguous);
+extern "C" SEXP _shide_jdatetime_parse_cpp(SEXP x, SEXP format, SEXP tzone, SEXP ambiguous) {
   BEGIN_CPP11
-    return cpp11::as_sexp(jdatetime_parse_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(format), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone)));
+    return cpp11::as_sexp(jdatetime_parse_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(format), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(tzone), cpp11::as_cpp<cpp11::decay_t<const std::string&>>(ambiguous)));
   END_CPP11
 }
 // round.cpp
@@ -170,8 +170,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_shide_jdate_seq_by_month_cpp",          (DL_FUNC) &_shide_jdate_seq_by_month_cpp,          2},
     {"_shide_jdate_seq_by_year_cpp",           (DL_FUNC) &_shide_jdate_seq_by_year_cpp,           2},
     {"_shide_jdatetime_get_fields_cpp",        (DL_FUNC) &_shide_jdatetime_get_fields_cpp,        1},
-    {"_shide_jdatetime_make_cpp",              (DL_FUNC) &_shide_jdatetime_make_cpp,              2},
-    {"_shide_jdatetime_parse_cpp",             (DL_FUNC) &_shide_jdatetime_parse_cpp,             3},
+    {"_shide_jdatetime_make_cpp",              (DL_FUNC) &_shide_jdatetime_make_cpp,              3},
+    {"_shide_jdatetime_parse_cpp",             (DL_FUNC) &_shide_jdatetime_parse_cpp,             4},
     {"_shide_local_days_from_sys_seconds_cpp", (DL_FUNC) &_shide_local_days_from_sys_seconds_cpp, 2},
     {"_shide_parse_unit_cpp",                  (DL_FUNC) &_shide_parse_unit_cpp,                  1},
     {"_shide_sys_seconds_from_local_days_cpp", (DL_FUNC) &_shide_sys_seconds_from_local_days_cpp, 2},

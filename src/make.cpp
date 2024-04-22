@@ -1,13 +1,13 @@
 #include "shide.h"
 #include <map>
+#include <math.h>
 
-enum class choose { earliest, latest, NA, error };
+enum class choose { earliest, latest, NA };
 choose string_to_choose(const std::string& choose_str) {
     static const std::map<std::string, choose> choose_map{
         {"earliest", choose::earliest},
         {"latest", choose::latest},
         {"NA", choose::NA},
-        {"error", choose::error},
     };
 
     auto it = choose_map.find(choose_str);
@@ -19,6 +19,37 @@ choose string_to_choose(const std::string& choose_str) {
     }
 }
 
+double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
+                                    date::local_info& info, const choose& c)
+{
+    using std::chrono::seconds;
+    tzdb::get_local_info(ls, tz, info);
+    seconds s{};
+    if (info.result == date::local_info::unique)
+    {
+        s = ls.time_since_epoch() - info.first.offset;
+    }
+    else if (info.result == date::local_info::ambiguous)
+    {
+        switch (c)
+        {
+        case choose::earliest:
+            s = ls.time_since_epoch() - info.first.offset;
+            break;
+        case choose::latest:
+            s = ls.time_since_epoch() - info.second.offset;
+            break;
+        case choose::NA:
+            return NA_REAL;
+        }
+    }
+    else
+    {
+        return NA_REAL;
+    }
+
+    return static_cast<double>(s.count());
+}
 
 bool hour_minute_second_ok(const int hour, const int minute, const int second)
 {
@@ -68,11 +99,13 @@ cpp11::doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields) {
 }
 
 [[cpp11::register]]
-cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const cpp11::strings& tzone) {
+cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields,
+                                  const cpp11::strings& tzone, const std::string& ambiguous) {
     using std::chrono::hours;
     using std::chrono::minutes;
     using std::chrono::seconds;
 
+    const auto Ambiguous{ string_to_choose(ambiguous) };
     const date::time_zone* tz{};
     date::local_info info;
     sh_year_month_day ymd{};
@@ -83,7 +116,6 @@ cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const 
         cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
     }
 
-    seconds seconds_since_epoch;
     date::local_seconds ls;
 
     const cpp11::integers year = fields[0];
@@ -117,21 +149,7 @@ cpp11::doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields, const 
         }
 
         ls = local_days(ymd) + hours{ hour[i] } + minutes{ minute[i] } + seconds{ second[i] };
-        tzdb::get_local_info(ls, tz, info);
-        switch (info.result)
-        {
-        case date::local_info::unique:
-            break;
-        case date::local_info::nonexistent:
-            out[i] = NA_REAL;
-            continue;
-        case date::local_info::ambiguous:
-            out[i] = NA_REAL;
-            continue;
-        }
-
-        seconds_since_epoch = ls.time_since_epoch() - info.first.offset;
-        out[i] = static_cast<double>(seconds_since_epoch.count());
+        out[i] = jdatetime_from_local_seconds(ls, tz, info, Ambiguous);
     }
 
     return out;

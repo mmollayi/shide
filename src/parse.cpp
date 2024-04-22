@@ -1,6 +1,11 @@
 #include "shide.h"
 #include "jalali.h"
 
+enum class choose;
+choose string_to_choose(const std::string& choose_str);
+double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
+                                    date::local_info& info, const choose& c);
+
 [[cpp11::register]]
 cpp11::writable::doubles
 jdate_parse_cpp(const cpp11::strings& x, const cpp11::strings& format)
@@ -62,14 +67,15 @@ jdate_parse_cpp(const cpp11::strings& x, const cpp11::strings& format)
 
 [[cpp11::register]]
 cpp11::writable::doubles
-jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format, const cpp11::strings& tzone)
+jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format,
+                    const cpp11::strings& tzone, const std::string& ambiguous)
 {
     if (format.size() != 1) {
         cpp11::stop("`format` must have size 1.");
     }
 
+    const auto Ambiguous{ string_to_choose(ambiguous) };
     date::local_seconds ls;
-    std::chrono::seconds seconds_since_epoch;
     const date::time_zone* tz{};
     date::local_info info;
     const std::string tz_name(tzone[0]);
@@ -130,21 +136,7 @@ jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format, const
         }
 
         ls = local_days(ymd) + fds.tod.to_duration();
-        tzdb::get_local_info(ls, tz, info);
-        switch (info.result)
-        {
-        case date::local_info::unique:
-            break;
-        case date::local_info::nonexistent:
-            out[i] = NA_REAL;
-            continue;
-        case date::local_info::ambiguous:
-            out[i] = NA_REAL;
-            continue;
-        }
-
-        seconds_since_epoch = ls.time_since_epoch() - info.first.offset;
-        out[i] = static_cast<double>(seconds_since_epoch.count());
+        out[i] = jdatetime_from_local_seconds(ls, tz, info, Ambiguous);
     }
 
     return out;
