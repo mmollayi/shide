@@ -40,6 +40,10 @@ jdatetime_make_cpp <- function(fields, tzone, ambiguous) {
   .Call(`_shide_jdatetime_make_cpp`, fields, tzone, ambiguous)
 }
 
+jdatetime_make_with_reference_cpp <- function(fields, tzone, x) {
+  .Call(`_shide_jdatetime_make_with_reference_cpp`, fields, tzone, x)
+}
+
 jdate_parse_cpp <- function(x, format) {
   .Call(`_shide_jdate_parse_cpp`, x, format)
 }
