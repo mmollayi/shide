@@ -94,7 +94,7 @@ is_jdatetime <- function(x) {
 
 #' @export
 format.jdatetime <- function(x, format = NULL, ...) {
-    format <- format %||% "%Y-%m-%d %H:%M:%S"
+    format <- format %||% "%Y-%m-%d %T %z"
     out <- format_jdatetime_cpp(x, format)
     names(out) <- names(x)
     out

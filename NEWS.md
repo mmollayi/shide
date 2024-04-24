@@ -1,5 +1,7 @@
 # shide (development version)
 
+* Default formatting for `jdatetime` objects has change to comply with default R behavior.
+
 # shide 0.2.0
 
 * New `sh_year_is_leap()` determines if a Jalali year is a leap year.

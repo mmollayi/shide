@@ -74,11 +74,11 @@ format_jdatetime_cpp(const cpp11::sexp x,
         cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
     }
 
-    int jd, year, month, day;
     date::local_seconds ls;
     date::sys_seconds ss;
     date::local_days ld;
-    date::year_month_day ymd;
+    sh_year_month_day ymd{};
+    date::year_month_day ymd2{};
     date::sys_info info;
 
     const R_xlen_t size = xx.size();
@@ -104,12 +104,10 @@ format_jdatetime_cpp(const cpp11::sexp x,
         ls = date::local_seconds{(ss + info.offset).time_since_epoch()};
         ld = date::floor<date::days>(ls);
         auto tod = date::hh_mm_ss<std::chrono::seconds>{ ls - date::local_seconds{ ld } };
-        jd = (ld + date::days{jd_unix_epoch}).time_since_epoch().count();
+        ymd = sh_year_month_day{ ld };
+        ymd2 = {ymd.year(), ymd.month(), ymd.day()};
 
-        day_to_ymd(static_cast<int>(jd), &year, &month, &day);
-        ymd = date::year{year}/month/day;
-
-        date::fields<std::chrono::seconds> fds{ ymd, tod };
+        date::fields<std::chrono::seconds> fds{ ymd2, tod };
         date::to_stream(os, fmt, fds, &tz_name, &info.offset);
 
         if (os.fail()) {
