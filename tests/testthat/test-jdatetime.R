@@ -56,3 +56,32 @@ test_that("jdatetime parser fails as expected", {
     expect_identical(jdatetime("1403-02-01 16:11:60", tz, format = "%F %T"),
                      jdatetime(NA_real_, tz))
 })
+
+test_that("ambiguous time resolution works as expected", {
+    tz <- "Asia/Tehran"
+    expect_equal(
+        vec_data(c(jdatetime("1401-06-30 23:00:00", tz, ambiguous = "earliest"),
+                   jdatetime("1401-06-30 23:00:00", tz, ambiguous = "latest"))),
+        c(1663785000, 1663788600)
+    )
+    expect_identical(
+        jdatetime("1401-06-30 23:59:59", tz, ambiguous = "latest") + 1,
+        jdatetime("1401-06-31 00:00:00", tz)
+    )
+    expect_identical(
+        jdatetime("1401-06-30 23:00:00", tz, ambiguous = "NA"),
+        jdatetime(NA_real_, tz)
+    )
+})
+
+test_that("nonexistent time fails as expected", {
+    tz <- "Asia/Tehran"
+    expect_identical(
+        jdatetime(c("1401-01-02 00:00:00", "1401-01-02 00:59:59"), tz),
+        jdatetime(c(NA_real_, NA_real_), tz)
+    )
+    expect_identical(
+        jdatetime("1401-01-01 23:59:59", tz) + 1,
+        jdatetime("1401-01-02 01:00:00", tz)
+    )
+})
