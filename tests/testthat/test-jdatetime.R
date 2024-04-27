@@ -80,8 +80,30 @@ test_that("nonexistent time fails as expected", {
         jdatetime(c("1401-01-02 00:00:00", "1401-01-02 00:59:59"), tz),
         jdatetime(c(NA_real_, NA_real_), tz)
     )
+})
+
+test_that("jdatetime works as expected at time zone boundaries", {
+    tz <- "Asia/Tehran"
     expect_identical(
         jdatetime("1401-01-01 23:59:59", tz) + 1,
         jdatetime("1401-01-02 01:00:00", tz)
+    )
+
+    expect_identical(
+        jdatetime("1401-06-30 23:59:59", tz) + 1,
+        jdatetime("1401-06-30 23:00:00", tz, ambiguous = "latest")
+    )
+})
+
+test_that("jdatetime_make works as expected", {
+    tz <- "Asia/Tehran"
+    expect_identical(
+        jdatetime_make(1402:1403, 2, 7, 9, 22, 44, tz),
+        jdatetime(c("1402-02-07 09:22:44", "1403-02-07 09:22:44"), tz)
+    )
+
+    expect_identical(
+        jdatetime_make(1401, 6, 30, 23, 0, 0, tz, ambiguous = "latest"),
+        jdatetime("1401-06-30 23:00:00", tz, ambiguous = "latest")
     )
 })
