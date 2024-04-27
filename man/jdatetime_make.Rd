@@ -35,6 +35,17 @@ jdatetime_make(
 \item{second}{Numeric second.}
 
 \item{tzone}{A time zone name. Default value represents local time zone.}
+
+\item{ambiguous}{Resolve ambiguous times that occur during a repeated interval
+(when the clock is adjusted backwards during the transition from DST to standard time).
+Possible values are:
+\itemize{
+\item \code{"earliest"}: Choose the earliest of the two moments.
+\item \code{"latest"}: Choose the latest of the two moments.
+\item \code{"NA"}: Produce \code{NA}.
+}
+
+If \code{NULL}, defaults to \code{"earliest"}; as this seems to be base R's behavior.}
 }
 \value{
 \itemize{
@@ -57,4 +68,6 @@ Numeric components are recycled to their common size using
 jdate_make(year = 1401)
 ## Components are recycled
 jdatetime_make(year = 1399:1400, month = 12, day = c(30, 29), hour = 12, tzone = "UTC")
+## resolve ambiguous time by choosing the later time instant
+jdatetime_make(1401, 6, 30, 23, 0, 0, tzone = "Asia/Tehran", ambiguous = "latest")
 }

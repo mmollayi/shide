@@ -17,7 +17,7 @@ new_jdatetime <- function(x = double(), tzone = "") {
 #' `jdatetime` is an S3 class for representing date-times with the Jalali calendar dates.
 #'  It can be constructed from character and numeric vectors.
 #'
-#' @details `jdatetime` is stored internaly as a double vector and has a single
+#' @details `jdatetime` is stored internally as a double vector and has a single
 #'    attribute: the timezone (tzone). Its value represents the count of seconds
 #'    since the Unix epoch (a negative value if it represents an instant prior to the epoch).
 #'    This implementation coincides with that of `POSIXct` class, except that `POSIXct`
@@ -36,7 +36,9 @@ new_jdatetime <- function(x = double(), tzone = "") {
 #' ## nonexistent time will be replaced with NA
 #' jdatetime("1401-01-02 00:30:00", tzone = "Asia/Tehran")
 #' ## ambiguous time will be replaced with NA
-#' jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran")
+#' jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran", ambiguous = "NA")
+#' ## ambiguous time will resolve by choosing the later time instant
+#' jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran", ambiguous = "latest")
 #' ## Jalali date-time in Iran time zone, corresponding to Unix epoch
 #' jdatetime(0, "Iran")
 #' @export
@@ -60,6 +62,15 @@ jdatetime.numeric <- function(x, tzone = "", ...) {
 
 #' @rdname jdatetime
 #' @param format Format argument for character method.
+#' @param ambiguous
+#'    Resolve ambiguous times that occur during a repeated interval
+#'    (when the clock is adjusted backwards during the transition from DST to standard time).
+#'    Possible values are:
+#'    * `"earliest"`: Choose the earliest of the two moments.
+#'    * `"latest"`: Choose the latest of the two moments.
+#'    * `"NA"`: Produce `NA`.
+#'
+#'    If `NULL`, defaults to `"earliest"`; as this seems to be base R's behavior.
 #' @export
 jdatetime.character <- function(x, tzone = "", format = NULL, ..., ambiguous = NULL) {
     check_dots_empty()
@@ -153,6 +164,15 @@ jdatetime_now <- function(tzone = "") {
 #' @param second Numeric second.
 #' @param tzone A time zone name. Default value represents local time zone.
 #' @inheritParams rlang::args_dots_empty
+#' @param ambiguous
+#'    Resolve ambiguous times that occur during a repeated interval
+#'    (when the clock is adjusted backwards during the transition from DST to standard time).
+#'    Possible values are:
+#'    * `"earliest"`: Choose the earliest of the two moments.
+#'    * `"latest"`: Choose the latest of the two moments.
+#'    * `"NA"`: Produce `NA`.
+#'
+#'    If `NULL`, defaults to `"earliest"`; as this seems to be base R's behavior.
 #' @return
 #' * `jdate_make()` A vector of jdate object.
 #' * `jdatetime_make()` A vector of jdatetime object.
@@ -161,6 +181,8 @@ jdatetime_now <- function(tzone = "") {
 #' jdate_make(year = 1401)
 #' ## Components are recycled
 #' jdatetime_make(year = 1399:1400, month = 12, day = c(30, 29), hour = 12, tzone = "UTC")
+#' ## resolve ambiguous time by choosing the later time instant
+#' jdatetime_make(1401, 6, 30, 23, 0, 0, tzone = "Asia/Tehran", ambiguous = "latest")
 #' @export
 jdatetime_make <- function(year, month = 1L, day = 1L,
                            hour = 0L, minute = 0L, second = 0L, tzone = "", ...,

@@ -17,6 +17,17 @@ jdatetime(x, tzone = "", ...)
 \item{...}{Arguments passed on to further methods.}
 
 \item{format}{Format argument for character method.}
+
+\item{ambiguous}{Resolve ambiguous times that occur during a repeated interval
+(when the clock is adjusted backwards during the transition from DST to standard time).
+Possible values are:
+\itemize{
+\item \code{"earliest"}: Choose the earliest of the two moments.
+\item \code{"latest"}: Choose the latest of the two moments.
+\item \code{"NA"}: Produce \code{NA}.
+}
+
+If \code{NULL}, defaults to \code{"earliest"}; as this seems to be base R's behavior.}
 }
 \value{
 A vector of \code{jdatetime} objects.
@@ -26,7 +37,7 @@ A vector of \code{jdatetime} objects.
 It can be constructed from character and numeric vectors.
 }
 \details{
-\code{jdatetime} is stored internaly as a double vector and has a single
+\code{jdatetime} is stored internally as a double vector and has a single
 attribute: the timezone (tzone). Its value represents the count of seconds
 since the Unix epoch (a negative value if it represents an instant prior to the epoch).
 This implementation coincides with that of \code{POSIXct} class, except that \code{POSIXct}
@@ -41,7 +52,9 @@ jdatetime("1402/09/20 18:57:09", format = "\%Y-\%m-\%d \%H:\%M:\%S")
 ## nonexistent time will be replaced with NA
 jdatetime("1401-01-02 00:30:00", tzone = "Asia/Tehran")
 ## ambiguous time will be replaced with NA
-jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran")
+jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran", ambiguous = "NA")
+## ambiguous time will resolve by choosing the later time instant
+jdatetime("1401-06-30 23:30:00", tzone = "Asia/Tehran", ambiguous = "latest")
 ## Jalali date-time in Iran time zone, corresponding to Unix epoch
 jdatetime(0, "Iran")
 }
