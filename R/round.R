@@ -25,9 +25,6 @@ sh_round <- function(x, unit = NULL, ...) {
 #' @export
 sh_round.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
-    unit <- unit %||% "day"
-    unit <- arg_match(unit, jdate_rounding_units)
-
     upper <- vec_data(sh_ceiling(x, unit))
     lower <- vec_data(sh_floor(x, unit))
     xx <- trunc(vec_data(x))
@@ -61,9 +58,8 @@ sh_ceiling <- function(x, unit = NULL, ...) {
 sh_ceiling.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- arg_match(unit, jdate_rounding_units)
-
-    jdate(jdate_ceiling_cpp(x, unit))
+    unit <- parse_unit(unit)
+    jdate(jdate_ceiling_cpp(x, unit$unit, unit$n))
 }
 
 parse_unit <- function(unit) {

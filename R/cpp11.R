@@ -52,8 +52,8 @@ jdatetime_parse_cpp <- function(x, format, tzone, ambiguous) {
   .Call(`_shide_jdatetime_parse_cpp`, x, format, tzone, ambiguous)
 }
 
-jdate_ceiling_cpp <- function(x, unit_name) {
-  .Call(`_shide_jdate_ceiling_cpp`, x, unit_name)
+jdate_ceiling_cpp <- function(x, unit_name, n) {
+  .Call(`_shide_jdate_ceiling_cpp`, x, unit_name, n)
 }
 
 jdate_floor_cpp <- function(x, unit_name, n) {

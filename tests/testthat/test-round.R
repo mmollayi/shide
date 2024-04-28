@@ -20,7 +20,7 @@ test_that("sh_floor works as expected for multi-units", {
 
 test_that("sh_ceiling works as expected for each unit", {
     d <- jdate(c("1367-09-06", "1371-03-13"))
-    expect_identical(sh_ceiling(d, "day"), jdate(c("1367-09-06", "1371-03-13")))
+    expect_identical(sh_ceiling(d, "day"), jdate(c("1367-09-06", "1371-03-13")) + 1)
     expect_identical(sh_ceiling(d, "week"), jdate(c("1367-09-12", "1371-03-16")))
     expect_identical(sh_ceiling(d, "month"), jdate(c("1367-10-01", "1371-04-01")))
     expect_identical(sh_ceiling(d, "quarter"), jdate(c("1367-10-01", "1371-04-01")))
