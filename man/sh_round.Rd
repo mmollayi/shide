@@ -15,7 +15,10 @@ sh_ceiling(x, unit = NULL, ...)
 \arguments{
 \item{x}{A vector of \code{jdate} objects.}
 
-\item{unit}{Valid units are \code{day}, \code{week}, \code{month}, \code{quarter}, and \code{year}. If NULL, defaults to \code{day}.}
+\item{unit}{A scalar character, containing a date unit or a multiple of a unit.
+Valid date units are \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"} and \code{"year"}. These can
+optionally be followed by "s". If multiple of a unit is used, unit coefficient must be
+a whole number greater than or equal to 1. If \code{NULL}, defaults to \code{"day"}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 }
@@ -33,6 +36,7 @@ For dates which are exactly halfway between two consecutive units, the conventio
 \examples{
 x <- jdate("1402-12-15")
 sh_floor(x, "year")
+sh_floor(x, "2 months")
 sh_ceiling(x, "year")
 sh_round(x, "year")
 sh_round(x, "week") == sh_floor(x, "week")

@@ -6,13 +6,17 @@
 #' For dates which are exactly halfway between two consecutive units, the convention is to round up.
 #'
 #' @param x A vector of `jdate` objects.
-#' @param unit Valid units are `day`, `week`, `month`, `quarter`, and `year`. If NULL, defaults to `day`.
+#' @param unit A scalar character, containing a date unit or a multiple of a unit.
+#'    Valid date units are `"day"`, `"week"`, `"month"`, `"quarter"` and `"year"`. These can
+#'    optionally be followed by "s". If multiple of a unit is used, unit coefficient must be
+#'    a whole number greater than or equal to 1. If `NULL`, defaults to `"day"`.
 #' @inheritParams rlang::args_dots_empty
 #' @return A vector of `jdate` objects with the same length as x.
 #' @seealso [lubridate::round_date()]
 #' @examples
 #' x <- jdate("1402-12-15")
 #' sh_floor(x, "year")
+#' sh_floor(x, "2 months")
 #' sh_ceiling(x, "year")
 #' sh_round(x, "year")
 #' sh_round(x, "week") == sh_floor(x, "week")
@@ -85,7 +89,7 @@ parse_unit <- function(unit) {
     }
 
     if (nu$n < 1) {
-        cli::cli_abort("Unit coefficient must be larger than 1.")
+        cli::cli_abort("Unit coefficient must be greater than or equal to 1.")
     }
 
     if (nu$n > unit_upper_limits[i]) {
