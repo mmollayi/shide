@@ -234,6 +234,15 @@ vec_ptype_abbr.jdatetime <- function(x, ...) {
     "jdttm"
 }
 
+#' @export
+pillar_shaft.jdatetime <- function(x, ...) {
+    d <- format(x, format = "%Y-%m-%d")
+    t <- format(x, format = "%T")
+    dt <- paste0(d, " ", pillar::style_subtle(t))
+    dt[is.na(x)] <- NA
+    pillar::new_pillar_shaft_simple(dt, width = 19L, align = "left")
+}
+
 # Coerce ------------------------------------------------------------------
 
 #' @rdname shide-coercion
