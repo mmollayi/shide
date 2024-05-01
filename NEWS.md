@@ -2,6 +2,11 @@
 
 * Default formatting for `jdatetime` objects has change to comply with default R behavior.
 
+* `jdate` and `jdatetime` vectors are printed more nicely in tibbles.
+
+* Rounding family of functions (`sh_floor()`, `sh_ceiling()` and `sh_round()`) now accept
+  multi-unit values for `unit` argument.
+
 # shide 0.2.0
 
 * New `sh_year_is_leap()` determines if a Jalali year is a leap year.
