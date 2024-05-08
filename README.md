@@ -7,6 +7,7 @@
 
 [![Codecov test
 coverage](https://codecov.io/gh/mmollayi/shide/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mmollayi/shide?branch=master)
+[![R-CMD-check](https://github.com/mmollayi/shide/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mmollayi/shide/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -89,19 +90,19 @@ supplied in either case:
 ``` r
 jdatetime("1402-09-13 15:37:29", tzone = "")
 #> <jdatetime<local>[1]>
-#> [1] "1402-09-13 15:37:29"
+#> [1] "1402-09-13 15:37:29 +0330"
 jdatetime("1402/09/13 15:37:29", tzone = "Asia/Tehran", format = "%Y/%m/%d %H:%M:%S")
 #> <jdatetime<Asia/Tehran>[1]>
-#> [1] "1402-09-13 15:37:29"
+#> [1] "1402-09-13 15:37:29 +0330"
 
 # Jalali date-time that corresponds to Unix epoch
 jdatetime(0, tzone ="Asia/Tehran")
 #> <jdatetime<Asia/Tehran>[1]>
-#> [1] "1348-10-11 03:30:00"
+#> [1] "1348-10-11 03:30:00 +0330"
 
 jdatetime_make(1399, 12 ,30, 23, 59, 59, "Asia/Tehran")
 #> <jdatetime<Asia/Tehran>[1]>
-#> [1] "1399-12-30 23:59:59"
+#> [1] "1399-12-30 23:59:59 +0330"
 ```
 
 Converting other date and date-time classes to `jdate` and `jdatetime`
@@ -110,8 +111,8 @@ is possible with `as_jdate()` and `as_jdatetime()` respectively:
 ``` r
 as_jdate(Sys.Date())
 #> <jdate[1]>
-#> [1] "1403-01-11"
+#> [1] "1403-02-19"
 as_jdatetime(Sys.time())
 #> <jdatetime<local>[1]>
-#> [1] "1403-01-11 13:12:15"
+#> [1] "1403-02-19 14:48:26 +0330"
 ```

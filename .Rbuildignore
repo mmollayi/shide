@@ -6,3 +6,4 @@
 ^CRAN-SUBMISSION$
 ^data-raw$
 ^codecov\.yml$
+^\.github$

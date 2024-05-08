@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Codecov test coverage](https://codecov.io/gh/mmollayi/shide/branch/master/graph/badge.svg)](https://app.codecov.io/gh/mmollayi/shide?branch=master)
+[![R-CMD-check](https://github.com/mmollayi/shide/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mmollayi/shide/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
