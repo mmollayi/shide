@@ -234,7 +234,6 @@ vec_ptype_abbr.jdatetime <- function(x, ...) {
     "jdttm"
 }
 
-#' @export
 pillar_shaft.jdatetime <- function(x, ...) {
     d <- format(x, format = "%Y-%m-%d")
     t <- format(x, format = "%T")

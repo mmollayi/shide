@@ -123,7 +123,6 @@ vec_ptype_abbr.jdate <- function(x, ...) {
     "jdate"
 }
 
-#' @export
 pillar_shaft.jdate <- function(x, ...) {
     pillar::new_pillar_shaft_simple(format(x, "%Y-%m-%d"), width = 10L, align = "left")
 }
