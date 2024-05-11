@@ -3,6 +3,17 @@ test_that("jdates have informative types", {
     expect_equal(vec_ptype_full(jdate_now()), "jdate")
 })
 
+# constructor ---------------------------------------------------------------
+
+test_that("can create a jdate", {
+    expect_identical(jdate(), structure(double(), class = c("jdate", "vctrs_vctr")))
+    expect_identical(jdate(0), structure(0, class = c("jdate", "vctrs_vctr")))
+})
+
+test_that("input names are retained", {
+    expect_named(jdate(c(x = 0)), "x")
+})
+
 # cast: ---------------------------------------------------------------------
 
 test_that("safe casts work as expected", {

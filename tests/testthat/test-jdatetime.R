@@ -3,6 +3,17 @@ test_that("prototype objects are generated as expected", {
     expect_equal(jdatetime(tzone = "UTC"), new_jdatetime(tzone = "UTC"))
 })
 
+# constructor ---------------------------------------------------------------
+
+test_that("can create a jdatetime", {
+    expect_identical(jdatetime(), structure(double(), class = c("jdatetime", "vctrs_vctr"), tzone = ""))
+    expect_identical(jdatetime(0), structure(0, class = c("jdatetime", "vctrs_vctr"), tzone = ""))
+})
+
+test_that("input names are retained", {
+    expect_named(jdatetime(c(x = 0)), "x")
+})
+
 test_that("jdatetime parser works as expected", {
     tz <- "Asia/Tehran"
     expect_identical(
