@@ -8,6 +8,7 @@ test_that("jdates have informative types", {
 test_that("can create a jdate", {
     expect_identical(jdate(), structure(double(), class = c("jdate", "vctrs_vctr")))
     expect_identical(jdate(0), structure(0, class = c("jdate", "vctrs_vctr")))
+    expect_identical(jdate(0), jdate(0L))
 })
 
 test_that("input names are retained", {

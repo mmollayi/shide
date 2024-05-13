@@ -5,7 +5,7 @@ new_jdatetime <- function(x = double(), tzone = "") {
         tzone = ""
     }
 
-    if (!is.character(tzone) && length(tzone) != 1L && is.na(tzone)) {
+    if (!rlang::is_scalar_character(tzone) || is.na(tzone)) {
         stop("`tzone` must be a character vector of length 1 or `NULL`.")
     }
 

@@ -1,3 +1,8 @@
+test_that("jdatetimes have informative types", {
+    expect_equal(vec_ptype_abbr(jdatetime_now()), "jdttm")
+    expect_equal(vec_ptype_full(jdatetime_now()), "jdatetime<local>")
+})
+
 test_that("prototype objects are generated as expected", {
     expect_equal(jdatetime(), new_jdatetime())
     expect_equal(jdatetime(tzone = "UTC"), new_jdatetime(tzone = "UTC"))
@@ -8,10 +13,22 @@ test_that("prototype objects are generated as expected", {
 test_that("can create a jdatetime", {
     expect_identical(jdatetime(), structure(double(), class = c("jdatetime", "vctrs_vctr"), tzone = ""))
     expect_identical(jdatetime(0), structure(0, class = c("jdatetime", "vctrs_vctr"), tzone = ""))
+    expect_identical(jdatetime(0L), jdatetime(0))
 })
 
 test_that("input names are retained", {
     expect_named(jdatetime(c(x = 0)), "x")
+})
+
+test_that("tzone is allowed to be `NULL`", {
+    expect_identical(new_datetime(tzone = NULL), new_datetime(tzone = ""))
+})
+
+test_that("tzone must be a scalar character or NULL", {
+    expect_identical(jdatetime(tzone = NULL), jdatetime(tzone = ""))
+    expect_error(jdatetime(tzone = 1))
+    expect_error(jdatetime(tzone = c("UTC", "")))
+    expect_error(jdatetime(tzone = NA_character_))
 })
 
 test_that("jdatetime parser works as expected", {
