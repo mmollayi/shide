@@ -21,7 +21,7 @@ test_that("input names are retained", {
 })
 
 test_that("tzone is allowed to be `NULL`", {
-    expect_identical(new_datetime(tzone = NULL), new_datetime(tzone = ""))
+    expect_identical(jdatetime(tzone = NULL), jdatetime(tzone = ""))
 })
 
 test_that("tzone must be a scalar character or NULL", {
@@ -29,6 +29,38 @@ test_that("tzone must be a scalar character or NULL", {
     expect_error(jdatetime(tzone = 1))
     expect_error(jdatetime(tzone = c("UTC", "")))
     expect_error(jdatetime(tzone = NA_character_))
+})
+
+# coercion ------------------------------------------------------------------------------------
+
+# these tests are brought over from vctrs package
+test_that("tz comes from first non-empty", {
+    # On the assumption that if you've set the time zone explicitly it
+    # should win
+
+    x <- jdatetime("1403-02-25 11:45:03")
+    y <- jdatetime("1403-02-25 11:45:03", tz = "Asia/Tehran")
+
+    expect_identical(vec_ptype2(x, y), y[0])
+    expect_identical(vec_ptype2(y, x), y[0])
+
+    z <- jdatetime("1403-02-25 11:45:03", tz = "UTC")
+    expect_identical(vec_ptype2(y, z), y[0])
+    expect_identical(vec_ptype2(z, y), z[0])
+})
+
+test_that("jdatetime coercions are symmetric and unchanging", {
+    types <- list(
+        jdate(),
+        jdatetime(),
+        jdatetime(tzone = "UTC")
+    )
+    mat <- maxtype_mat(types)
+
+    expect_true(isSymmetric(mat))
+
+    local_options(width = 100)
+    expect_snapshot(print(mat))
 })
 
 test_that("jdatetime parser works as expected", {
