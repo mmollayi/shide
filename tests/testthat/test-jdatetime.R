@@ -63,6 +63,16 @@ test_that("jdatetime coercions are symmetric and unchanging", {
     expect_snapshot(print(mat))
 })
 
+test_that("vec_ptype2(<jdatetime>, NA) is symmetric", {
+    dt <- jdatetime()
+    expect_identical(
+        vec_ptype2(dt, NA),
+        vec_ptype2(NA, dt)
+    )
+})
+
+# cast ----------------------------------------------------------------------------------------
+
 test_that("jdatetime parser works as expected", {
     tz <- "Asia/Tehran"
     expect_identical(

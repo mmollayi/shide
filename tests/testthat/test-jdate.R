@@ -15,18 +15,26 @@ test_that("input names are retained", {
     expect_named(jdate(c(x = 0)), "x")
 })
 
-# cast: ---------------------------------------------------------------------
+# coercion ------------------------------------------------------------------------------------
 
-test_that("safe casts work as expected", {
-    d <- jdate("1402-09-15")
-
-    expect_equal(vec_cast(NULL, d), NULL)
-    expect_equal(vec_cast(d, d), d)
-    expect_equal(vec_cast(as_jdatetime(d), d), d)
+test_that("vec_ptype2(<jdate>, NA) is symmetric", {
+    d <- jdate()
+    expect_identical(vec_ptype2(d, NA), vec_ptype2(NA, d))
 })
 
-test_that("can cast NA", {
-    expect_equal(vec_cast(NA, new_jdate()), new_jdate(NA_real_))
+# cast ----------------------------------------------------------------------------------------
+
+test_that("jdate casts work as expected", {
+    d <- jdate("1402-09-15")
+
+    expect_identical(vec_cast(NULL, d), NULL)
+    expect_identical(vec_cast(d, d), d)
+    expect_identical(vec_cast(as_jdatetime(d), d), d)
+
+    na_d <- jdate(NA_real_)
+    expect_identical(vec_cast(NA, jdate()), na_d)
+    expect_identical(vec_cast(na_d, na_d), na_d)
+    expect_identical(vec_cast(as_jdatetime(na_d), na_d), na_d)
 })
 
 test_that("Date <-> jdate conversion works as expected", {
@@ -39,6 +47,12 @@ test_that("Date <-> jdate conversion works as expected", {
 test_that("jdate <-> jdatetime conversion works as expected", {
     expect_identical(jdate(NA_real_), as_jdate(jdatetime(NA_real_)))
     expect_identical(jdatetime(NA_real_), as_jdatetime(jdate(NA_real_)))
+
+    d <- jdate("1403-02-26")
+    dt <- jdatetime("1403-02-26 00:00:00", tz = "Asia/Tehran")
+
+    expect_identical(vec_cast(vec_cast(d, dt), d), d)
+    expect_identical(vec_cast(vec_cast(dt, d), dt), dt)
 })
 
 test_that("jdate parser works as expected", {
