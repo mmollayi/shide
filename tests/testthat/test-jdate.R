@@ -40,8 +40,14 @@ test_that("jdate casts work as expected", {
 test_that("Date <-> jdate conversion works as expected", {
     expect_identical(as_jdate(as.Date("2024-01-23")), jdate("1402-11-03"))
     expect_identical(as.Date(jdate("1402-11-03")), as.Date("2024-01-23"))
-    expect_identical(as.Date(jdate(jalali_leap_years$jalali_date)), jalali_leap_years$gregorian_date)
-    expect_identical(jdate(jalali_leap_years$jalali_date), as_jdate(jalali_leap_years$gregorian_date))
+    expect_identical(
+        as.Date(jdate(jalali_leap_years$jalali_date)),
+        jalali_leap_years$gregorian_date
+    )
+    expect_identical(
+        jdate(jalali_leap_years$jalali_date),
+        as_jdate(jalali_leap_years$gregorian_date)
+    )
 })
 
 test_that("jdate <-> jdatetime conversion works as expected", {
@@ -51,6 +57,8 @@ test_that("jdate <-> jdatetime conversion works as expected", {
     d <- jdate("1403-02-26")
     dt <- jdatetime("1403-02-26 00:00:00", tz = "Asia/Tehran")
 
+    expect_identical(tzone(vec_cast(d, dt)), "Asia/Tehran")
+    expect_identical(format(vec_cast(d, dt), "%H:%M:%S"), "00:00:00")
     expect_identical(vec_cast(vec_cast(d, dt), d), d)
     expect_identical(vec_cast(vec_cast(dt, d), dt), dt)
 })

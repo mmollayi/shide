@@ -11,8 +11,14 @@ test_that("prototype objects are generated as expected", {
 # constructor ---------------------------------------------------------------
 
 test_that("can create a jdatetime", {
-    expect_identical(jdatetime(), structure(double(), class = c("jdatetime", "vctrs_vctr"), tzone = ""))
-    expect_identical(jdatetime(0), structure(0, class = c("jdatetime", "vctrs_vctr"), tzone = ""))
+    expect_identical(
+        jdatetime(),
+        structure(double(), class = c("jdatetime", "vctrs_vctr"), tzone = "")
+    )
+    expect_identical(
+        jdatetime(0),
+        structure(0, class = c("jdatetime", "vctrs_vctr"), tzone = "")
+    )
     expect_identical(jdatetime(0L), jdatetime(0))
 })
 
@@ -72,6 +78,21 @@ test_that("vec_ptype2(<jdatetime>, NA) is symmetric", {
 })
 
 # cast ----------------------------------------------------------------------------------------
+
+test_that("jdatetime casts work as expected", {
+    dt <- jdatetime("1403-02-29 00:00:00", tz = "UTC")
+
+    expect_identical(vec_cast(NULL, dt), NULL)
+    expect_identical(vec_cast(dt, dt), dt)
+    expect_identical(vec_cast(as_jdate(dt), dt), dt)
+
+    na_dt <- jdatetime(NA_real_, tzone = "UTC")
+
+    expect_identical(vec_cast(NA, jdatetime(tzone = "UTC")), na_dt)
+    expect_identical(vec_cast(na_dt, na_dt), na_dt)
+    expect_identical(vec_cast(as_jdate(na_dt), na_dt), na_dt)
+
+})
 
 test_that("jdatetime parser works as expected", {
     tz <- "Asia/Tehran"
