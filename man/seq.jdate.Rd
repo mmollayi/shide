@@ -7,7 +7,7 @@
 \method{seq}{jdate}(from, to, by, length.out = NULL, along.with = NULL, ...)
 }
 \arguments{
-\item{from}{starting date.  Required}
+\item{from}{starting date.  Required.}
 
 \item{to}{end date.  Optional.}
 
