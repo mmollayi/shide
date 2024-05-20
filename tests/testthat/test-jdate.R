@@ -59,8 +59,22 @@ test_that("jdate <-> jdatetime conversion works as expected", {
 
     expect_identical(tzone(vec_cast(d, dt)), "Asia/Tehran")
     expect_identical(format(vec_cast(d, dt), "%H:%M:%S"), "00:00:00")
+    expect_identical(vec_cast(dt, d), d)
     expect_identical(vec_cast(vec_cast(d, dt), d), d)
     expect_identical(vec_cast(vec_cast(dt, d), dt), dt)
+})
+
+# arithmetic ----------------------------------------------------------------------------------
+
+test_that("jdate vs numeric arithmetic works as expected", {
+    d <- jdate("1403-02-31")
+
+    expect_identical(vec_arith("+", d, 1), d + 1)
+    expect_identical(vec_arith("+", 1, d), d + 1)
+    expect_identical(vec_arith("-", d, 1), d - 1)
+    expect_error(vec_arith("-", 1, d), class = "vctrs_error_incompatible_op")
+    expect_error(vec_arith("*", 1, d), class = "vctrs_error_incompatible_op")
+    expect_error(vec_arith("*", d, 1), class = "vctrs_error_incompatible_op")
 })
 
 test_that("jdate parser works as expected", {

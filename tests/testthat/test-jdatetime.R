@@ -94,6 +94,28 @@ test_that("jdatetime casts work as expected", {
 
 })
 
+test_that("casting to another time zone retains the underlying data", {
+    dt <- jdatetime("1403-02-31 14:46:24", tz = "Asia/Tehran")
+
+    expect_equal(
+        vec_data(vec_cast(dt, jdatetime(tzone = "UTC"))),
+        vec_data(dt)
+    )
+})
+
+# arithmetic ----------------------------------------------------------------------------------
+
+test_that("jdate vs numeric arithmetic works as expected", {
+    dt <- jdatetime("1403-02-31 00:00:00", tzone = "Asia/Tehran")
+
+    expect_identical(vec_arith("+", dt, 1), dt + 1)
+    expect_identical(vec_arith("+", 1, dt), dt + 1)
+    expect_identical(vec_arith("-", dt, 1), dt - 1)
+    expect_error(vec_arith("-", 1, dt), class = "vctrs_error_incompatible_op")
+    expect_error(vec_arith("*", 1, dt), class = "vctrs_error_incompatible_op")
+    expect_error(vec_arith("*", dt, 1), class = "vctrs_error_incompatible_op")
+})
+
 test_that("jdatetime parser works as expected", {
     tz <- "Asia/Tehran"
     expect_identical(
