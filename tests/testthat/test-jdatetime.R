@@ -116,6 +116,27 @@ test_that("jdate vs numeric arithmetic works as expected", {
     expect_error(vec_arith("*", dt, 1), class = "vctrs_error_incompatible_op")
 })
 
+test_that("jdatetime vs jdate-jdatetime arithmetic works as expected", {
+    d <- jdate("1403-02-31")
+    dt <- jdatetime("1403-02-31 00:00:00", tzone = "Asia/Tehran")
+
+    expect_error(vec_arith("+", dt, dt), class = "vctrs_error_incompatible_op")
+    expect_identical(vec_arith("-", dt, dt), dt - dt)
+
+    expect_error(vec_arith("+", dt, d), class = "vctrs_error_incompatible_op")
+    expect_identical(vec_arith("-", dt, d), difftime(dt, d))
+})
+
+# math ----------------------------------------------------------------------------------------
+
+test_that("jdatetime math works as expected", {
+    testthat::expect_true(is.finite(jdatetime(0)))
+    testthat::expect_false(is.infinite(jdatetime(0)))
+    expect_error(vec_math("sum", jdatetime()))
+})
+
+# parse ---------------------------------------------------------------------------------------
+
 test_that("jdatetime parser works as expected", {
     tz <- "Asia/Tehran"
     expect_identical(
