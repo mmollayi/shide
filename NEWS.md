@@ -6,6 +6,10 @@
 
 * Rounding family of functions (`sh_floor()`, `sh_ceiling()` and `sh_round()`) now accept
   multi-unit values for `unit` argument.
+  
+* `jdatetime()` and `jdatetime_make()` now support ambiguous time resolution strategies
+  via `ambiguous` argument (ambiguous times occur during a repeated interval when the clock 
+  is adjusted backwards during the transition from DST to standard time).
 
 # shide 0.2.0
 
