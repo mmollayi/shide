@@ -118,13 +118,16 @@ test_that("jdate vs numeric arithmetic works as expected", {
 
 test_that("jdatetime vs jdate-jdatetime arithmetic works as expected", {
     d <- jdate("1403-02-31")
-    dt <- jdatetime("1403-02-31 00:00:00", tzone = "Asia/Tehran")
+    dt1 <- jdatetime("1403-02-31 00:00:00", tzone = "Asia/Tokyo")
+    dt2 <- as_jdatetime(d)
 
-    expect_error(vec_arith("+", dt, dt), class = "vctrs_error_incompatible_op")
-    expect_identical(vec_arith("-", dt, dt), dt - dt)
+    expect_error(vec_arith("+", dt1, dt1), class = "vctrs_error_incompatible_op")
+    expect_identical(vec_arith("-", dt1, dt1), dt1 - dt1)
 
-    expect_error(vec_arith("+", dt, d), class = "vctrs_error_incompatible_op")
-    expect_identical(vec_arith("-", dt, d), difftime(dt, d))
+    expect_error(vec_arith("+", dt1, d), class = "vctrs_error_incompatible_op")
+    expect_identical(vec_arith("-", dt1, d), difftime(dt1, as_jdatetime(d), units = "secs"))
+
+    expect_identical(vec_arith("-", dt2, d), as.difftime(0, units = "secs"))
 })
 
 # math ----------------------------------------------------------------------------------------
