@@ -203,7 +203,7 @@ vec_cast.jdate.POSIXct <- function(x, to, ...) {
 #' @method vec_cast.jdate jdatetime
 #' @export
 vec_cast.jdate.jdatetime <- function(x, to, ...) {
-    tz <- tzone(to)
+    tz <- tzone(x)
     if (identical(tz, "")) {
         tz <- get_current_tzone()
     }

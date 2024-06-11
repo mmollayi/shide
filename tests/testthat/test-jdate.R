@@ -55,9 +55,9 @@ test_that("jdate <-> jdatetime conversion works as expected", {
     expect_identical(jdatetime(NA_real_), as_jdatetime(jdate(NA_real_)))
 
     d <- jdate("1403-02-26")
-    dt <- jdatetime("1403-02-26 00:00:00", tz = "Asia/Tehran")
+    dt <- jdatetime("1403-02-26 00:00:00", tz = "Asia/Tokyo")
 
-    expect_identical(tzone(vec_cast(d, dt)), "Asia/Tehran")
+    expect_identical(tzone(vec_cast(d, dt)), "Asia/Tokyo")
     expect_identical(format(vec_cast(d, dt), "%H:%M:%S"), "00:00:00")
     expect_identical(vec_cast(dt, d), d)
     expect_identical(vec_cast(vec_cast(d, dt), d), d)
