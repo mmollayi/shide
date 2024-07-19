@@ -60,6 +60,9 @@ library(shide)
 jdate("1402-09-13")
 #> <jdate[1]>
 #> [1] "1402-09-13"
+```
+
+``` r
 jdate("1402/09/13", format = "%Y/%m/%d")
 #> <jdate[1]>
 #> [1] "1402-09-13"
@@ -88,17 +91,26 @@ numeric vector or from individual components. But a timezone should be
 supplied in either case:
 
 ``` r
-jdatetime("1402-09-13 15:37:29", tzone = "")
-#> <jdatetime<local>[1]>
+jdatetime("1402-09-13 15:37:29", tzone = "Asia/Tehran")
+#> <jdatetime<Asia/Tehran>[1]>
 #> [1] "1402-09-13 15:37:29 +0330"
+```
+
+``` r
 jdatetime("1402/09/13 15:37:29", tzone = "Asia/Tehran", format = "%Y/%m/%d %H:%M:%S")
 #> <jdatetime<Asia/Tehran>[1]>
 #> [1] "1402-09-13 15:37:29 +0330"
+```
+
+``` r
 
 # Jalali date-time that corresponds to Unix epoch
 jdatetime(0, tzone ="Asia/Tehran")
 #> <jdatetime<Asia/Tehran>[1]>
 #> [1] "1348-10-11 03:30:00 +0330"
+```
+
+``` r
 
 jdatetime_make(1399, 12 ,30, 23, 59, 59, "Asia/Tehran")
 #> <jdatetime<Asia/Tehran>[1]>
@@ -109,10 +121,13 @@ Converting other date and date-time classes to `jdate` and `jdatetime`
 is possible with `as_jdate()` and `as_jdatetime()` respectively:
 
 ``` r
-as_jdate(Sys.Date())
+as_jdate(as.Date("2024-07-19"))
 #> <jdate[1]>
-#> [1] "1403-02-19"
-as_jdatetime(Sys.time())
-#> <jdatetime<local>[1]>
-#> [1] "1403-02-19 14:48:26 +0330"
+#> [1] "1403-04-29"
+```
+
+``` r
+as_jdatetime(as.POSIXct("2024-07-19 16:25:00", tz = "Asia/Tehran"))
+#> <jdatetime<Asia/Tehran>[1]>
+#> [1] "1403-04-29 16:25:00 +0330"
 ```

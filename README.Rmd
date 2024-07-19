@@ -75,7 +75,7 @@ jdate_make(1399, 12 ,30)
 Like `jdate` a `jdatetime` object can be generated from a character or numeric vector or from individual components. But a timezone should be supplied in either case:
 
 ```{r}
-jdatetime("1402-09-13 15:37:29", tzone = "")
+jdatetime("1402-09-13 15:37:29", tzone = "Asia/Tehran")
 jdatetime("1402/09/13 15:37:29", tzone = "Asia/Tehran", format = "%Y/%m/%d %H:%M:%S")
 
 # Jalali date-time that corresponds to Unix epoch
@@ -87,6 +87,6 @@ jdatetime_make(1399, 12 ,30, 23, 59, 59, "Asia/Tehran")
 Converting other date and date-time classes to `jdate` and `jdatetime` is possible with `as_jdate()` and `as_jdatetime()` respectively:
 
 ```{r}
-as_jdate(Sys.Date())
-as_jdatetime(Sys.time())
+as_jdate(as.Date("2024-07-19"))
+as_jdatetime(as.POSIXct("2024-07-19 16:25:00", tz = "Asia/Tehran"))
 ```
