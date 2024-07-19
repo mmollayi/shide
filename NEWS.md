@@ -1,6 +1,6 @@
 # shide (development version)
 
-* Default formatting for `jdatetime` objects has change to comply with default R behavior.
+* Default formatting for `jdatetime` objects is changed to conform to default R behavior.
 
 * `jdate` and `jdatetime` vectors are printed more nicely in tibbles.
 
@@ -10,6 +10,8 @@
 * `jdatetime()` and `jdatetime_make()` now support ambiguous time resolution strategies
   via `ambiguous` argument (ambiguous times occur during a repeated interval when the clock 
   is adjusted backwards during the transition from DST to standard time).
+  
+* Fixed a bug regarding casting of `jdatetime` to `jdate` (#4).
 
 # shide 0.2.0
 
