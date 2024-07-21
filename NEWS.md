@@ -1,3 +1,5 @@
+# shide (development version)
+
 # shide 0.2.1
 
 * Default formatting for `jdatetime` objects is changed to conform to default R behavior.
