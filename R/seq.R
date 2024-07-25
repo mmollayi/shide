@@ -180,3 +180,11 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
     jdate(res)
 }
 
+jdate_seq_units <- c("days", "weeks", "months", "quarters", "years")
+jdatetime_seq_units <- c(
+    "secs", "mins", "hours", "days", "weeks", "months", "years", "DSTdays", "quarters"
+)
+
+parse_by <- function(x) {
+    UseMethod("parse_by")
+}
