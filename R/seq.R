@@ -90,48 +90,9 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
         return(jdate(res))
     }
 
-    if (length(by) != 1L){
-        stop("'by' must be of length 1")
-    }
-
-    valid <- 0L
-    if (inherits(by, "difftime")) {
-        by <- switch(attr(by, "units"), secs = 1/86400, mins = 1/1440,
-                     hours = 1/24, days = 1, weeks = 7) * unclass(by)
-    } else if (is.character(by)) {
-        by2 <- strsplit(by, " ", fixed = TRUE)[[1L]]
-        if (length(by2) > 2L || length(by2) < 1L) {
-            stop("invalid 'by' string")
-        }
-
-        valid <- pmatch(by2[length(by2)], c(
-            "days", "weeks", "months", "quarters", "years"
-        ))
-
-        if (is.na(valid)) {
-            stop("invalid string for 'by'")
-        }
-
-        if (valid <= 2L) {
-            by <- c(1, 7)[valid]
-            if (length(by2) == 2L) {
-                by <- by * as.integer(by2[1L])
-            }
-        } else {
-            by <- if (length(by2) == 2L) {
-                as.integer(by2[1L])
-            } else {
-                1
-            }
-        }
-    } else if (!is.numeric(by)) {
-        stop("invalid mode for 'by'")
-    }
-
-    if (is.na(by)) {
-        stop("'by' is NA")
-
-    }
+    bv <- parse_by_jdate(by)
+    valid = bv$valid
+    by <- bv$by
 
     if (valid <= 2L) {
         if (!is.null(length.out)) {
@@ -185,6 +146,51 @@ jdatetime_seq_units <- c(
     "secs", "mins", "hours", "days", "weeks", "months", "years", "DSTdays", "quarters"
 )
 
-parse_by <- function(x) {
-    UseMethod("parse_by")
+parse_by_jdate <- function(by) {
+    if (length(by) != 1L){
+        cli::cli_abort("{.var by} must be of length 1.")
+    }
+
+    if (is.na(by)) {
+        cli::cli_abort("{.var by} is NA.")
+    }
+
+    if (inherits(by, "difftime")) {
+        by <- switch(attr(by, "units"), secs = 1/86400, mins = 1/1440,
+                     hours = 1/24, days = 1, weeks = 7) * unclass(by)
+        return(list(by = by, valid = 0))
+    }
+
+    if (is.numeric(by)) {
+        return(list(by = by, valid = 0))
+    }
+
+    if (is.character(by)) {
+        by2 <- strsplit(by, " ", fixed = TRUE)[[1L]]
+        if (length(by2) > 2L || length(by2) < 1L) {
+            cli::cli_abort("Invalid {.var by} specification.")
+        }
+
+        valid <- pmatch(by2[length(by2)], jdate_seq_units)
+
+        if (is.na(valid)) {
+            cli::cli_abort("Invalid {.var by} specification.")
+        }
+
+        if (valid <= 2L) {
+            by <- c(1, 7)[valid]
+            if (length(by2) == 2L) {
+                by <- by * as.integer(by2[1L])
+            }
+        } else {
+            by <- if (length(by2) == 2L) {
+                as.integer(by2[1L])
+            } else {
+                1
+            }
+        }
+        return(list(by = by, valid = valid))
+    }
+
+    cli::cli_abort("Invalid {.var by} specification.")
 }
