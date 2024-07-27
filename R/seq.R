@@ -90,7 +90,7 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
         return(jdate(res))
     }
 
-    bv <- parse_by_jdate(by)
+    bv <- parse_by(by, "days")
     valid = bv$valid
     by <- bv$by
 
@@ -155,18 +155,21 @@ parse_by_jdate <- function(by) {
         cli::cli_abort("{.var by} is NA.")
     }
 
-    if (inherits(by, "difftime")) {
-        by <- switch(attr(by, "units"), secs = 1/86400, mins = 1/1440,
-                     hours = 1/24, days = 1, weeks = 7) * unclass(by)
-        return(list(by = by, valid = 0))
-    }
-
     if (is.numeric(by)) {
         return(list(by = by, valid = 0))
     }
 
+    if (inherits(by, "difftime")) {
+        if (!attr(by, "units") %in% c("days", "weeks")) {
+            cli::cli_abort("Only `days` and `weeks` units are supported
+                           for {.var by} of class difftime.")
+        }
+        by <- vec_cast(by, new_duration(units = "days"))
+        return(list(by = vec_data(by), valid = 0))
+    }
+
     if (is.character(by)) {
-        by2 <- strsplit(by, " ", fixed = TRUE)[[1L]]
+        by2 <- parse_unit_cpp("1 1 DSTdays year")
         if (length(by2) > 2L || length(by2) < 1L) {
             cli::cli_abort("Invalid {.var by} specification.")
         }
@@ -189,6 +192,51 @@ parse_by_jdate <- function(by) {
                 1
             }
         }
+        return(list(by = by, valid = valid))
+    }
+
+    cli::cli_abort("Invalid {.var by} specification.")
+}
+
+parse_by <- function(by, resolution) {
+    if (length(by) != 1L){
+        cli::cli_abort("{.var by} must be of length 1.")
+    }
+
+    if (is.na(by)) {
+        cli::cli_abort("{.var by} is NA.")
+    }
+
+    if (is.numeric(by)) {
+        return(list(by = by, valid = 0))
+    }
+
+    if (inherits(by, "difftime")) {
+        if ((resolution == "days") && (!attr(by, "units") %in% c("days", "weeks"))) {
+            cli::cli_abort("Only `days` and `weeks` units are supported
+                           for {.var by} of class difftime.")
+        }
+
+        by <- vec_cast(by, new_duration(units = resolution))
+        return(list(by = vec_data(by), valid = 0))
+    }
+
+    if (is.character(by)) {
+        by2 <- parse_unit_cpp(by)
+        seq_units <- switch(resolution, "days" = jdate_seq_units, "secs" = jdatetime_seq_units)
+        valid <- pmatch(by2$unit, seq_units)
+
+        if (is.na(valid)) {
+            cli::cli_abort("Invalid {.var by} specification.")
+        }
+
+        if (valid <= match("weeks", seq_units)) {
+            by <- vec_cast(new_duration(by2$n, seq_units[valid]), new_duration(units = resolution))
+            by <- vec_data(by)
+        } else {
+            by <- by2$n
+        }
+
         return(list(by = by, valid = valid))
     }
 
