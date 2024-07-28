@@ -47,91 +47,60 @@
 #' seq(jdate("1402-06-31"), by = "6 months", length.out = 2)
 #' @export
 seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
-    check_dots_empty()
-
-    if (missing(from)) {
-        stop("'from' must be specified")
-    }
-
-    if (!inherits(from, "jdate")) {
-        stop("'from' must be a \"jdate\" object")
-    }
-
-    if (length(from) != 1L) {
-        stop("'from' must be of length 1")
-    }
-
-    if (!missing(to)) {
-        if (!inherits(to, "jdate")) {
-            stop("'to' must be a \"jdate\" object")
-        }
-        if (length(to) != 1L) {
-            stop("'to' must be of length 1")
-        }
-    }
-
-    if (!missing(along.with)) {
-        length.out <- length(along.with)
-    } else if (!is.null(length.out)) {
-        if (length(length.out) != 1L) {
-            stop("'length.out' must be of length 1")
-        }
-
-        length.out <- ceiling(length.out)
-    }
-
-    status <- c(!missing(to), !missing(by), !is.null(length.out))
-    if (sum(status) != 2L) {
-        stop("exactly two of 'to', 'by' and 'length.out' / 'along.with' must be specified")
-    }
+    args <- validate_seq_args("jdate", from, to, by, length.out, along.with, ...)
+    from <- args$from
+    to <- args$to
+    by <- args$by
+    length.out <- args$length.out
 
     if (missing(by)) {
         res <- seq.int(as.integer(from), as.integer(to), length.out = length.out)
         return(jdate(res))
     }
 
-    bv <- parse_by(by, "days")
-    valid = bv$valid
-    by <- bv$by
+    nu <- parse_by(by, "days")
+    unit = nu$unit
+    n <- nu$n
 
-    if (valid <= 2L) {
+    jdate_seq_impl(from, to, length.out, unit, n)
+}
+
+jdate_seq_impl <- function(from, to, length.out, unit, n) {
+    if (unit == "days") {
         if (!is.null(length.out)) {
-            res <- seq.int(as.integer(from), by = by, length.out = length.out)
+            res <- seq.int(as.integer(from), by = n, length.out = length.out)
         } else {
-            res <- seq.int(0, as.integer(to - from), by) + as.integer(from)
+            res <- seq.int(0, as.integer(to - from), n) + as.integer(from)
+        }
+        return(jdate(res))
+    }
+
+    r1 <- jdate_get_fields_cpp(from)
+    if (unit == "months") {
+        if (missing(to)) {
+            mon <- seq.int(r1$mon, by = n, length.out = length.out)
+        } else {
+            to0 <- jdate_get_fields_cpp(to)
+            mon <- seq.int(r1$mon, 12 * (to0$year - r1$year) + to0$mon, n)
         }
 
-    } else {
-        r1 <- jdate_get_fields_cpp(from)
-        if (valid == 5L) {
-            if (missing(to)) {
-                yr <- seq.int(r1$year, by = by, length.out = length.out)
-            } else {
-                to0 <- jdate_get_fields_cpp(to)
-                yr <- seq.int(r1$year, to0$year, by)
-            }
+        res <- jdate_seq_by_month_cpp(from, as.integer(mon))
+    }
 
-            res <- jdate_seq_by_year_cpp(from, as.integer(yr))
+    if (unit == "years") {
+        if (missing(to)) {
+            yr <- seq.int(r1$year, by = n, length.out = length.out)
         } else {
-            if (valid == 4L) {
-                by <- by * 3
-            }
-
-            if (missing(to)) {
-                mon <- seq.int(r1$mon, by = by, length.out = length.out)
-            } else {
-                to0 <- jdate_get_fields_cpp(to)
-                mon <- seq.int(r1$mon, 12 * (to0$year - r1$year) +
-                                   to0$mon, by)
-            }
-
-            res <- jdate_seq_by_month_cpp(from, as.integer(mon))
+            to0 <- jdate_get_fields_cpp(to)
+            yr <- seq.int(r1$year, to0$year, n)
         }
+
+        res <- jdate_seq_by_year_cpp(from, as.integer(yr))
     }
 
     if (!missing(to)) {
         to <- as.double(to)
-        res <- if (by > 0) {
+        res <- if (n > 0) {
             res[res <= to]
         } else {
             res[res >= to]
@@ -142,63 +111,13 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
 }
 
 jdate_seq_units <- c("days", "weeks", "months", "quarters", "years")
-jdatetime_seq_units <- c(
-    "secs", "mins", "hours", "days", "weeks", "months", "years", "DSTdays", "quarters"
-)
-
-parse_by_jdate <- function(by) {
-    if (length(by) != 1L){
-        cli::cli_abort("{.var by} must be of length 1.")
-    }
-
-    if (is.na(by)) {
-        cli::cli_abort("{.var by} is NA.")
-    }
-
-    if (is.numeric(by)) {
-        return(list(by = by, valid = 0))
-    }
-
-    if (inherits(by, "difftime")) {
-        if (!attr(by, "units") %in% c("days", "weeks")) {
-            cli::cli_abort("Only `days` and `weeks` units are supported
-                           for {.var by} of class difftime.")
-        }
-        by <- vec_cast(by, new_duration(units = "days"))
-        return(list(by = vec_data(by), valid = 0))
-    }
-
-    if (is.character(by)) {
-        by2 <- parse_unit_cpp("1 1 DSTdays year")
-        if (length(by2) > 2L || length(by2) < 1L) {
-            cli::cli_abort("Invalid {.var by} specification.")
-        }
-
-        valid <- pmatch(by2[length(by2)], jdate_seq_units)
-
-        if (is.na(valid)) {
-            cli::cli_abort("Invalid {.var by} specification.")
-        }
-
-        if (valid <= 2L) {
-            by <- c(1, 7)[valid]
-            if (length(by2) == 2L) {
-                by <- by * as.integer(by2[1L])
-            }
-        } else {
-            by <- if (length(by2) == 2L) {
-                as.integer(by2[1L])
-            } else {
-                1
-            }
-        }
-        return(list(by = by, valid = valid))
-    }
-
-    cli::cli_abort("Invalid {.var by} specification.")
-}
+jdatetime_seq_units <- c("secs", "mins", "hours", jdate_seq_units, "DSTdays")
 
 parse_by <- function(by, resolution) {
+    if (missing(by)) {
+        return(list(n = 1, unit = resolution))
+    }
+
     if (length(by) != 1L){
         cli::cli_abort("{.var by} must be of length 1.")
     }
@@ -208,7 +127,7 @@ parse_by <- function(by, resolution) {
     }
 
     if (is.numeric(by)) {
-        return(list(by = by, valid = 0))
+        return(list(n = by, unit = "days"))
     }
 
     if (inherits(by, "difftime")) {
@@ -218,7 +137,7 @@ parse_by <- function(by, resolution) {
         }
 
         by <- vec_cast(by, new_duration(units = resolution))
-        return(list(by = vec_data(by), valid = 0))
+        return(list(n = vec_data(by), unit = "days"))
     }
 
     if (is.character(by)) {
@@ -233,12 +152,59 @@ parse_by <- function(by, resolution) {
         if (valid <= match("weeks", seq_units)) {
             by <- vec_cast(new_duration(by2$n, seq_units[valid]), new_duration(units = resolution))
             by <- vec_data(by)
-        } else {
-            by <- by2$n
+            return(list(n = by, unit = resolution))
         }
 
-        return(list(by = by, valid = valid))
+        if (seq_units[valid] == "quarters") {
+            return(list(n = by2$n * 3, unit = "months"))
+        }
+
+        return(list(n = by2$n, unit = seq_units[valid]))
     }
 
     cli::cli_abort("Invalid {.var by} specification.")
+}
+
+validate_seq_args <- function(class, from, to, by, length.out = NULL, along.with = NULL, ...) {
+    check_dots_empty()
+
+    if (missing(from)) {
+        cli::cli_abort("{.var from} must be specified.")
+    }
+
+    if (!inherits(from, class)) {
+        cli::cli_abort("{.var from} must be a {.cls {class}} object.")
+    }
+
+    if (length(from) != 1L) {
+        cli::cli_abort("{.var from} must be of length 1.")
+    }
+
+    if (!missing(to)) {
+        if (!inherits(to, class)) {
+            cli::cli_abort("{.var to} must be a {.cls {class}} object.")
+        }
+        if (length(to) != 1L) {
+            cli::cli_abort("{.var to} must be of length 1.")
+        }
+    }
+
+    if (!is.null(along.with)) {
+        length.out <- length(along.with)
+    } else if (!is.null(length.out)) {
+        if (length(length.out) != 1L) {
+            cli::cli_abort("{.var length.out} must be of length 1.")
+        }
+
+        length.out <- ceiling(length.out)
+    }
+
+    status <- c(!missing(to), !missing(by), !is.null(length.out))
+    if (sum(status) != 2L) {
+        cli::cli_abort("exactly two of {.var to}, {.var by} and
+                       {.var length.out} / {.var along.with} must be specified.")
+    }
+
+    list(from = from, to = rlang::maybe_missing(to),
+         by = rlang::maybe_missing(by), length.out = length.out)
 }
