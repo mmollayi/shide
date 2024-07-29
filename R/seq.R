@@ -59,10 +59,72 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
     }
 
     nu <- parse_by(by, "days")
-    unit = nu$unit
+    unit <- nu$unit
     n <- nu$n
 
     jdate_seq_impl(from, to, length.out, unit, n)
+}
+
+#' @export
+seq.jdatetime <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
+    args <- validate_seq_args("jdatetime", from, to, by, length.out, along.with, ...)
+    from <- args$from
+    to <- args$to
+    by <- args$by
+    length.out <- args$length.out
+
+    if (missing(by)) {
+        res <- seq.int(as.integer(from), as.integer(to), length.out = length.out)
+        return(jdatetime(res))
+    }
+
+    nu <- parse_by(by, "secs")
+    unit <- nu$unit
+    n <- nu$n
+
+    tz <- tzone(from)
+
+    if (unit == "secs") {
+        if (!is.null(length.out)) {
+            res <- seq.int(as.integer(from), by = n, length.out = length.out)
+        } else {
+            res <- seq.int(0, as.integer(to - from), n) + as.integer(from)
+        }
+        return(jdatetime(res, tz))
+    }
+
+    r1 <- jdatetime_get_fields_cpp(from)
+    if (unit %in% c("months", "years")) {
+        if (missing(to)) {
+            to0 <- args$to
+        } else {
+            to0 <- as_jdate(to)
+        }
+
+        d <- jdate_seq_impl(as_jdate(from), to0, length.out, unit, n)
+    }
+
+    if (unit == c("DSTdays")) {
+        if (!missing(to)) {
+            ## We might have a short day, so need to over-estimate.
+            length.out <- 2L + floor((unclass(to) - unclass(from))/(n * 86400))
+        }
+
+        d <- jdate_seq_impl(as_jdate(from), length.out = length.out, unit = "days", n = n)
+    }
+
+    d_fields <- jdate_get_fields_cpp(d)
+    out <- jdatetime_update(from, d_fields)
+
+    if (!missing(to)) {
+        out <- if (n > 0) {
+            out[out <= to]
+        } else {
+            out[out >= to]
+        }
+    }
+
+    out
 }
 
 jdate_seq_impl <- function(from, to, length.out, unit, n) {
