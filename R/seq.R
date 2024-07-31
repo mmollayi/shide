@@ -65,6 +65,33 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
     jdate_seq_impl(from, to, length.out, unit, n)
 }
 
+#' Generate regular sequences of Jalali date-times
+#'
+#' The method for [seq] for objects of class `jdatetime`.
+#'
+#' @inheritParams base::seq.POSIXt
+#' @details
+#' `by` can be specified in several ways:
+#' * A number, taken to be in seconds.
+#' * A object of class [difftime].
+#' * A character string, containing one of "sec", "min", "hour", "day", "DSTday",
+#'   "week", "month", "quarter" or "year".
+#'   This can optionally be preceded by a (positive or negative) integer
+#'   and a space, or followed by "s".
+#'
+#' @return A vector of `jdatetime` objects.
+#' @seealso [base::seq.POSIXt()]
+#' @examples
+#' # first days of years
+#' seq(jdatetime_make(1390, 1, 1), jdatetime_make(1399, 1, 1), "years")
+#' # by month
+#' seq(jdatetime_make(1400, 1, 1), by = "month", length.out = 12)
+#' seq(jdatetime_make(1400, 1, 31), by = "month", length.out = 12)
+#' # days vs DSTdays
+#' seq(jdatetime_make(1400, 1, 1, 12, tzone = "Asia/Tehran"), by = "day", length.out = 2)
+#' seq(jdatetime_make(1400, 1, 1, 12, tzone = "Asia/Tehran"), by = "DSTday", length.out = 2)
+#' seq(jdatetime_make(1400, 1, 1, 12, tzone = "Asia/Tehran"), by = "1 week", length.out = 2)
+#' seq(jdatetime_make(1400, 1, 1, 12, tzone = "Asia/Tehran"), by = "7 DSTdays", length.out = 2)
 #' @export
 seq.jdatetime <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
     args <- validate_seq_args("jdatetime", from, to, by, length.out, along.with, ...)
