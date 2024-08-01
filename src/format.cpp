@@ -99,7 +99,7 @@ format_jdatetime_cpp(const cpp11::sexp x,
         os.str(std::string());
         os.clear();
 
-        ss = date::sys_seconds{ std::chrono::seconds{ static_cast<int>(xx[i]) } };
+        ss = sys_seconds_from_double(xx[i]);
         tzdb::get_sys_info(ss, tz, info);
         ls = date::local_seconds{(ss + info.offset).time_since_epoch()};
         ld = date::floor<date::days>(ls);

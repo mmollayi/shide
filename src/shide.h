@@ -11,4 +11,6 @@
 
 const int jd_unix_epoch{ 2440588 };
 
+date::sys_seconds sys_seconds_from_double(double x);
+
 #endif

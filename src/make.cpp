@@ -249,7 +249,7 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
             continue;
         }
 
-        ss_ref = date::sys_seconds{ seconds{static_cast<int>(ref[i])} };
+        ss_ref = sys_seconds_from_double(ref[i]);
         out[i] = jdatetime_from_local_seconds_with_reference(ls, tz, info, ss_ref);
     }
 

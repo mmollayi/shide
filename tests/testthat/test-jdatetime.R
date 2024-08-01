@@ -37,6 +37,13 @@ test_that("tzone must be a scalar character or NULL", {
     expect_error(jdatetime(tzone = NA_character_))
 })
 
+test_that("jdatetime covers the whole range intended range", {
+    expect_equal(
+        format(jdatetime(c("-1095-01-01 00:00:00", "2326-12-29 23:59:59"), "UTC")),
+        c("-1095-01-01 00:00:00 +0000", "2326-12-29 23:59:59 +0000")
+    )
+})
+
 # coercion ------------------------------------------------------------------------------------
 
 # these tests are brought over from vctrs package

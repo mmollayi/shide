@@ -65,7 +65,7 @@ local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tz
             continue;
         }
 
-        ss = date::sys_seconds{ std::chrono::seconds{ static_cast<int>(x[i]) } };
+        ss = sys_seconds_from_double(x[i]);
         ld = local_days_from_sys_seconds(ss, tz, info);
         out[i] = static_cast<double>(ld.time_since_epoch().count());
     }
@@ -79,4 +79,9 @@ std::string get_current_tzone_cpp() {
     cpp11::strings tz_name_ = cpp11::as_cpp<cpp11::strings>(result);
     std::string tz_name(tz_name_[0]);
     return tz_name;
+}
+
+date::sys_seconds sys_seconds_from_double(double x)
+{
+    return date::sys_seconds{ std::chrono::seconds{ static_cast<long long>(x) } };
 }

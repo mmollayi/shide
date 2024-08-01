@@ -137,7 +137,7 @@ get_sys_info_cpp(const cpp11::sexp x)
             continue;
         }
 
-        ss = date::sys_seconds{ std::chrono::seconds{ static_cast<int>(xx[0]) } };
+        ss = sys_seconds_from_double(xx[0]);
         tzdb::get_sys_info(ss, tz, info);
         dst[i] = static_cast<double>(info.save.count());
         offset[i] = static_cast<double>(info.offset.count());
