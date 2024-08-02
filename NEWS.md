@@ -1,5 +1,9 @@
 # shide (development version)
 
+* New `seq.jdatetime()` generates regular sequences of Jalali date-times.
+
+* Fixed an issue where `jdatetime` objects did not span the entire predefined value range.
+
 # shide 0.2.1
 
 * Default formatting for `jdatetime` objects is changed to conform to default R behavior.
