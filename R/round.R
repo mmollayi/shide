@@ -48,7 +48,7 @@ sh_floor <- function(x, unit = NULL, ...) {
 sh_floor.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- parse_unit(unit)
+    unit <- parse_unit(unit, "days")
     jdate(jdate_floor_cpp(x, unit$unit, unit$n))
 }
 
@@ -62,25 +62,26 @@ sh_ceiling <- function(x, unit = NULL, ...) {
 sh_ceiling.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- parse_unit(unit)
+    unit <- parse_unit(unit, "days")
     jdate(jdate_ceiling_cpp(x, unit$unit, unit$n))
 }
 
-parse_unit <- function(unit) {
+parse_unit <- function(unit, resolution) {
     if (!rlang::is_scalar_character(unit)) {
         cli::cli_abort("{.var unit} must be a scalar character.")
     }
 
     nu <- parse_unit_cpp(unit)
-    i <- match(nu$unit, jdate_rounding_units)
+    base_units <- switch(resolution, "days" = jdate_round_units, "secs" = jdatetime_round_units)
+    i <- match(nu$unit, base_units)
 
     if (is.na(i)) {
-        i <- match(nu$unit, paste0(jdate_rounding_units, "s"))
+        i <- match(nu$unit, paste0(base_units, "s"))
 
         if (is.na(i)) {
             cli::cli_abort("Invalid unit specification.")
         } else {
-            nu$unit <- jdate_rounding_units[i]
+            nu$unit <- base_units[i]
         }
     }
 
@@ -100,7 +101,8 @@ parse_unit <- function(unit) {
 }
 
 unit_upper_limits <- c(
-    day = 31, week = 1, month = 12, quarter = 4, year = 2326
+    second = 60, minute = 60, hour = 24, day = 31, week = 1, month = 12, quarter = 4, year = 2326
 )
 
-jdate_rounding_units <- c("day", "week", "month", "quarter", "year")
+jdate_round_units <- c("day", "week", "month", "quarter", "year")
+jdatetime_round_units <- c("second", "minute", "hour", jdate_round_units)

@@ -62,7 +62,7 @@ test_that("parse_unit works as expected", {
     expect_identical(
         lapply(
             c("day", "days", "1day", "1days", "1.days", "1 day", "1 days", " 1 days "),
-            parse_unit
+            parse_unit, resolution = "days"
         ),
         rep(list(list(n = 1, unit = "day")), 8)
     )
