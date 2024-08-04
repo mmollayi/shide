@@ -1,5 +1,20 @@
 # include "shide.h"
 
+date::local_seconds to_local_seconds(const date::sys_seconds& tp,
+                                     const date::time_zone* p_time_zone,
+                                     date::sys_info& info)
+{
+    tzdb::get_sys_info(tp, p_time_zone, info);
+    return date::local_seconds{ (tp + info.offset).time_since_epoch() };
+}
+
+date::local_days to_local_days(const date::sys_seconds& tp,
+                               const date::time_zone* p_time_zone,
+                               date::sys_info& info)
+{
+    return date::floor<date::days>(to_local_seconds(tp, p_time_zone, info));
+}
+
 [[cpp11::register]]
 cpp11::writable::doubles
 sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tzone)
@@ -33,14 +48,6 @@ sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tz
     return out;
 }
 
-date::local_days
-local_days_from_sys_seconds(const date::sys_seconds& ss, const date::time_zone* tz, date::sys_info& info)
-{
-    tzdb::get_sys_info(ss, tz, info);
-    const date::local_seconds ls{ (ss + info.offset).time_since_epoch() };
-    return date::floor<date::days>(ls);
-}
-
 [[cpp11::register]]
 cpp11::writable::doubles
 local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tzone)
@@ -66,7 +73,7 @@ local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tz
         }
 
         ss = sys_seconds_from_double(x[i]);
-        ld = local_days_from_sys_seconds(ss, tz, info);
+        ld = to_local_days(ss, tz, info);
         out[i] = static_cast<double>(ld.time_since_epoch().count());
     }
 

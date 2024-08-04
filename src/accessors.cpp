@@ -2,6 +2,10 @@
 
 std::string get_current_tzone_cpp();
 
+date::local_seconds to_local_seconds(const date::sys_seconds& tp,
+                                     const date::time_zone* p_time_zone,
+                                     date::sys_info& info);
+
 int sh_yday(const sh_year_month_day& ymd)
 {
     static const int month_data_cum[12] = {0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336};
@@ -103,8 +107,7 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
         }
 
         ss = sys_seconds_from_double(xx[i]);
-        tzdb::get_sys_info(ss, tz, info);
-        ls = date::local_seconds{(ss + info.offset).time_since_epoch()};
+        ls = to_local_seconds(ss, tz, info);
         ld = date::floor<date::days>(ls);
         ymd = sh_year_month_day{ ld };
         auto tod = date::hh_mm_ss<std::chrono::seconds>{ ls - date::local_seconds{ ld } };
