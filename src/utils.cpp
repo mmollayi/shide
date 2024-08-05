@@ -15,6 +15,15 @@ date::local_days to_local_days(const date::sys_seconds& tp,
     return date::floor<date::days>(to_local_seconds(tp, p_time_zone, info));
 }
 
+date::sys_seconds to_sys_seconds(const date::local_seconds& tp,
+                                 const date::time_zone* p_time_zone,
+                                 date::local_info& info)
+{
+    tzdb::get_local_info(tp, p_time_zone, info);
+    return date::sys_seconds{ tp.time_since_epoch() - info.first.offset };
+}
+
+
 [[cpp11::register]]
 cpp11::writable::doubles
 sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tzone)
@@ -29,9 +38,9 @@ sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tz
 
     const R_xlen_t size = x.size();
     cpp11::writable::doubles out(size);
-    std::chrono::seconds seconds_since_epoch;
     date::local_seconds ls;
     date::local_info info;
+    date::sys_seconds ss;
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (std::isnan(x[i])) {
@@ -40,9 +49,8 @@ sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tz
         }
 
         ls = date::local_seconds{ date::days{ static_cast<int>(x[i]) }};
-        tzdb::get_local_info(ls, tz, info);
-        seconds_since_epoch = ls.time_since_epoch() - info.first.offset;
-        out[i] = static_cast<double>(seconds_since_epoch.count());
+        ss = to_sys_seconds(ls, tz, info);
+        out[i] = static_cast<double>(ss.time_since_epoch().count());
     }
 
     return out;
