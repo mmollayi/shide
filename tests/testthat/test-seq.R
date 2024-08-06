@@ -3,12 +3,25 @@ test_that("combining `by` with `length.out` works as expected", {
         seq(jdate("1401-01-01"), by = 2, length.out = 3),
         jdate_make(1401, 1, c(1, 3, 5))
     )
+
+    tz <- "Asia/Tehran"
+    expect_identical(
+        seq(jdatetime_make(1401, 1, 1, tzone = tz), by = 2, length.out = 3),
+        jdatetime_make(1401, 1, 1, second = c(0, 2, 4), tzone = tz)
+    )
 })
 
 test_that("combining `to` with `length.out` works as expected", {
     expect_identical(
         seq(jdate("1401-01-01"), to = jdate("1401-01-05"), length.out = 3),
         jdate_make(1401, 1, c(1, 3, 5))
+    )
+
+    tz <- "Asia/Tehran"
+    expect_identical(
+        seq(jdatetime_make(1401, 1, 1, tzone = tz),
+            to = jdatetime_make(1401, 1, 1, second = 4, tzone = tz), length.out = 3),
+        jdatetime_make(1401, 1, 1, second = c(0, 2, 4), tzone = tz)
     )
 })
 

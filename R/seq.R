@@ -99,17 +99,16 @@ seq.jdatetime <- function(from, to, by, length.out = NULL, along.with = NULL, ..
     to <- args$to
     by <- args$by
     length.out <- args$length.out
+    tz <- tzone(from)
 
     if (missing(by)) {
         res <- seq.int(as.integer(from), as.integer(to), length.out = length.out)
-        return(jdatetime(res))
+        return(jdatetime(res, tzone = tz))
     }
 
     nu <- parse_by(by, "secs")
     unit <- nu$unit
     n <- nu$n
-
-    tz <- tzone(from)
 
     if (unit == "secs") {
         if (!is.null(length.out)) {
@@ -216,7 +215,7 @@ parse_by <- function(by, resolution) {
     }
 
     if (is.numeric(by)) {
-        return(list(n = by, unit = "days"))
+        return(list(n = by, unit = resolution))
     }
 
     if (inherits(by, "difftime")) {
@@ -226,7 +225,7 @@ parse_by <- function(by, resolution) {
         }
 
         by <- vec_cast(by, new_duration(units = resolution))
-        return(list(n = vec_data(by), unit = "days"))
+        return(list(n = vec_data(by), unit = resolution))
     }
 
     if (is.character(by)) {
