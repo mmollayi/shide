@@ -48,8 +48,16 @@ sh_floor <- function(x, unit = NULL, ...) {
 sh_floor.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- parse_unit(unit)
+    unit <- parse_unit(unit, "days")
     jdate(jdate_floor_cpp(x, unit$unit, unit$n))
+}
+
+#' @export
+sh_floor.jdatetime <- function(x, unit = NULL, ...) {
+    check_dots_empty()
+    unit <- unit %||% "second"
+    unit <- parse_unit(unit, "secs")
+    jdatetime(jdatetime_floor_cpp(x, unit$unit, unit$n), tzone(x))
 }
 
 #' @rdname sh_round
@@ -62,25 +70,27 @@ sh_ceiling <- function(x, unit = NULL, ...) {
 sh_ceiling.jdate <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "day"
-    unit <- parse_unit(unit)
+    unit <- parse_unit(unit, "days")
     jdate(jdate_ceiling_cpp(x, unit$unit, unit$n))
 }
 
-parse_unit <- function(unit) {
+parse_unit <- function(unit, resolution) {
+    resolution <- rlang::arg_match(resolution, c("days", "secs"))
     if (!rlang::is_scalar_character(unit)) {
         cli::cli_abort("{.var unit} must be a scalar character.")
     }
 
     nu <- parse_unit_cpp(unit)
-    i <- match(nu$unit, jdate_rounding_units)
+    base_units <- switch(resolution, "days" = jdate_round_units, "secs" = jdatetime_round_units)
+    i <- match(nu$unit, base_units)
 
     if (is.na(i)) {
-        i <- match(nu$unit, paste0(jdate_rounding_units, "s"))
+        i <- match(nu$unit, paste0(base_units, "s"))
 
         if (is.na(i)) {
             cli::cli_abort("Invalid unit specification.")
         } else {
-            nu$unit <- jdate_rounding_units[i]
+            nu$unit <- base_units[i]
         }
     }
 
@@ -92,15 +102,17 @@ parse_unit <- function(unit) {
         cli::cli_abort("Unit coefficient must be greater than or equal to 1.")
     }
 
-    if (nu$n > unit_upper_limits[i]) {
-        cli::cli_abort("Rounding with {nu$unit} > {unit_upper_limits[i]} is not supported.")
+    if (nu$n > unit_upper_limits[base_units[i]]) {
+        cli::cli_abort("Rounding with {nu$unit} > {unit_upper_limits[base_units[i]]} is
+                       not supported.")
     }
 
     nu
 }
 
 unit_upper_limits <- c(
-    day = 31, week = 1, month = 12, quarter = 4, year = 2326
+    second = 60, minute = 60, hour = 24, day = 31, week = 1, month = 12, quarter = 4, year = 2326
 )
 
-jdate_rounding_units <- c("day", "week", "month", "quarter", "year")
+jdate_round_units <- c("day", "week", "month", "quarter", "year")
+jdatetime_round_units <- c("second", "minute", "hour", jdate_round_units)
