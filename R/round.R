@@ -52,6 +52,14 @@ sh_floor.jdate <- function(x, unit = NULL, ...) {
     jdate(jdate_floor_cpp(x, unit$unit, unit$n))
 }
 
+#' @export
+sh_floor.jdatetime <- function(x, unit = NULL, ...) {
+    check_dots_empty()
+    unit <- unit %||% "second"
+    unit <- parse_unit(unit, "secs")
+    jdatetime(jdatetime_floor_cpp(x, unit$unit, unit$n), tzone(x))
+}
+
 #' @rdname sh_round
 #' @export
 sh_ceiling <- function(x, unit = NULL, ...) {
@@ -67,6 +75,7 @@ sh_ceiling.jdate <- function(x, unit = NULL, ...) {
 }
 
 parse_unit <- function(unit, resolution) {
+    resolution <- rlang::arg_match(resolution, c("days", "secs"))
     if (!rlang::is_scalar_character(unit)) {
         cli::cli_abort("{.var unit} must be a scalar character.")
     }
@@ -93,8 +102,9 @@ parse_unit <- function(unit, resolution) {
         cli::cli_abort("Unit coefficient must be greater than or equal to 1.")
     }
 
-    if (nu$n > unit_upper_limits[i]) {
-        cli::cli_abort("Rounding with {nu$unit} > {unit_upper_limits[i]} is not supported.")
+    if (nu$n > unit_upper_limits[base_units[i]]) {
+        cli::cli_abort("Rounding with {nu$unit} > {unit_upper_limits[base_units[i]]} is
+                       not supported.")
     }
 
     nu

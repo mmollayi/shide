@@ -70,11 +70,11 @@ test_that("parse_unit works as expected", {
 })
 
 test_that("parse_unit errors as expected", {
-    expect_error(parse_unit("1d"))
-    expect_error(parse_unit(c("days", "months")))
-    expect_error(parse_unit("1"))
-    expect_error(parse_unit("1.5 days"))
-    expect_error(parse_unit("0 days"))
-    expect_error(parse_unit("2327 years"))
-    expect_error(parse_unit("2 weeks"))
+    expect_error(parse_unit("1d", "days"))
+    expect_error(parse_unit(c("days", "months"), "days"))
+    expect_error(parse_unit("1", "days"))
+    expect_error(parse_unit("1.5 days", "days"))
+    expect_error(parse_unit("0 days", "days"))
+    expect_error(parse_unit("2327 years", "days"))
+    expect_error(parse_unit("2 weeks", "days"))
 })
