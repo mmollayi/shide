@@ -56,4 +56,40 @@ test_that("fractional sequences work as expected", {
         vec_data(seq(jdate(0), jdate(-3), length.out = 3)),
         c(0, -1, -3)
     )
+
+    expect_identical(
+        vec_data(seq(jdatetime(0), jdatetime(3), length.out = 3)),
+        c(0, 1, 3)
+    )
+
+    expect_identical(
+        vec_data(seq(jdatetime(0), jdatetime(-3), length.out = 3)),
+        c(0, -1, -3)
+    )
+})
+
+test_that("'days' and 'DSTdays' units work as expected around DST gaps and fallbacks", {
+    tz <- "Asia/Tehran"
+    dt1 <- jdatetime("1401-01-01 12:00:00", tz)
+    dt2 <- jdatetime("1401-06-30 12:00:00", tz)
+
+    expect_identical(
+        seq(dt1, by = "days", length.out = 2),
+        jdatetime_make(1401, 1, 1:2, 12:13, tzone = tz)
+    )
+
+    expect_identical(
+        seq(dt1, by = "DSTdays", length.out = 2),
+        jdatetime_make(1401, 1, 1:2, 12, tzone = tz)
+    )
+
+    expect_identical(
+        seq(dt2, by = "days", length.out = 2),
+        jdatetime_make(1401, 6, 30:31, 12:11, tzone = tz)
+    )
+
+    expect_identical(
+        seq(dt2, by = "DSTdays", length.out = 2),
+        jdatetime_make(1401, 6, 30:31, 12, tzone = tz)
+    )
 })
