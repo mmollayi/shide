@@ -1,21 +1,82 @@
 test_that("sh_floor works as expected for each unit", {
-    d <- jdate(c("1367-09-06", "1371-03-13"))
-    expect_identical(sh_floor(d), jdate(c("1367-09-06", "1371-03-13")))
-    expect_identical(sh_floor(d, "day"), jdate(c("1367-09-06", "1371-03-13")))
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
+    d <- as_jdate(dt)
+
+    expect_identical(sh_floor(d), d)
+    expect_identical(sh_floor(d, "day"), d)
     expect_identical(sh_floor(d, "week"), jdate(c("1367-09-05", "1371-03-09")))
     expect_identical(sh_floor(d, "month"), jdate(c("1367-09-01", "1371-03-01")))
     expect_identical(sh_floor(d, "quarter"), jdate(c("1367-07-01", "1371-01-01")))
     expect_identical(sh_floor(d, "year"), jdate(c("1367-01-01", "1371-01-01")))
+
+    expect_identical(sh_floor(dt), dt)
+    expect_identical(sh_floor(dt, "second"), dt)
+    expect_identical(
+        sh_floor(dt, "minute"),
+        jdatetime(c("1367-09-06 12:27", "1371-03-13 14:02"), tz, format = "%F %H:%M")
+    )
+
+    expect_identical(
+        sh_floor(dt, "hour"),
+        jdatetime(c("1367-09-06 12", "1371-03-13 14"), tz, format = "%F %H")
+    )
+
+    expect_identical(
+        sh_floor(dt, "day"), jdatetime(c("1367-09-06", "1371-03-13"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "week"), jdatetime(c("1367-09-05", "1371-03-09"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "month"), jdatetime(c("1367-09-01", "1371-03-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "quarter"), jdatetime(c("1367-07-01", "1371-01-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "year"), jdatetime(c("1367-01-01", "1371-01-01"), tz, format = "%F")
+    )
 })
 
 test_that("sh_floor works as expected for multi-units", {
-    d <- jdate(c("1367-09-06", "1371-03-13"))
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
+    d <- as_jdate(dt)
+
     expect_identical(sh_floor(d, "2 days"), jdate(c("1367-09-05", "1371-03-13")))
     expect_identical(sh_floor(d, "10 days"), jdate(c("1367-09-01", "1371-03-11")))
     expect_identical(sh_floor(d, "4 months"), jdate(c("1367-09-01", "1371-01-01")))
     expect_identical(sh_floor(d, "2 quarters"), jdate(c("1367-07-01", "1371-01-01")))
     expect_identical(sh_floor(d, "2 years"), jdate(c("1366-01-01", "1370-01-01")))
     expect_identical(sh_floor(d, "3 years"), jdate(c("1365-01-01", "1371-01-01")))
+
+    expect_identical(
+        sh_floor(dt, "30 seconds"),
+        jdatetime(c("1367-09-06 12:27:30", "1371-03-13 14:02:00"), tz)
+    )
+    expect_identical(
+        sh_floor(dt, "20 minutes"),
+        jdatetime(c("1367-09-06 12:20", "1371-03-13 14:00"), tz, format = "%F %H:%M")
+    )
+
+    expect_identical(
+        sh_floor(dt, "6 hours"),
+        jdatetime(c("1367-09-06 12", "1371-03-13 12"), tz, format = "%F %H")
+    )
+
+    expect_identical(
+        sh_floor(dt, "10 days"), jdatetime(c("1367-09-01", "1371-03-11"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "4 month"), jdatetime(c("1367-09-01", "1371-01-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "2 quarters"), jdatetime(c("1367-07-01", "1371-01-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_floor(dt, "3 years"), jdatetime(c("1365-01-01", "1371-01-01"), tz, format = "%F")
+    )
 })
 
 test_that("sh_ceiling works as expected for each unit", {
