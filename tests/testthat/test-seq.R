@@ -46,6 +46,18 @@ test_that("if `by` has `quarters` unit, in case of encountering invalid date, ov
     )
 })
 
+test_that("integer `by` works as expected", {
+    expect_identical(
+        seq(jdate(0), jdate(2), "days"),
+        seq(jdate(0), jdate(2), 1)
+    )
+
+    expect_identical(
+        seq(jdatetime(0), jdatetime(2), new_duration(1, "secs")),
+        seq(jdatetime(0), jdatetime(2), 1)
+    )
+})
+
 test_that("fractional sequences work as expected", {
     expect_identical(
         vec_data(seq(jdate(0), jdate(3), length.out = 3)),
@@ -91,5 +103,19 @@ test_that("'days' and 'DSTdays' units work as expected around DST gaps and fallb
     expect_identical(
         seq(dt2, by = "DSTdays", length.out = 2),
         jdatetime_make(1401, 6, 30:31, 12, tzone = tz)
+    )
+})
+
+test_that("nonexistent times result in `NA`", {
+    tz <- "Asia/Tehran"
+
+    expect_identical(
+        seq(jdatetime_make(1401, 1, 1, tzone = tz), by = "DSTdays", length.out = 2),
+        jdatetime_make(c(1401, NA), 1, 1, tzone = tz)
+    )
+
+    expect_identical(
+        seq(jdatetime_make(1399, 12, 2, tzone = tz), by = "months", length.out = 2),
+        jdatetime_make(c(1399, NA), 12, 2, tzone = tz)
     )
 })
