@@ -271,6 +271,87 @@ jdatetime_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int
     return out;
 }
 
+date::local_seconds
+jdatetime_ceiling(const date::local_seconds& ls, const Unit& unit, const int n)
+{
+    const date::local_days ld{ date::floor<date::days>(ls) };
+    const auto tod = date::hh_mm_ss<std::chrono::seconds>{ ls - ld };
+    date::local_seconds ls_out{};
+    int h, m, s;
+
+    switch (unit)
+    {
+    case Unit::year:
+    case Unit::quarter:
+    case Unit::month:
+    case Unit::week:
+    case Unit::day:
+        ls_out = date::local_seconds{ jdate_ceiling(ld, unit, n) };
+        break;
+    case Unit::hour:
+        h = ceiling_component1(tod.hours().count(), n);
+        ls_out = ld + std::chrono::hours{ h };
+        break;
+    case Unit::minute:
+        m = ceiling_component1(tod.minutes().count(), n);
+        ls_out = ld + tod.hours() + std::chrono::minutes{ m };
+        break;
+    case Unit::second:
+        s = ceiling_component1(tod.seconds().count(), n);
+        ls_out = ld + tod.hours() + tod.minutes() + std::chrono::seconds{ s };
+        break;
+    default:
+        Rf_error("Invalid unit");
+    }
+
+    return ls_out;
+}
+
+[[cpp11::register]]
+cpp11::writable::doubles
+jdatetime_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name, const int n)
+{
+    const cpp11::strings tz_name_ =  cpp11::as_cpp<cpp11::strings>(x.attr("tzone"));
+    std::string tz_name(tz_name_[0]);
+    const date::time_zone* tz{};
+
+    if (!tz_name.size())
+    {
+        tz_name = get_current_tzone_cpp();
+    }
+
+    if (!tzdb::locate_zone(tz_name, tz))
+    {
+        cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
+    }
+
+    const auto unit{ string_to_unit(unit_name) };
+    const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
+    const R_xlen_t size = xx.size();
+    cpp11::writable::doubles out(size);
+    date::sys_seconds ss;
+    date::sys_seconds ss2;
+    date::local_seconds ls;
+    date::sys_info info;
+    date::local_info info2;
+
+    for (R_xlen_t i = 0; i < size; ++i)
+    {
+        if (std::isnan(xx[i]))
+        {
+            out[i] = NA_REAL;
+            continue;
+        }
+
+        ss = sys_seconds_from_double(xx[i]);
+        ls = to_local_seconds(ss, tz, info);
+        ss2 = to_sys_seconds(jdatetime_ceiling(ls, unit, n), tz, info2);
+        out[i] = static_cast<double>(ss2.time_since_epoch().count());
+    }
+
+    return out;
+}
+
 [[cpp11::register]]
 cpp11::writable::list
 parse_unit_cpp(const cpp11::strings& unit) {

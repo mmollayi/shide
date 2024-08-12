@@ -64,6 +64,10 @@ jdatetime_floor_cpp <- function(x, unit_name, n) {
   .Call(`_shide_jdatetime_floor_cpp`, x, unit_name, n)
 }
 
+jdatetime_ceiling_cpp <- function(x, unit_name, n) {
+  .Call(`_shide_jdatetime_ceiling_cpp`, x, unit_name, n)
+}
+
 parse_unit_cpp <- function(unit) {
   .Call(`_shide_parse_unit_cpp`, unit)
 }

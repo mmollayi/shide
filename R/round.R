@@ -74,6 +74,14 @@ sh_ceiling.jdate <- function(x, unit = NULL, ...) {
     jdate(jdate_ceiling_cpp(x, unit$unit, unit$n))
 }
 
+#' @export
+sh_ceiling.jdatetime <- function(x, unit = NULL, ...) {
+    check_dots_empty()
+    unit <- unit %||% "second"
+    unit <- parse_unit(unit, "secs")
+    jdatetime(jdatetime_ceiling_cpp(x, unit$unit, unit$n), tzone(x))
+}
+
 parse_unit <- function(unit, resolution) {
     resolution <- rlang::arg_match(resolution, c("days", "secs"))
     if (!rlang::is_scalar_character(unit)) {
