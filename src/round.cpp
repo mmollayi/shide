@@ -208,15 +208,15 @@ jdatetime_floor(const date::local_seconds& ls, const Unit& unit, const int n)
         ls_out = date::local_seconds{ jdate_floor(ld, unit, n) };
         break;
     case Unit::hour:
-        h = floor_component2(tod.hours().count(), n);
+        h = floor_component1(tod.hours().count(), n);
         ls_out = ld + std::chrono::hours{ h };
         break;
     case Unit::minute:
-        m = floor_component2(tod.minutes().count(), n);
+        m = floor_component1(tod.minutes().count(), n);
         ls_out = ld + tod.hours() + std::chrono::minutes{ m };
         break;
     case Unit::second:
-        s = floor_component2(tod.seconds().count(), n);
+        s = floor_component1(tod.seconds().count(), n);
         ls_out = ld + tod.hours() + tod.minutes() + std::chrono::seconds{ s };
         break;
     default:
