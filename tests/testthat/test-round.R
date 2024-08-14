@@ -80,12 +80,43 @@ test_that("sh_floor works as expected for multi-units", {
 })
 
 test_that("sh_ceiling works as expected for each unit", {
-    d <- jdate(c("1367-09-06", "1371-03-13"))
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
+    d <- as_jdate(dt)
+
     expect_identical(sh_ceiling(d, "day"), jdate(c("1367-09-06", "1371-03-13")) + 1)
     expect_identical(sh_ceiling(d, "week"), jdate(c("1367-09-12", "1371-03-16")))
     expect_identical(sh_ceiling(d, "month"), jdate(c("1367-10-01", "1371-04-01")))
     expect_identical(sh_ceiling(d, "quarter"), jdate(c("1367-10-01", "1371-04-01")))
     expect_identical(sh_ceiling(d, "year"), jdate(c("1368-01-01", "1372-01-01")))
+
+    expect_identical(sh_ceiling(dt), dt)
+    expect_identical(sh_ceiling(dt, "second"), dt)
+    expect_identical(
+        sh_ceiling(dt, "minute"),
+        jdatetime(c("1367-09-06 12:28", "1371-03-13 14:03"), tz, format = "%F %H:%M")
+    )
+
+    expect_identical(
+        sh_ceiling(dt, "hour"),
+        jdatetime(c("1367-09-06 13", "1371-03-13 15"), tz, format = "%F %H")
+    )
+
+    expect_identical(
+        sh_ceiling(dt, "day"), jdatetime(c("1367-09-07", "1371-03-14"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "week"), jdatetime(c("1367-09-12", "1371-03-16"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "month"), jdatetime(c("1367-10-01", "1371-04-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "quarter"), jdatetime(c("1367-10-01", "1371-04-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "year"), jdatetime(c("1368-01-01", "1372-01-01"), tz, format = "%F")
+    )
 })
 
 test_that("sh_round works as expected for each unit", {
