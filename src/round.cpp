@@ -200,13 +200,6 @@ jdatetime_floor(const date::local_seconds& ls, const Unit& unit, const int n)
 
     switch (unit)
     {
-    case Unit::year:
-    case Unit::quarter:
-    case Unit::month:
-    case Unit::week:
-    case Unit::day:
-        ls_out = date::local_seconds{ jdate_floor(ld, unit, n) };
-        break;
     case Unit::hour:
         h = floor_component1(tod.hours().count(), n);
         ls_out = ld + std::chrono::hours{ h };
@@ -274,6 +267,11 @@ jdatetime_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int
 date::local_seconds
 jdatetime_ceiling(const date::local_seconds& ls, const Unit& unit, const int n)
 {
+    if (jdatetime_floor(ls, unit, n) == ls)
+    {
+        return ls;
+    }
+
     const date::local_days ld{ date::floor<date::days>(ls) };
     const auto tod = date::hh_mm_ss<std::chrono::seconds>{ ls - ld };
     date::local_seconds ls_out{};
@@ -281,13 +279,6 @@ jdatetime_ceiling(const date::local_seconds& ls, const Unit& unit, const int n)
 
     switch (unit)
     {
-    case Unit::year:
-    case Unit::quarter:
-    case Unit::month:
-    case Unit::week:
-    case Unit::day:
-        ls_out = date::local_seconds{ jdate_ceiling(ld, unit, n) };
-        break;
     case Unit::hour:
         h = ceiling_component1(tod.hours().count(), n);
         ls_out = ld + std::chrono::hours{ h };
