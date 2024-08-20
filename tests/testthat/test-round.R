@@ -141,6 +141,8 @@ test_that("sh_ceiling does not round up datetimes that are already on a boundary
     expect_equal(sh_ceiling(dt1, "3 years"), jdatetime_make(1404, 1, 1, tzone = tz))
     expect_equal(sh_ceiling(dt1, "5 years"), jdatetime_make(1405, 1, 1, tzone = tz))
     expect_equal(sh_ceiling(dt2, "hour"), dt2)
+    expect_equal(sh_ceiling(dt2, "3 hours"), dt2)
+    expect_equal(sh_ceiling(dt2, "5 hours"), jdatetime_make(1402, 1, 1, 15, tzone = tz))
     expect_equal(sh_ceiling(dt2, "minute"), dt2)
     expect_equal(sh_ceiling(dt2, "second"), dt2)
     expect_equal(sh_ceiling(dt2, "2 seconds"), dt2)

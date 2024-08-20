@@ -57,16 +57,7 @@ sh_floor.jdatetime <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "second"
     unit <- parse_unit(unit, "secs")
-
-    if (unit$unit %in% jdate_round_units) {
-        xx <- as_jdate(x)
-        out <- jdate_floor_cpp(xx, unit$unit, unit$n)
-        out <- as_jdatetime(jdate(out), tzone(x))
-    } else {
-        out <- jdatetime(jdatetime_floor_cpp(x, unit$unit, unit$n), tzone(x))
-    }
-
-    return(out)
+    jdatetime(jdatetime_floor_cpp(x, unit$unit, unit$n), tzone(x))
 }
 
 #' @rdname sh_round
@@ -88,16 +79,7 @@ sh_ceiling.jdatetime <- function(x, unit = NULL, ...) {
     check_dots_empty()
     unit <- unit %||% "second"
     unit <- parse_unit(unit, "secs")
-
-    if (unit$unit %in% jdate_round_units) {
-        xx <- as_jdate(x)
-        out <- jdate_ceiling_cpp(xx, unit$unit, unit$n)
-        out <- as_jdatetime(jdate(out), tzone(x))
-    } else {
-        out <- jdatetime(jdatetime_ceiling_cpp(x, unit$unit, unit$n), tzone(x))
-    }
-
-    return(out)
+    jdatetime(jdatetime_ceiling_cpp(x, unit$unit, unit$n), tzone(x))
 }
 
 parse_unit <- function(unit, resolution) {

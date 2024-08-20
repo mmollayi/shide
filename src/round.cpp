@@ -200,6 +200,13 @@ jdatetime_floor(const date::local_seconds& ls, const Unit& unit, const int n)
 
     switch (unit)
     {
+    case Unit::year:
+    case Unit::quarter:
+    case Unit::month:
+    case Unit::week:
+    case Unit::day:
+        ls_out = date::local_seconds{ jdate_floor(ld, unit, n) };
+        break;
     case Unit::hour:
         h = floor_component1(tod.hours().count(), n);
         ls_out = ld + std::chrono::hours{ h };
@@ -279,6 +286,13 @@ jdatetime_ceiling(const date::local_seconds& ls, const Unit& unit, const int n)
 
     switch (unit)
     {
+    case Unit::year:
+    case Unit::quarter:
+    case Unit::month:
+    case Unit::week:
+    case Unit::day:
+        ls_out = date::local_seconds{ jdate_ceiling(ld, unit, n) };
+        break;
     case Unit::hour:
         h = ceiling_component1(tod.hours().count(), n);
         ls_out = ld + std::chrono::hours{ h };
