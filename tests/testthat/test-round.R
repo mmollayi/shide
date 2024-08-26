@@ -129,6 +129,28 @@ test_that("sh_ceiling.jdatetime works as expected for each unit", {
     )
 })
 
+test_that("sh_ceiling works as expected for multi-units", {
+    tz <- "Asia/Tehran"
+
+    dt1 <- jdatetime("1403-05-15 12:01:59", tz)
+    dt2 <- jdatetime("1403-05-15 12:01:30", tz)
+
+    expect_identical(sh_ceiling(dt1, "2 seconds"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "3 seconds"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "5 seconds"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 minutes"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "3 minutes"), jdatetime("1403-05-15 12:03:00", tz))
+    expect_identical(sh_ceiling(dt1, "5 minutes"), jdatetime("1403-05-15 12:05:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 hours"), jdatetime("1403-05-15 14:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "5 hours"), jdatetime("1403-05-15 15:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 days"), jdatetime("1403-05-17 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "3 days"), jdatetime("1403-05-16 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "10 days"), jdatetime("1403-05-21 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 months"), jdatetime("1403-07-01 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 quarters"), jdatetime("1403-07-01 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 years"), jdatetime("1404-01-01 00:00:00", tz))
+})
+
 test_that("sh_ceiling does not round up datetimes that are already on a boundary", {
     tz <- "Asia/Tehran"
     dt1 <- jdatetime_make(1402, 1, 1, tzone = tz)
