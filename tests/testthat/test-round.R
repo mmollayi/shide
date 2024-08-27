@@ -1,7 +1,5 @@
-test_that("sh_floor works as expected for each unit", {
-    tz <- "Asia/Tehran"
-    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
-    d <- as_jdate(dt)
+test_that("sh_floor.jdate works as expected for each unit", {
+    d <- jdate(c("1367-09-06", "1371-03-13"))
 
     expect_identical(sh_floor(d), d)
     expect_identical(sh_floor(d, "day"), d)
@@ -9,6 +7,12 @@ test_that("sh_floor works as expected for each unit", {
     expect_identical(sh_floor(d, "month"), jdate(c("1367-09-01", "1371-03-01")))
     expect_identical(sh_floor(d, "quarter"), jdate(c("1367-07-01", "1371-01-01")))
     expect_identical(sh_floor(d, "year"), jdate(c("1367-01-01", "1371-01-01")))
+})
+
+test_that("sh_floor.jdatetime works as expected for each unit", {
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
+
 
     expect_identical(sh_floor(dt), dt)
     expect_identical(sh_floor(dt, "second"), dt)
@@ -39,10 +43,8 @@ test_that("sh_floor works as expected for each unit", {
     )
 })
 
-test_that("sh_floor works as expected for multi-units", {
-    tz <- "Asia/Tehran"
-    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
-    d <- as_jdate(dt)
+test_that("sh_floor.jdate works as expected for multi-units", {
+    d <- jdate(c("1367-09-06", "1371-03-13"))
 
     expect_identical(sh_floor(d, "2 days"), jdate(c("1367-09-05", "1371-03-13")))
     expect_identical(sh_floor(d, "10 days"), jdate(c("1367-09-01", "1371-03-11")))
@@ -50,6 +52,11 @@ test_that("sh_floor works as expected for multi-units", {
     expect_identical(sh_floor(d, "2 quarters"), jdate(c("1367-07-01", "1371-01-01")))
     expect_identical(sh_floor(d, "2 years"), jdate(c("1366-01-01", "1370-01-01")))
     expect_identical(sh_floor(d, "3 years"), jdate(c("1365-01-01", "1371-01-01")))
+})
+
+test_that("sh_floor.jdatetime works as expected for multi-units", {
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
 
     expect_identical(
         sh_floor(dt, "30 seconds"),
@@ -79,13 +86,89 @@ test_that("sh_floor works as expected for multi-units", {
     )
 })
 
-test_that("sh_ceiling works as expected for each unit", {
+test_that("sh_ceiling.jdate works as expected for each unit", {
     d <- jdate(c("1367-09-06", "1371-03-13"))
+
     expect_identical(sh_ceiling(d, "day"), jdate(c("1367-09-06", "1371-03-13")) + 1)
     expect_identical(sh_ceiling(d, "week"), jdate(c("1367-09-12", "1371-03-16")))
     expect_identical(sh_ceiling(d, "month"), jdate(c("1367-10-01", "1371-04-01")))
     expect_identical(sh_ceiling(d, "quarter"), jdate(c("1367-10-01", "1371-04-01")))
     expect_identical(sh_ceiling(d, "year"), jdate(c("1368-01-01", "1372-01-01")))
+})
+
+test_that("sh_ceiling.jdatetime works as expected for each unit", {
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
+
+    expect_identical(sh_ceiling(dt), dt)
+    expect_identical(sh_ceiling(dt, "second"), dt)
+    expect_identical(
+        sh_ceiling(dt, "minute"),
+        jdatetime(c("1367-09-06 12:28", "1371-03-13 14:03"), tz, format = "%F %H:%M")
+    )
+
+    expect_identical(
+        sh_ceiling(dt, "hour"),
+        jdatetime(c("1367-09-06 13", "1371-03-13 15"), tz, format = "%F %H")
+    )
+
+    expect_identical(
+        sh_ceiling(dt, "day"), jdatetime(c("1367-09-07", "1371-03-14"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "week"), jdatetime(c("1367-09-12", "1371-03-16"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "month"), jdatetime(c("1367-10-01", "1371-04-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "quarter"), jdatetime(c("1367-10-01", "1371-04-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_ceiling(dt, "year"), jdatetime(c("1368-01-01", "1372-01-01"), tz, format = "%F")
+    )
+})
+
+test_that("sh_ceiling works as expected for multi-units", {
+    tz <- "Asia/Tehran"
+
+    dt1 <- jdatetime("1403-05-15 12:01:59", tz)
+    dt2 <- jdatetime("1403-05-15 12:01:30", tz)
+
+    expect_identical(sh_ceiling(dt1, "2 seconds"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "3 seconds"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "5 seconds"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 minutes"), jdatetime("1403-05-15 12:02:00", tz))
+    expect_identical(sh_ceiling(dt1, "3 minutes"), jdatetime("1403-05-15 12:03:00", tz))
+    expect_identical(sh_ceiling(dt1, "5 minutes"), jdatetime("1403-05-15 12:05:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 hours"), jdatetime("1403-05-15 14:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "5 hours"), jdatetime("1403-05-15 15:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 days"), jdatetime("1403-05-17 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "3 days"), jdatetime("1403-05-16 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "10 days"), jdatetime("1403-05-21 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 months"), jdatetime("1403-07-01 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 quarters"), jdatetime("1403-07-01 00:00:00", tz))
+    expect_identical(sh_ceiling(dt1, "2 years"), jdatetime("1404-01-01 00:00:00", tz))
+})
+
+test_that("sh_ceiling does not round up datetimes that are already on a boundary", {
+    tz <- "Asia/Tehran"
+    dt1 <- jdatetime_make(1402, 1, 1, tzone = tz)
+    dt2 <- jdatetime_make(1402, 1, 1, 12, tzone = tz)
+
+    expect_equal(sh_ceiling(dt1, "year"), dt1)
+    expect_equal(sh_ceiling(dt1, "month"), dt1)
+    expect_equal(sh_ceiling(dt1, "day"), dt1)
+    expect_equal(sh_ceiling(dt1, "2 years"), dt1)
+    expect_equal(sh_ceiling(dt1, "3 years"), jdatetime_make(1404, 1, 1, tzone = tz))
+    expect_equal(sh_ceiling(dt1, "5 years"), jdatetime_make(1405, 1, 1, tzone = tz))
+    expect_equal(sh_ceiling(dt2, "hour"), dt2)
+    expect_equal(sh_ceiling(dt2, "3 hours"), dt2)
+    expect_equal(sh_ceiling(dt2, "5 hours"), jdatetime_make(1402, 1, 1, 15, tzone = tz))
+    expect_equal(sh_ceiling(dt2, "minute"), dt2)
+    expect_equal(sh_ceiling(dt2, "second"), dt2)
+    expect_equal(sh_ceiling(dt2, "2 seconds"), dt2)
+    expect_equal(sh_ceiling(dt2, "5 seconds"), dt2)
 })
 
 test_that("sh_round works as expected for each unit", {
