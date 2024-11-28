@@ -1,11 +1,6 @@
 #include <cstring>
 #include "shide.h"
 
-// #define JALALI_ZERO 1947954
-// #define LOWER_PERSIAN_YEAR -1096
-// #define UPPER_PERSIAN_YEAR 2327
-// #define N_MONTHS 12
-
 constexpr int JALALI_ZERO{ 1947954 };
 constexpr int LOWER_PERSIAN_YEAR {-1096};
 constexpr int UPPER_PERSIAN_YEAR {2327};
@@ -13,29 +8,34 @@ constexpr int LOWER_JD{ 1547650 };
 constexpr int UPPER_JD{ 2797873 };
 constexpr int N_MONTHS {12};
 
-int jalali_jd0(int year) {
-    static const short breaks[12] = { -708, -221,   -3,    6,  394,  720,
+int jalali_jd0(const int year) {
+    static constexpr int breaks[12] { -708, -221,   -3,    6,  394,  720,
                                       786, 1145, 1635, 1701, 1866, 2328 };
-    static const short deltas[12] = { 1108, 1047,  984, 1249,  952,  891,
+    static constexpr int deltas[12] { 1108, 1047,  984, 1249,  952,  891,
                                       930,  866,  869,  844,  848,  852 };
-    int i;
-    int rval{-1};
 
-    if (year < LOWER_PERSIAN_YEAR || year > UPPER_PERSIAN_YEAR)
+    // this case is equivalent to i=8 and is the most common case that may happen in practice
+    if (year >= breaks[7] && year < breaks[8])
     {
-        cpp11::stop("year is out of valid range.");           /* out of valid range */
+        return JALALI_ZERO + year * 365 + (deltas[8] + year * 303) / 1250 ;
     }
 
-    for (i = 0; i < 12; i++) {
-        if (year < breaks[i]) {
+    if (year < LOWER_PERSIAN_YEAR || year > UPPER_PERSIAN_YEAR)
+        return 0;           // out of valid range
+
+    int rval{ 0 };
+    for (int i{ 0 }; i < 12; ++i)
+    {
+        if (year < breaks[i])
+        {
             rval = JALALI_ZERO + year * 365 + (deltas[i] + year * 303) / 1250;
-            if (i < 3)  /* zero point drops one day in first three blocks */
-                rval--;
+            if (i < 3)  // zero point drops one day in first three blocks
+                --rval;
             break;
         }
     }
 
-    return(rval);           /* out of valid range */
+    return rval;
 }
 
 int get_calendar_data(int year, int *days, char *month_data)
