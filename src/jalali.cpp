@@ -7,6 +7,8 @@ constexpr int UPPER_PERSIAN_YEAR {2327};
 constexpr int LOWER_JD{ 1547650 };
 constexpr int UPPER_JD{ 2797873 };
 constexpr int N_MONTHS {12};
+constexpr int MONTH_DATA[12] { 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29 };
+constexpr int MONTH_DATA_CUM[12] { 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336 };
 
 int jalali_jd0(const int year) {
     static constexpr int breaks[12] { -708, -221,   -3,    6,  394,  720,
@@ -62,27 +64,7 @@ int get_calendar_data(int year, int *days, char *month_data)
 
 int ymd_to_day(int year, int month, int day)
 {
-    if (year < LOWER_PERSIAN_YEAR || year > UPPER_PERSIAN_YEAR)
-    {
-        cpp11::stop("year is out of valid range.");           /* out of valid range */
-    }
-
-    char mdata[N_MONTHS];
-    int jd;
-    int year_ends[2];
-    int rval;
-
-    rval = get_calendar_data(year, year_ends, mdata);
-    if( !rval)
-    {
-        jd = year_ends[0];
-        for(int i = 0; i < month - 1; i++)
-            jd += mdata[i];
-        jd += day - 1;
-    }
-    else
-        jd = 0;
-    return( jd);
+    return jalali_jd0(year) + MONTH_DATA_CUM[month - 1] + day;
 }
 
 int mod( int x, int y)
