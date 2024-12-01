@@ -6,9 +6,8 @@ constexpr int LOWER_PERSIAN_YEAR {-1096};
 constexpr int UPPER_PERSIAN_YEAR {2327};
 constexpr int LOWER_JD{ 1547650 };
 constexpr int UPPER_JD{ 2797873 };
-constexpr int N_MONTHS {12};
 constexpr int MONTH_DATA[12] { 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29 };
-constexpr int MONTH_DATA_CUM[12] { 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336 };
+constexpr int MONTH_DATA_CUM[13] { 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366 };
 
 int jalali_jd0(const int year) {
     static constexpr int breaks[12] { -708, -221,   -3,    6,  394,  720,
@@ -40,28 +39,6 @@ int jalali_jd0(const int year) {
     return rval;
 }
 
-int get_calendar_data(int year, int *days, char *month_data)
-{
-    int rval = 0;
-
-    days[0] = jalali_jd0( year) + 1;
-    days[1] = jalali_jd0( year + 1) + 1;
-    /* The first six months have 31 days.  The next five have 30  */
-    /* days.  The last month has 29 days in ordinary years,  30   */
-    /* in leap years.                                             */
-    memset(month_data, 31, 6);
-    memset(month_data + 6, 30, 5);
-    month_data[11] = (char)(days[1] - days[0] - 336);
-
-    /* days[1] = JD of "New Years Eve" + 1;  that is,    */
-    /* New Years Day of the following year.  If you have */
-    /* days[0] <= JD < days[1],  JD is in the current year. */
-    days[1] = days[0];
-    for( int i = 0; i < N_MONTHS; i++)
-        days[1] += month_data[i];
-    return( rval);
-}
-
 int ymd_to_day(int year, int month, int day)
 {
     return jalali_jd0(year) + MONTH_DATA_CUM[month - 1] + day;
@@ -91,50 +68,40 @@ int approx_year( int jd)
     return(year);
 }
 
-void day_to_ymd(int jd, int *year, int *month, int *day)
+void day_to_ymd(int jd, int* year, int* month, int* day)
 {
-    if (jd < LOWER_JD || jd > UPPER_JD)
-    {
-        cpp11::stop("jd is out of valid range.");
-    }
-
-    int year_ends[2];
-    int curr_jd;
-    char month_data[N_MONTHS];
-
-    *year = approx_year( jd);
+    *year = approx_year(jd);
     *day = -1;           /* to signal an error */
-    int j = 1;
+    int year_ends[2]{};
     do
     {
-        // making sure we don't stuck in an infinite loop
-        if (j == 3)
-        {
-            cpp11::stop("unknow error.");
-        }
-
-        if( get_calendar_data( *year, year_ends, month_data))
+        year_ends[0] = jalali_jd0(*year) + 1;
+        year_ends[1] = jalali_jd0(*year + 1);
+        if (!(year_ends[0] && year_ends[1]))
             return;
-        if( year_ends[0] > jd)
+        if (year_ends[0] > jd)
+        {
             (*year)--;
-        if( year_ends[1] <= jd)
-            (*year)++;
-        j++;
-    }
-    while( year_ends[0] > jd || year_ends[1] <= jd);
-
-    curr_jd = year_ends[0];
-    *month = -1;
-    for( int i = 0; i < N_MONTHS; i++)
-    {
-        *day = jd - curr_jd;
-        if(*day < month_data[i])
-        {
-            *month = i + 1;
-            (*day)++;
-            return;
+            continue;
         }
-        curr_jd += month_data[i];
+
+        if (year_ends[1] < jd)
+        {
+            (*year)++;
+            continue;
+        }
+
+    } while (year_ends[0] > jd || year_ends[1] < jd);
+
+    int yday{ jd - year_ends[0] + 1 };
+    for (int i{ 1 }; i < 13; ++i)
+    {
+        if (yday <= MONTH_DATA_CUM[i])
+        {
+            *month = i;
+            *day = yday - MONTH_DATA_CUM[i - 1];
+            break;
+        }
     }
     return;
 }
