@@ -9,8 +9,6 @@
 #include <Rinternals.h>
 #include "sh_year_month_day.h"
 
-const int jd_unix_epoch{ 2440588 };
-
 date::sys_seconds sys_seconds_from_double(double x);
 
 #endif

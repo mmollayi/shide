@@ -1,5 +1,4 @@
 #include <cstring>
-#include "shide.h"
 
 constexpr int JALALI_ZERO{ 1947954 };
 constexpr int LOWER_PERSIAN_YEAR {-1096};
@@ -7,7 +6,6 @@ constexpr int UPPER_PERSIAN_YEAR {2327};
 constexpr int LOWER_JD{ 1547650 };
 constexpr int UPPER_JD{ 2797873 };
 constexpr int MONTH_DATA[12] { 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29 };
-constexpr int MONTH_DATA_CUM[13] { 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366 };
 
 int jalali_jd0(const int year) {
     static constexpr int breaks[12] { -708, -221,   -3,    6,  394,  720,
@@ -31,7 +29,7 @@ int jalali_jd0(const int year) {
         {
             rval = JALALI_ZERO + year * 365 + (deltas[i] + year * 303) / 1250;
             if (i < 3)  // zero point drops one day in first three blocks
-                --rval;
+                rval--;;
             break;
         }
     }
@@ -39,12 +37,7 @@ int jalali_jd0(const int year) {
     return rval;
 }
 
-int ymd_to_day(int year, int month, int day)
-{
-    return jalali_jd0(year) + MONTH_DATA_CUM[month - 1] + day;
-}
-
-int mod( int x, int y)
+int mod(const int x, const int y)
 {
     int rval = x % y;
 
@@ -55,55 +48,16 @@ int mod( int x, int y)
 
 int approx_year( int jd)
 {
-    int year, n1 = 0, n2 = 0, calendar_epoch, day_in_cycle;
-    n1 = 2820;           /* exact values which overflow on 32 bits */
-    n2 = 2820 * 365 + 683;
-    calendar_epoch = JALALI_ZERO + 1;
+    static constexpr int calendar_epoch{ JALALI_ZERO + 1 };
+    static constexpr int n1{ 2820 }; /* exact values which overflow on 32 bits */
+    static constexpr int n2{ 2820 * 365 + 683 };
 
     jd -= calendar_epoch;
-    day_in_cycle = mod(jd, n2);
-    year = n1 * (( jd - day_in_cycle) / n2);
-    double tmp = (double)n1 / n2;
-    year += day_in_cycle * tmp;
-    return(year);
-}
-
-void day_to_ymd(int jd, int* year, int* month, int* day)
-{
-    *year = approx_year(jd);
-    *day = -1;           /* to signal an error */
-    int year_ends[2]{};
-    do
-    {
-        year_ends[0] = jalali_jd0(*year) + 1;
-        year_ends[1] = jalali_jd0(*year + 1);
-        if (!(year_ends[0] && year_ends[1]))
-            return;
-        if (year_ends[0] > jd)
-        {
-            (*year)--;
-            continue;
-        }
-
-        if (year_ends[1] < jd)
-        {
-            (*year)++;
-            continue;
-        }
-
-    } while (year_ends[0] > jd || year_ends[1] < jd);
-
-    int yday{ jd - year_ends[0] + 1 };
-    for (int i{ 1 }; i < 13; ++i)
-    {
-        if (yday <= MONTH_DATA_CUM[i])
-        {
-            *month = i;
-            *day = yday - MONTH_DATA_CUM[i - 1];
-            break;
-        }
-    }
-    return;
+    const int day_in_cycle{ mod(jd, n2) };
+    const double tmp{ (static_cast<double>(n1) / n2) * day_in_cycle };
+    int year{ n1 * ((jd - day_in_cycle) / n2) };
+    year += static_cast<int>(tmp);
+    return year ;
 }
 
 bool year_is_leap(const int year)

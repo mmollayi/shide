@@ -8,8 +8,6 @@ cpp11::writable::strings
 format_jdate_cpp(const cpp11::doubles x,
                    const cpp11::strings& format)
 {
-    int jd, year, month, day;
-
     if (format.size() != 1) {
         cpp11::stop("`format` must have size 1.");
     }
@@ -19,6 +17,10 @@ format_jdate_cpp(const cpp11::doubles x,
 
     const std::string format_(format[0]);
     const char* fmt = format_.c_str();
+
+    date::local_days ld;
+    sh_year_month_day ymd{};
+    date::year_month_day ymd2{};
 
     std::ostringstream os;
     os.imbue(std::locale::classic());
@@ -32,11 +34,11 @@ format_jdate_cpp(const cpp11::doubles x,
         os.str(std::string());
         os.clear();
 
-        jd = static_cast<int>(x[i]) + jd_unix_epoch;
-        day_to_ymd(jd, &year, &month, &day);
-        auto ymd = date::year{year}/month/day;
+        ld = date::local_days{ date::days(static_cast<int>(x[i]))};
+        ymd = sh_year_month_day{ ld };
+        ymd2 = {ymd.year(), ymd.month(), ymd.day()};
 
-        date::to_stream(os, fmt, ymd);
+        date::to_stream(os, fmt, ymd2);
 
         if (os.fail()) {
             SET_STRING_ELT(out, i, NA_STRING);

@@ -3,6 +3,11 @@
 #include <tzdb/date.h>
 #include "jalali.h"
 
+namespace constants
+{
+    constexpr int MONTH_DATA_CUM[13]{ 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366 };
+}
+
 using days = date::days;
 using months = date::months;
 using years = date::years;
@@ -100,7 +105,7 @@ sh_year_month_day::to_days() const NOEXCEPT
     auto const y = static_cast<int>(y_);
     auto const m = static_cast<int>(static_cast<unsigned>(m_));
     auto const d = static_cast<int>(static_cast<unsigned>(d_));
-    return days{ ymd_to_day(y, m, d) - 2440588 };
+    return days{ jalali_jd0(y) + constants::MONTH_DATA_CUM[m - 1] + d - jd_unix_epoch };
 }
 
 inline
@@ -113,9 +118,41 @@ inline
 sh_year_month_day
 sh_year_month_day::from_days(days dp) NOEXCEPT
 {
-    auto const jd = dp.count() + 2440588;
-    int y, m, d;
-    day_to_ymd(jd, &y, &m, &d);
+    auto const jd = dp.count() + jd_unix_epoch;
+    int m{ 1 };
+    int y{ approx_year(jd) };
+    int year_ends[2]{};
+    do
+    {
+        year_ends[0] = jalali_jd0(y) + 1;
+        year_ends[1] = jalali_jd0(y + 1);
+        assert(year_ends[0] && year_ends[1]);
+
+        if (year_ends[0] > jd)
+        {
+            y--;
+            continue;
+        }
+
+        if (year_ends[1] < jd)
+        {
+            y++;
+            continue;
+        }
+
+    } while (year_ends[0] > jd || year_ends[1] < jd);
+
+    const int doy{ jd - year_ends[0] + 1 };
+    for (int i{ 1 }; i < 13; ++i)
+    {
+        if (doy <= constants::MONTH_DATA_CUM[i])
+        {
+            m = i;
+            break;
+        }
+    }
+
+    const int d{ doy - constants::MONTH_DATA_CUM[m - 1] };
     return sh_year_month_day{ date::year(y), date::month(m), date::day(d) };
 }
 
