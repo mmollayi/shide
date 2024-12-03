@@ -37,13 +37,11 @@ int jalali_jd0(const int year) {
     return rval;
 }
 
+constexpr
 int mod(const int x, const int y)
 {
-    int rval = x % y;
-
-    if( rval < 0)
-        rval += y;
-    return(rval);
+    const int rval{ x % y };
+    return rval < 0 ? rval + y : rval;
 }
 
 int approx_year( int jd)
