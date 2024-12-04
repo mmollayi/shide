@@ -8,10 +8,9 @@ date::local_seconds to_local_seconds(const date::sys_seconds& tp,
 
 int sh_yday(const sh_year_month_day& ymd)
 {
-    static const int month_data_cum[12] = {0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336};
-    int m{static_cast<int>(unsigned{ ymd.month() })};
-    int d{static_cast<int>(unsigned{ ymd.day() })};
-    return month_data_cum[m-1] + d;
+    const int m{ static_cast<int>(unsigned{ ymd.month() }) };
+    const int d{ static_cast<int>(unsigned{ ymd.day() }) };
+    return constants::MONTH_DATA_CUM[m - 1] + d;
 }
 
 int sh_qday(const sh_year_month_day& ymd)
