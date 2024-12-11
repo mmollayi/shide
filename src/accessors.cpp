@@ -10,7 +10,7 @@ int sh_yday(const sh_year_month_day& ymd)
 {
     const int m{ static_cast<int>(unsigned{ ymd.month() }) };
     const int d{ static_cast<int>(unsigned{ ymd.day() }) };
-    return constants::MONTH_DATA_CUM[m - 1] + d;
+    return internal::MONTH_DATA_CUM[m - 1] + d;
 }
 
 int sh_qday(const sh_year_month_day& ymd)
