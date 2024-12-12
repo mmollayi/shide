@@ -1,5 +1,4 @@
 #include "shide.h"
-#include "jalali.h"
 
 std::string get_current_tzone_cpp();
 

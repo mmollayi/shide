@@ -1,7 +1,5 @@
 #include "shide.h"
 
-bool year_is_leap(const int year);
-
 sh_year_month_day
 first_day_next_month(const sh_year_month_day& ymd) {
     date::year_month ym{ ymd.year(), ymd.month() };
@@ -16,7 +14,7 @@ bool sh_date_is_leap(const sh_year_month_day& ymd) {
     if (ymd.month() != date::month{ 12 })
         return false;
 
-    if (!year_is_leap(int{ ymd.year() }))
+    if (!year_is_leap(ymd.year()))
         return false;
 
     return false;

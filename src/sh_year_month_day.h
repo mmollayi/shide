@@ -26,7 +26,7 @@ jalali_jd0(const int year) {
     // this case is equivalent to i=8 and is the most common case that may happen in practice
     if (year >= breaks[7] && year < breaks[8])
     {
-        return { JALALI_ZERO + year * 365 + (deltas[8] + year * 303) / 1250 };
+        return JALALI_ZERO + year * 365 + (deltas[8] + year * 303) / 1250;
     }
 
     if (year < LOWER_PERSIAN_YEAR || year > UPPER_PERSIAN_YEAR)

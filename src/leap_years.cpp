@@ -1,13 +1,12 @@
 #include <cpp11.hpp>
 #include <R.h>
 #include <Rinternals.h>
-
-bool year_is_in_range(const int year);
-bool year_is_leap(const int year);
+#include "sh_year_month_day.h"
 
 [[cpp11::register]]
 cpp11::writable::logicals year_is_leap_cpp(const cpp11::integers& x)
 {
+    using namespace internal;
     const R_xlen_t size = x.size();
     cpp11::writable::logicals out(size);
     for (R_xlen_t i = 0; i < size; ++i)
@@ -18,14 +17,10 @@ cpp11::writable::logicals year_is_leap_cpp(const cpp11::integers& x)
             continue;
         }
 
-        if (!year_is_in_range(x[i]))
+        if (x[i] < LOWER_PERSIAN_YEAR || x[i] > UPPER_PERSIAN_YEAR)
             cpp11::stop("year is out of valid range.");
 
-
-        if (year_is_leap(x[i]))
-            out[i] = true;
-        else
-            out[i] = false;
+        out[i] = year_is_leap(date::year{x[i]});
     }
 
     return out;

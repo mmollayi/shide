@@ -1,5 +1,4 @@
 #include "shide.h"
-#include "jalali.h"
 
 enum class choose;
 choose string_to_choose(const std::string& choose_str);
