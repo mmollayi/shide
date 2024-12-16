@@ -1,7 +1,8 @@
 #include "shide.h"
+#include <optional>
 
 enum class choose;
-choose string_to_choose(const std::string& choose_str);
+std::optional<choose> string_to_choose(const std::string& choose_str);
 double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
                                     date::local_info& info, const choose& c);
 
@@ -73,7 +74,13 @@ jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format,
         cpp11::stop("`format` must have size 1.");
     }
 
-    const auto Ambiguous{ string_to_choose(ambiguous) };
+    const auto opt{ string_to_choose(ambiguous) };
+
+    if (!opt) {
+        cpp11::stop("Invalid ambiguous relolution strategy");
+    }
+
+    const auto Ambiguous{*opt};
     date::local_seconds ls;
     const date::time_zone* tz{};
     date::local_info info;

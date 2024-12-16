@@ -1,13 +1,15 @@
 #include "shide.h"
 #include <map>
 #include <math.h>
+#include <optional>
 
 using cpp11::integers;
 using cpp11::doubles;
 using std::chrono::seconds;
 
 enum class choose { earliest, latest, NA };
-choose string_to_choose(const std::string& choose_str) {
+
+std::optional<choose> string_to_choose(const std::string& choose_str) {
     static const std::map<std::string, choose> choose_map{
         {"earliest", choose::earliest},
         {"latest", choose::latest},
@@ -19,7 +21,7 @@ choose string_to_choose(const std::string& choose_str) {
         return it->second;
     }
     else {
-        cpp11::stop("Invalid ambiguous relolution strategy: (%s)", choose_str.c_str());
+        return {};
     }
 }
 
@@ -215,7 +217,13 @@ jdatetime_make_impl(const integers& year, const integers& month, const integers&
 doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields,
                            const cpp11::strings& tzone, const std::string& ambiguous)
 {
-    const auto Ambiguous{ string_to_choose(ambiguous) };
+    const auto opt{ string_to_choose(ambiguous) };
+
+    if (!opt) {
+        cpp11::stop("Invalid ambiguous relolution strategy");
+    }
+
+    const auto Ambiguous{*opt};
     const date::time_zone* tz{};
     const std::string tz_name(tzone[0]);
 
