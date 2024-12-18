@@ -2,6 +2,7 @@
 #include <map>
 #include <math.h>
 #include <optional>
+#include "hour_minute_second.h"
 
 using cpp11::integers;
 using cpp11::doubles;
@@ -136,9 +137,10 @@ bool make_local_seconds(const int year, const int month, const int day,
 {
     using std::chrono::hours;
     using std::chrono::minutes;
+    using std::chrono::seconds;
 
-    if (!hour_minute_second_ok(hour, minute, second))
-    {
+    const auto hms = hour_minute_second{hours(hour), minutes(minute), seconds(second)};
+    if (!hms.in_conventional_range()) {
         return false;
     }
 
@@ -148,7 +150,7 @@ bool make_local_seconds(const int year, const int month, const int day,
         return false;
     }
 
-    ls = local_days(ymd) + hours{ hour } + minutes{ minute } + seconds{ second };
+    ls = local_days(ymd) + hms.to_duration();
     return true;
 }
 

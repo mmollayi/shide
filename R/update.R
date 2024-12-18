@@ -29,9 +29,9 @@ jdatetime_update <- function(x, fields, ..., ambiguous = NULL) {
 
     fields <- vec_cast_common(!!!fields, .to = integer())
     fields <- vec_recycle_common(!!!fields, .size = size)
-    fields <- df_list_propagate_missing(fields)
     fields_x <- jdatetime_get_fields_cpp(x)
     fields_out <- vec_assign(fields_x, names(fields), fields)
+    fields_out <- df_list_propagate_missing(fields_out)
 
     if (is.null(ambiguous)) {
         out <- jdatetime_make_with_reference_cpp(fields_out, tz, x)
