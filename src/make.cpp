@@ -117,20 +117,6 @@ double jdatetime_from_local_seconds_with_reference(const date::local_seconds& ls
     return static_cast<double>(s.count());
 }
 
-bool hour_minute_second_ok(const int hour, const int minute, const int second)
-{
-    if (!(0 <= hour && hour <= 23))
-        return false;
-
-    if (!(0 <= minute && minute <= 59))
-        return false;
-
-    if (!(0 <= second && second <= 59))
-        return false;
-
-    return true;
-}
-
 bool make_local_seconds(const int year, const int month, const int day,
                         const int hour, const int minute, const int second,
                         date::local_seconds& ls)
