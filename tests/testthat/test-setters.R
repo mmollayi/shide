@@ -43,6 +43,11 @@ test_that("setter functions return NA for NA input values", {
     sh_year(d[1]) <- NA
     expect_equal(d, vec_c(NA, d[2]))
     expect_equal(dt,vec_c(NA, dt[2]))
+
+    sh_second(dt[2]) <- NA
+    sh_day(d[2]) <- NA
+    expect_equal(d, vec_c(jdate(NA_real_), NA))
+    expect_equal(dt,vec_c(jdatetime(NA_real_, tzone  = "Asia/Tehran"), NA))
 })
 
 test_that("setter functions return NA for invalid input values", {
