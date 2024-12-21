@@ -117,26 +117,18 @@ double jdatetime_from_local_seconds_with_reference(const date::local_seconds& ls
     return static_cast<double>(s.count());
 }
 
-bool make_local_seconds(const int year, const int month, const int day,
-                        const int hour, const int minute, const int second,
-                        date::local_seconds& ls)
+bool make_local_seconds(const sh_fields& fds, date::local_seconds& ls)
 {
-    using std::chrono::hours;
-    using std::chrono::minutes;
-    using std::chrono::seconds;
-
-    const auto hms = hour_minute_second{hours(hour), minutes(minute), seconds(second)};
-    if (!hms.in_conventional_range()) {
+    if (!fds.tod.in_conventional_range()) {
         return false;
     }
 
-    const auto ymd = sh_year_month_day{ date::year(year), date::month(month), date::day(day) };
-    if (!ymd.ok())
+    if (!fds.ymd.ok())
     {
         return false;
     }
 
-    ls = local_days(ymd) + hms.to_duration();
+    ls = local_days(fds.ymd) + fds.tod.to_duration();
     return true;
 }
 
@@ -178,10 +170,14 @@ jdatetime_make_impl(const integers& year, const integers& month, const integers&
                     const integers& hour, const integers& minute, const integers& second,
                     const date::time_zone* tz, const choose& c)
 {
+    using std::chrono::hours;
+    using std::chrono::minutes;
+    using std::chrono::seconds;
     const R_xlen_t size = year.size();
     cpp11::writable::doubles out(size);
     date::local_seconds ls;
     date::local_info info;
+    struct sh_fields fds{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (year[i] == NA_INTEGER) {
@@ -189,7 +185,9 @@ jdatetime_make_impl(const integers& year, const integers& month, const integers&
             continue;
         }
 
-        if (!make_local_seconds(year[i], month[i], day[i], hour[i], minute[i], second[i], ls))
+        fds.ymd = {date::year(year[i]), date::month(month[i]), date::day(day[i])};
+        fds.tod = {hours(hour[i]), minutes(minute[i]), seconds(second[i])};
+        if (!make_local_seconds(fds, ls))
         {
             out[i] = NA_REAL;
             continue;
@@ -227,11 +225,15 @@ doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields,
 doubles jdatetime_make_with_reference_impl(const integers& year, const integers& month, const integers& day,
                                            const integers& hour, const integers& minute, const integers& second,
                                            const date::time_zone* tz, const doubles& ref) {
+    using std::chrono::hours;
+    using std::chrono::minutes;
+    using std::chrono::seconds;
     const R_xlen_t size = year.size();
     cpp11::writable::doubles out(size);
     date::local_seconds ls;
     date::local_info info;
     date::sys_seconds ss_ref;
+    struct sh_fields fds{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (year[i] == NA_INTEGER) {
@@ -239,7 +241,9 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
             continue;
         }
 
-        if (!make_local_seconds(year[i], month[i], day[i], hour[i], minute[i], second[i], ls))
+        fds.ymd = {date::year(year[i]), date::month(month[i]), date::day(day[i])};
+        fds.tod = {hours(hour[i]), minutes(minute[i]), seconds(second[i])};
+        if (!make_local_seconds(fds, ls))
         {
             out[i] = NA_REAL;
             continue;

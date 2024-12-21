@@ -1,6 +1,7 @@
 #ifndef SH_YEAR_MONTH_DAY_H
 #define SH_YEAR_MONTH_DAY_H
 #include <tzdb/date.h>
+#include "hour_minute_second.h"
 
 namespace internal
 {
@@ -491,17 +492,16 @@ sh_year_month_day::sh_year_month_day(const sh_year_month_day_last& ymdl) NOEXCEP
     , d_(ymdl.day())
 {}
 
-template <class Duration>
 struct sh_fields
 {
-    sh_year_month_day        ymd{ date::nanyear, date::month(0), date::day(0) };
-    date::hh_mm_ss<Duration>    tod{};
+    sh_year_month_day     ymd{ date::nanyear, date::month(0), date::day(0) };
+    hour_minute_second    tod{};
     bool                  has_tod = false;
 
     sh_fields() = default;
     sh_fields(sh_year_month_day ymd_) : ymd(ymd_) {}
-    sh_fields(date::hh_mm_ss<Duration> tod_) : tod(tod_), has_tod(true) {}
-    sh_fields(sh_year_month_day ymd_, date::hh_mm_ss<Duration> tod_) : ymd(ymd_), tod(tod_),
+    sh_fields(hour_minute_second tod_) : tod(tod_), has_tod(true) {}
+    sh_fields(sh_year_month_day ymd_, hour_minute_second tod_) : ymd(ymd_), tod(tod_),
     has_tod(true) {}
 };
 
