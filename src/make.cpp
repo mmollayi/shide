@@ -52,7 +52,8 @@ choose detect_ambiguous_resolution_from_reference(const date::time_zone* tz,
 }
 
 double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
-                                    date::local_info& info, const choose& c)
+                                    date::local_info& info, choose c,
+                                    const date::sys_seconds* ss_ref=nullptr)
 {
     tzdb::get_local_info(ls, tz, info);
     seconds s{};
@@ -62,41 +63,8 @@ double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::t
     }
     else if (info.result == date::local_info::ambiguous)
     {
-        switch (c)
-        {
-        case choose::earliest:
-            s = ls.time_since_epoch() - info.first.offset;
-            break;
-        case choose::latest:
-            s = ls.time_since_epoch() - info.second.offset;
-            break;
-        case choose::NA:
-            return NA_REAL;
-        }
-    }
-    else
-    {
-        return NA_REAL;
-    }
-
-    return static_cast<double>(s.count());
-}
-
-double jdatetime_from_local_seconds_with_reference(const date::local_seconds& ls,
-                                                   const date::time_zone* tz,
-                                                   date::local_info& info,
-                                                   const date::sys_seconds& ss_ref)
-{
-    tzdb::get_local_info(ls, tz, info);
-    seconds s{};
-    if (info.result == date::local_info::unique)
-    {
-        s = ls.time_since_epoch() - info.first.offset;
-    }
-    else if (info.result == date::local_info::ambiguous)
-    {
-        const auto c = detect_ambiguous_resolution_from_reference(tz, ss_ref);
-
+        if (ss_ref)
+            c = detect_ambiguous_resolution_from_reference(tz, *ss_ref);
         switch (c)
         {
         case choose::earliest:
@@ -168,7 +136,7 @@ doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields) {
 doubles
 jdatetime_make_impl(const integers& year, const integers& month, const integers& day,
                     const integers& hour, const integers& minute, const integers& second,
-                    const date::time_zone* tz, const choose& c)
+                    const date::time_zone* tz, const choose c)
 {
     using std::chrono::hours;
     using std::chrono::minutes;
@@ -232,7 +200,7 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
     cpp11::writable::doubles out(size);
     date::local_seconds ls;
     date::local_info info;
-    date::sys_seconds ss_ref;
+    date::sys_seconds ss_ref{};
     struct sh_fields fds{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
@@ -250,7 +218,7 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
         }
 
         ss_ref = sys_seconds_from_double(ref[i]);
-        out[i] = jdatetime_from_local_seconds_with_reference(ls, tz, info, ss_ref);
+        out[i] = jdatetime_from_local_seconds(ls, tz, info, choose{}, &ss_ref);
     }
 
     return out;
