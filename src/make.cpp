@@ -34,20 +34,18 @@ choose detect_ambiguous_resolution_from_reference(const date::time_zone* tz,
     const date::local_seconds ls_ref{ (ss_ref + info.offset).time_since_epoch() };
     date::local_info info2;
     tzdb::get_local_info(ls_ref, tz, info2);
-    const date::sys_seconds ss_ref1{ (ls_ref - info2.first.offset).time_since_epoch() };
-    const date::sys_seconds ss_ref2{ (ls_ref - info2.second.offset).time_since_epoch() };
 
-    if (ss_ref == ss_ref1)
+    if (info2.first.begin == info.begin)
     {
         return choose::earliest;
     }
-    else if (ss_ref == ss_ref2)
+    else if (info2.second.begin == info.begin)
     {
         return choose::latest;
     }
     else
     {
-        cpp11::stop("Unknown error");
+        return choose::NA;
     }
 }
 

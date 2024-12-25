@@ -34,21 +34,32 @@ test_that("jdatetime_update works as expected", {
 })
 
 test_that("jdatetime_update works as expected when input is consulted for resolving ambiguous time", {
-    dt1 <- jdatetime("1401-06-30 23:00:00", "Asia/Tehran", ambiguous = "latest")
-    dt2 <- jdatetime("1401-06-30 23:00:00", "Asia/Tehran", ambiguous = "earliest")
+    tz = "Asia/Tehran"
+    dt1 <- jdatetime("1401-06-30 23:00:00", tz, ambiguous = "latest")
+    dt2 <- jdatetime("1401-06-30 23:00:00", tz, ambiguous = "earliest")
 
     expect_identical(
         jdatetime_update(dt1, list(second = 1)),
-        jdatetime("1401-06-30 23:00:01", "Asia/Tehran", ambiguous = "latest")
+        jdatetime("1401-06-30 23:00:01", tz, ambiguous = "latest")
     )
 
     expect_identical(
         jdatetime_update(dt2, list(second = 1)),
-        jdatetime("1401-06-30 23:00:01", "Asia/Tehran", ambiguous = "earliest")
+        jdatetime("1401-06-30 23:00:01", tz, ambiguous = "earliest")
     )
 
     expect_identical(
         jdatetime_update(dt1, list(year = 1400)),
-        jdatetime("1400-06-30 23:00:00", "Asia/Tehran", ambiguous = "latest")
+        jdatetime("1400-06-30 23:00:00", tz, ambiguous = "latest")
+    )
+
+    #This should not happen in practice. I just want to document internal code behavior
+    fields <- list(year = 1400L, month = 6L, day = 30L, hour = 23L, minute = 0L, second = 0L)
+    expect_identical(
+        jdatetime_make_with_reference_cpp(
+            fields, tz,
+            jdatetime(NA_real_, tzone = tz)
+        ) |> jdatetime(tz),
+        jdatetime(NA_real_, tz)
     )
 })
