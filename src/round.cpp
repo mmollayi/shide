@@ -2,9 +2,6 @@
 #include <map>
 #include <stdlib.h>
 
-int sh_qday(const sh_year_month_day& ymd);
-int sh_yday(const sh_year_month_day& ymd);
-int sh_wday(const date::local_days& ld);
 sh_year_month_day first_day_next_month(const sh_year_month_day& ymd);
 std::string get_current_tzone_cpp();
 date::local_seconds to_local_seconds(const date::sys_seconds& tp,
@@ -79,7 +76,7 @@ jdate_ceiling(const date::local_days& ld, const Unit& unit, const int n)
         ymd2 = sh_year_month_day{ ymd.year(), date::month(m), date::day(1) };
         break;
     case Unit::week:
-        ld_out = ld + date::days{7 - sh_wday(ld)} + date::days{ 1 };
+        ld_out = ld + (date::days{7} - sh_wday(ld)) + date::days{ 1 };
         return ld_out;
     case Unit::day:
         d = ceiling_component2(static_cast<unsigned>(ymd.day()), n);
@@ -118,7 +115,7 @@ jdate_floor(const date::local_days& ld, const Unit& unit, const int n)
         ymd2 = sh_year_month_day{ ymd.year(), date::month(m), date::day(1) };
         break;
     case Unit::week:
-        ld_out = ld - date::days(sh_wday(ld) - 1);
+        ld_out = ld - sh_wday(ld) + date::days{ 1 };
         return ld_out;
     case Unit::day:
         d = floor_component2(static_cast<unsigned>(ymd.day()), n);

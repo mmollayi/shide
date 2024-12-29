@@ -505,4 +505,31 @@ struct sh_fields
     has_tod(true) {}
 };
 
+constexpr
+inline
+days
+sh_yday(const sh_year_month_day& ymd)
+{
+    using namespace internal;
+    return days{ MONTH_DATA_CUM[unsigned{ ymd.month() } - 1] + unsigned{ ymd.day() } };
+}
+
+constexpr
+inline
+days
+sh_qday(const sh_year_month_day& ymd)
+{
+    constexpr int quarter_data[12] = { 0, 31, 62, 0, 31, 62, 0, 30, 60, 0, 30, 60 };
+    return days{ quarter_data[unsigned{ ymd.month() } - 1] + unsigned{ ymd.day() } };
+}
+
+constexpr
+inline
+days
+sh_wday(const date::local_days& ld)
+{
+    date::weekday wd{ ld };
+    return days{ (wd.c_encoding() + 1) % 7 + 1 };
+}
+
 #endif

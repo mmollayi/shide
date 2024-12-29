@@ -6,27 +6,6 @@ date::local_seconds to_local_seconds(const date::sys_seconds& tp,
                                      const date::time_zone* p_time_zone,
                                      date::sys_info& info);
 
-int sh_yday(const sh_year_month_day& ymd)
-{
-    const int m{ static_cast<int>(unsigned{ ymd.month() }) };
-    const int d{ static_cast<int>(unsigned{ ymd.day() }) };
-    return internal::MONTH_DATA_CUM[m - 1] + d;
-}
-
-int sh_qday(const sh_year_month_day& ymd)
-{
-    static const int quarter_data[12] = {0, 31, 62, 0, 31, 62, 0, 30, 60, 0, 30, 60};
-    int m{static_cast<int>(unsigned{ ymd.month() })};
-    int d{static_cast<int>(unsigned{ ymd.day() })};
-    return quarter_data[m-1] + d;
-}
-
-int sh_wday(const date::local_days& ld)
-{
-    date::weekday wd{ ld };
-    return static_cast<int>((wd.c_encoding() + 1) % 7 + 1);
-}
-
 [[cpp11::register]]
 cpp11::writable::list
 jdate_get_fields_cpp(const cpp11::sexp x)
@@ -142,7 +121,7 @@ jdate_get_yday_cpp(const cpp11::sexp x)
         }
 
         ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
-        out[i] = sh_yday(ymd);
+        out[i] = sh_yday(ymd).count();
     }
 
     return out;
@@ -166,7 +145,7 @@ jdate_get_wday_cpp(const cpp11::sexp x)
         }
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
-        out[i] = sh_wday(ld);
+        out[i] = sh_wday(ld).count();
     }
 
     return out;
@@ -190,7 +169,7 @@ jdate_get_qday_cpp(const cpp11::sexp x)
         }
 
         ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
-        out[i] = sh_qday(ymd);
+        out[i] = sh_qday(ymd).count();
     }
 
     return out;
