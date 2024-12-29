@@ -138,4 +138,10 @@ double make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     return make_jdatetime(fds, tz, info, ss_ref);
 }
 
+sh_fields make_sh_fields(const date::local_seconds& ls)
+{
+    const auto ld = date::floor<date::days>(ls);
+    return sh_fields{ sh_year_month_day(ld), hour_minute_second(ls - ld)};
+}
+
 #endif
