@@ -1,7 +1,7 @@
 #include "shide.h"
 
 std::string get_current_tzone_cpp();
-
+sh_fields make_sh_fields(const date::local_seconds& ls);
 date::local_seconds to_local_seconds(const date::sys_seconds& tp,
                                      const date::time_zone* p_time_zone,
                                      date::sys_info& info);
@@ -15,7 +15,6 @@ jdate_get_fields_cpp(const cpp11::sexp x)
     cpp11::writable::integers year(size);
     cpp11::writable::integers month(size);
     cpp11::writable::integers day(size);
-    sh_year_month_day ymd{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -27,7 +26,7 @@ jdate_get_fields_cpp(const cpp11::sexp x)
             continue;
         }
 
-        ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
+        auto ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
         year[i] = int{ ymd.year() };
         month[i] = static_cast<int>(unsigned{ ymd.month() });
         day[i] = static_cast<int>(unsigned{ ymd.day() });
@@ -57,9 +56,7 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
         cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
     }
 
-    date::local_seconds ls;
     date::sys_seconds ss;
-    date::local_days ld;
     date::sys_info info;
 
     const R_xlen_t size = xx.size();
@@ -69,7 +66,6 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
     cpp11::writable::integers hour(size);
     cpp11::writable::integers minute(size);
     cpp11::writable::integers second(size);
-    sh_year_month_day ymd{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -85,17 +81,14 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
         }
 
         ss = sys_seconds_from_double(xx[i]);
-        ls = to_local_seconds(ss, tz, info);
-        ld = date::floor<date::days>(ls);
-        ymd = sh_year_month_day{ ld };
-        auto tod = hour_minute_second{ ls - ld };
+        auto fds = make_sh_fields( to_local_seconds(ss, tz, info) );
 
-        year[i] = int{ ymd.year() };
-        month[i] = static_cast<int>(unsigned{ ymd.month() });
-        day[i] = static_cast<int>(unsigned{ ymd.day() });
-        hour[i] = tod.hours().count();
-        minute[i] = tod.minutes().count();
-        second[i] = static_cast<int>(tod.seconds().count());
+        year[i] = int{ fds.ymd.year() };
+        month[i] = static_cast<int>(unsigned{ fds.ymd.month() });
+        day[i] = static_cast<int>(unsigned{ fds.ymd.day() });
+        hour[i] = fds.tod.hours().count();
+        minute[i] = fds.tod.minutes().count();
+        second[i] = static_cast<int>(fds.tod.seconds().count());
     }
 
     cpp11::writable::list out({year, month, day, hour, minute, second});
@@ -110,7 +103,6 @@ jdate_get_yday_cpp(const cpp11::sexp x)
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
     cpp11::writable::integers out(size);
-    sh_year_month_day ymd{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -120,7 +112,7 @@ jdate_get_yday_cpp(const cpp11::sexp x)
             continue;
         }
 
-        ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
+        auto ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
         out[i] = sh_yday(ymd).count();
     }
 
@@ -158,7 +150,6 @@ jdate_get_qday_cpp(const cpp11::sexp x)
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
     cpp11::writable::integers out(size);
-    sh_year_month_day ymd{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -168,7 +159,7 @@ jdate_get_qday_cpp(const cpp11::sexp x)
             continue;
         }
 
-        ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
+        auto ymd = sh_year_month_day{ date::local_days{ date::days(static_cast<int>(xx[i])) } };
         out[i] = sh_qday(ymd).count();
     }
 
