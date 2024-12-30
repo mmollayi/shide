@@ -88,7 +88,7 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
         ls = to_local_seconds(ss, tz, info);
         ld = date::floor<date::days>(ls);
         ymd = sh_year_month_day{ ld };
-        auto tod = date::hh_mm_ss<std::chrono::seconds>{ ls - date::local_seconds{ ld } };
+        auto tod = hour_minute_second{ ls - ld };
 
         year[i] = int{ ymd.year() };
         month[i] = static_cast<int>(unsigned{ ymd.month() });
