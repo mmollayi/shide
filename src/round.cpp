@@ -4,6 +4,7 @@
 
 sh_year_month_day first_day_next_month(const sh_year_month_day& ymd);
 std::string get_current_tzone_cpp();
+double jdate_from_local_days(const date::local_days& ld);
 date::local_seconds to_local_seconds(const date::sys_seconds& tp,
                                      const date::time_zone* p_time_zone,
                                      date::sys_info& info);
@@ -137,9 +138,7 @@ jdate_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name, const int n
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
     cpp11::writable::doubles out(size);
-    date::days days_since_epoch;
     date::local_days ld;
-    date::local_days ld_out;
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -150,9 +149,7 @@ jdate_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name, const int n
         }
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
-        ld_out = jdate_ceiling(ld, unit, n);
-        days_since_epoch = ld_out.time_since_epoch();
-        out[i] = static_cast<double>(days_since_epoch.count());
+        out[i] = jdate_from_local_days(jdate_ceiling(ld, unit, n));
     }
 
     return out;
@@ -166,9 +163,7 @@ jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int n)
     const cpp11::doubles xx = cpp11::as_cpp<cpp11::doubles>(x);
     const R_xlen_t size = xx.size();
     cpp11::writable::doubles out(size);
-    date::days days_since_epoch;
     date::local_days ld;
-    date::local_days ld_out;
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -179,9 +174,7 @@ jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int n)
         }
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
-        ld_out = jdate_floor(ld, unit, n);
-        days_since_epoch = ld_out.time_since_epoch();
-        out[i] = static_cast<double>(days_since_epoch.count());
+        out[i] = jdate_from_local_days(jdate_floor(ld, unit, n));
     }
 
     return out;

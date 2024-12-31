@@ -3,19 +3,18 @@
 
 using cpp11::integers;
 using cpp11::doubles;
+using std::chrono::hours;
+using std::chrono::minutes;
 using std::chrono::seconds;
 
 [[cpp11::register]]
 doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields) {
-    date::days days_since_epoch;
-
     const integers year = fields[0];
     const integers month = fields[1];
     const integers day = fields[2];
 
     const R_xlen_t size = year.size();
     cpp11::writable::doubles out(size);
-    sh_year_month_day ymd{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (year[i] == NA_INTEGER) {
@@ -23,16 +22,8 @@ doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields) {
             continue;
         }
 
-        ymd = {date::year(year[i]), date::month(month[i]), date::day(day[i])};
-
-        if (!ymd.ok())
-        {
-            out[i] = NA_REAL;
-            continue;
-        }
-
-        days_since_epoch = local_days(ymd).time_since_epoch();
-        out[i] = static_cast<double>(days_since_epoch.count());
+        auto ymd = sh_year_month_day{date::year(year[i]), date::month(month[i]), date::day(day[i])};
+        out[i] = make_jdate(ymd);
     }
 
     return out;
@@ -43,12 +34,8 @@ jdatetime_make_impl(const integers& year, const integers& month, const integers&
                     const integers& hour, const integers& minute, const integers& second,
                     const date::time_zone* tz, const choose c)
 {
-    using std::chrono::hours;
-    using std::chrono::minutes;
-    using std::chrono::seconds;
     const R_xlen_t size = year.size();
     cpp11::writable::doubles out(size);
-    date::local_seconds ls;
     date::local_info info;
     struct sh_fields fds{};
 
@@ -92,12 +79,8 @@ doubles jdatetime_make_cpp(cpp11::list_of<cpp11::integers> fields,
 doubles jdatetime_make_with_reference_impl(const integers& year, const integers& month, const integers& day,
                                            const integers& hour, const integers& minute, const integers& second,
                                            const date::time_zone* tz, const doubles& ref) {
-    using std::chrono::hours;
-    using std::chrono::minutes;
-    using std::chrono::seconds;
     const R_xlen_t size = year.size();
     cpp11::writable::doubles out(size);
-    date::local_seconds ls;
     date::local_info info;
     date::sys_seconds ss_ref{};
     struct sh_fields fds{};

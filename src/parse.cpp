@@ -6,6 +6,7 @@ std::optional<choose> string_to_choose(const std::string& choose_str);
 double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
                                     date::local_info& info, choose c,
                                     const date::sys_seconds* ss_ref=nullptr);
+double make_jdate(const sh_year_month_day& ymd);
 
 [[cpp11::register]]
 cpp11::writable::doubles
@@ -24,8 +25,6 @@ jdate_parse_cpp(const cpp11::strings& x, const cpp11::strings& format)
     std::istringstream is;
     std::chrono::minutes* offptr{};
     std::string* abbrev{};
-    sh_year_month_day ymd{};
-    date::days days_since_epoch;
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -51,16 +50,8 @@ jdate_parse_cpp(const cpp11::strings& x, const cpp11::strings& format)
             continue;
         }
 
-        ymd = {fds.ymd.year(), fds.ymd.month(), fds.ymd.day()};
-
-        if (!ymd.ok())
-        {
-            out[i] = NA_REAL;
-            continue;
-        }
-
-        days_since_epoch = local_days(ymd).time_since_epoch();
-        out[i] = static_cast<double>(days_since_epoch.count());
+        auto ymd = sh_year_month_day{fds.ymd.year(), fds.ymd.month(), fds.ymd.day()};
+        out[i] = make_jdate(ymd);
     }
 
     return out;

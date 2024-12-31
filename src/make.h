@@ -144,4 +144,19 @@ sh_fields make_sh_fields(const date::local_seconds& ls)
     return sh_fields{ sh_year_month_day(ld), hour_minute_second(ls - ld)};
 }
 
+double jdate_from_local_days(const date::local_days& ld)
+{
+    return static_cast<double>(ld.time_since_epoch().count());
+}
+
+double make_jdate(const sh_year_month_day& ymd)
+{
+    if (!ymd.ok())
+    {
+        return NA_REAL;
+    }
+
+    return jdate_from_local_days(date::local_days(ymd));
+}
+
 #endif
