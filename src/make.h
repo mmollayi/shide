@@ -12,21 +12,23 @@ using date::sys_seconds;
 
 enum class choose { earliest, latest, NA };
 
-std::optional<choose> string_to_choose(const std::string& choose_str)
+constexpr
+std::optional<choose>
+string_to_choose(const std::string& choose_str)
 {
-    static const std::map<std::string, choose> choose_map{
+    constexpr std::array<std::pair<std::string_view, choose>, 3> choose_pair{ {
         {"earliest", choose::earliest},
         {"latest", choose::latest},
         {"NA", choose::NA},
-    };
+        } };
 
-    auto it = choose_map.find(choose_str);
-    if (it != choose_map.end()) {
-        return it->second;
+    for (const auto& pair : choose_pair) {
+        if (pair.first == choose_str) {
+            return pair.second;
+        }
     }
-    else {
-        return {};
-    }
+
+    return {};
 }
 
 choose sys_seconds_to_choose(const sys_seconds& tp, const date::time_zone* tz)
