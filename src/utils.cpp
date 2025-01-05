@@ -1,28 +1,5 @@
 # include "shide.h"
-
-date::local_seconds to_local_seconds(const date::sys_seconds& tp,
-                                     const date::time_zone* p_time_zone,
-                                     date::sys_info& info)
-{
-    tzdb::get_sys_info(tp, p_time_zone, info);
-    return date::local_seconds{ (tp + info.offset).time_since_epoch() };
-}
-
-date::local_days to_local_days(const date::sys_seconds& tp,
-                               const date::time_zone* p_time_zone,
-                               date::sys_info& info)
-{
-    return date::floor<date::days>(to_local_seconds(tp, p_time_zone, info));
-}
-
-date::sys_seconds to_sys_seconds(const date::local_seconds& tp,
-                                 const date::time_zone* p_time_zone,
-                                 date::local_info& info)
-{
-    tzdb::get_local_info(tp, p_time_zone, info);
-    return date::sys_seconds{ tp.time_since_epoch() - info.first.offset };
-}
-
+# include "utils.h"
 
 [[cpp11::register]]
 cpp11::writable::doubles
