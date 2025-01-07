@@ -1,6 +1,8 @@
 # include "shide.h"
 # include "utils.h"
 
+double jdate_from_local_days(const date::local_days& ld);
+
 [[cpp11::register]]
 cpp11::writable::doubles
 sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tzone)
@@ -9,9 +11,7 @@ sys_seconds_from_local_days_cpp(const cpp11::doubles x, const cpp11::strings& tz
     const date::time_zone* tz{};
 
     if (!tzdb::locate_zone(tz_name, tz))
-    {
         cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
-    }
 
     const R_xlen_t size = x.size();
     cpp11::writable::doubles out(size);
@@ -41,15 +41,12 @@ local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tz
     const date::time_zone* tz{};
 
     if (!tzdb::locate_zone(tz_name, tz))
-    {
         cpp11::stop(std::string(tz_name + " not found in timezone database").c_str());
-    }
 
     const R_xlen_t size = x.size();
     cpp11::writable::doubles out(size);
     date::local_days ld{};
     date::sys_info info;
-    date::sys_seconds ss{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (std::isnan(x[i])) {
@@ -57,9 +54,8 @@ local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tz
             continue;
         }
 
-        ss = sys_seconds_from_double(x[i]);
-        ld = to_local_days(ss, tz, info);
-        out[i] = static_cast<double>(ld.time_since_epoch().count());
+        ld = to_local_days(sys_seconds_from_double(x[i]), tz, info);
+        out[i] = jdate_from_local_days(ld);
     }
 
     return out;

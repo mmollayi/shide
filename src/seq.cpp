@@ -2,6 +2,8 @@
 #include <cpp11.hpp>
 #include "R_ext/Print.h"
 
+double jdate_from_local_days(const date::local_days& ld);
+
 [[cpp11::register]]
 cpp11::writable::doubles
 jdate_seq_by_month_cpp(const cpp11::sexp& x, const cpp11::integers& dm)
@@ -12,23 +14,21 @@ jdate_seq_by_month_cpp(const cpp11::sexp& x, const cpp11::integers& dm)
     out[0] = xx[0];
 
     if (size == 1)
-    {
         return out;
-    }
 
     sh_year_month_day ymd{date::local_days{ date::days(static_cast<int>(xx[0])) } };
-    date::days days_since_epoch;
+    local_days ld;
 
     for (R_xlen_t i = 1; i < size; ++i)
     {
         ymd += date::months{ dm[i] - dm[i-1] };
 
         if (ymd.ok())
-            days_since_epoch = local_days(ymd).time_since_epoch();
+            ld = local_days(ymd);
         else
-            days_since_epoch = local_days(first_day_next_month(ymd)).time_since_epoch();
+            ld = local_days(first_day_next_month(ymd));
 
-        out[i] = static_cast<double>(days_since_epoch.count());
+        out[i] = jdate_from_local_days(ld);
     }
 
     return out;
@@ -44,18 +44,14 @@ jdate_seq_by_year_cpp(const cpp11::sexp& x, const cpp11::integers& dy)
     out[0] = xx[0];
 
     if (size == 1)
-    {
         return out;
-    }
 
     sh_year_month_day ymd{date::local_days{ date::days(static_cast<int>(xx[0])) } };
-    date::days days_since_epoch;
 
     for (R_xlen_t i = 1; i < size; ++i)
     {
         ymd += date::years{ dy[i] - dy[i-1] };
-        days_since_epoch = local_days(ymd).time_since_epoch();
-        out[i] = static_cast<double>(days_since_epoch.count());
+        out[i] = jdate_from_local_days(local_days(ymd));
     }
 
     return out;
