@@ -1,6 +1,6 @@
 #ifndef SH_YEAR_MONTH_DAY_H
 #define SH_YEAR_MONTH_DAY_H
-#include <tzdb/date.h>
+#include "date.h"
 
 namespace internal
 {
@@ -9,6 +9,7 @@ constexpr int JD_UNIX_EPOCH{ 2440588 };
 constexpr int LOWER_PERSIAN_YEAR{ -1096 };
 constexpr int UPPER_PERSIAN_YEAR{ 2327 };
 static constexpr int MONTH_DATA_CUM[13]{ 0, 31, 62, 93, 124, 155, 186, 216, 246, 276, 306, 336, 366 };
+constexpr date::local_days nan_local_days{ date::local_days(date::nanyear / 0 / 0) };
 }
 
 namespace detail

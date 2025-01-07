@@ -18,6 +18,15 @@ to_local_seconds(const sys_seconds& tp, const date::time_zone* p_time_zone, sys_
 }
 
 inline
+local_seconds
+to_local_seconds(const sys_seconds& tp, const date::time_zone* p_time_zone)
+{
+    sys_info info;
+    tzdb::get_sys_info(tp, p_time_zone, info);
+    return local_seconds{ (tp + info.offset).time_since_epoch() };
+}
+
+inline
 local_days
 to_local_days(const sys_seconds& tp, const date::time_zone* p_time_zone, sys_info& info)
 {
@@ -28,6 +37,15 @@ inline
 sys_seconds
 to_sys_seconds(const local_seconds& tp, const date::time_zone* p_time_zone, local_info& info)
 {
+    tzdb::get_local_info(tp, p_time_zone, info);
+    return sys_seconds{ tp.time_since_epoch() - info.first.offset };
+}
+
+inline
+sys_seconds
+to_sys_seconds(const local_seconds& tp, const date::time_zone* p_time_zone)
+{
+    local_info info;
     tzdb::get_local_info(tp, p_time_zone, info);
     return sys_seconds{ tp.time_since_epoch() - info.first.offset };
 }
