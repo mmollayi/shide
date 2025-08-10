@@ -127,6 +127,13 @@ test_that("jdate parser fails as expected", {
     expect_identical(jdate("  1403-02-01", format = "%t%F"), jdate(NA_real_))
 })
 
+test_that("negative years parse as expected", {
+    expect_identical(jdate("-1000-01-01"), jdate(NA_real_))
+    expect_identical(jdate("-1000-01-01", "%F"), jdate(NA_real_))
+    expect_identical(jdate("-1000-01-01", format = "%5Y-%m-%d"), jdate_make(-1000))
+    expect_identical(jdate("-1000-01-01", format = "%5F"), jdate_make(-1000))
+})
+
 test_that("jdate_make works as expected", {
     expect_identical(jdate_make(1401:1402, 1, 1), jdate(c("1401-01-01", "1402-01-01")))
     expect_error(jdate_make(1401:1403, 1:2, 1))
