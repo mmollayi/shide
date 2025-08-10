@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "sh_year_month_day.h"
-#include "tzdb.h"
+#include "shide/sh_year_month_day.h"
+#include "shide/tzdb.h"
 
 using date::sys_seconds;
 using date::local_seconds;

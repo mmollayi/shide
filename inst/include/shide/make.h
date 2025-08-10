@@ -3,8 +3,10 @@
 
 #include <optional>
 #include <array>
-#include "sh_year_month_day.h"
-#include "tzdb.h"
+#include "shide/sh_year_month_day.h"
+#include "shide/tzdb.h"
+#include "shide/utils.h"
+#include "shide/macros.h"
 
 using std::chrono::hours;
 using std::chrono::seconds;
@@ -18,9 +20,9 @@ std::optional<choose>
 string_to_choose(const std::string& choose_str)
 {
     constexpr std::array<std::pair<std::string_view, choose>, 3> choose_pair{ {
-        {"earliest", choose::earliest},
-        {"latest", choose::latest},
-        {"NA", choose::NA},
+            {"earliest", choose::earliest},
+            {"latest", choose::latest},
+            {"NA", choose::NA},
         } };
 
     for (const auto& pair : choose_pair) {
@@ -141,10 +143,20 @@ double make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     return make_jdatetime(fds, tz, info, ss_ref);
 }
 
-sh_fields make_sh_fields(const date::local_seconds& ls)
+sh_fields make_sh_fields(const date::local_seconds& tp)
 {
-    const auto ld = date::floor<date::days>(ls);
-    return sh_fields{ sh_year_month_day(ld), hour_minute_second(ls - ld)};
+    const auto ld = date::floor<date::days>(tp);
+    return sh_fields{ sh_year_month_day(ld), hour_minute_second(tp - ld)};
+}
+
+sh_fields make_sh_fields(const date::sys_seconds& tp, const std::string& tz_name)
+{
+    sh_fields fds{};
+    const date::time_zone* tz{};
+    if (!tzdb::locate_zone(tz_name, tz))
+        return fds;
+
+    return make_sh_fields(to_local_seconds(tp, tz));
 }
 
 double jdate_from_local_days(const date::local_days& ld)

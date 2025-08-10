@@ -1,4 +1,4 @@
-#include "seq.h"
+#include <shide/seq.h>
 #include <cpp11.hpp>
 #include "R_ext/Print.h"
 

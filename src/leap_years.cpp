@@ -1,7 +1,7 @@
 #include <cpp11.hpp>
 #include <R.h>
 #include <Rinternals.h>
-#include "sh_year_month_day.h"
+#include <shide/sh_year_month_day.h>
 
 [[cpp11::register]]
 cpp11::writable::logicals year_is_leap_cpp(const cpp11::integers& x)

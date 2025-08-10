@@ -1,5 +1,5 @@
 # include "shide.h"
-# include "utils.h"
+# include <shide/utils.h>
 
 [[cpp11::register]]
 cpp11::writable::doubles

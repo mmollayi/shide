@@ -1,11 +1,12 @@
 #ifndef ROUND_H
 #define ROUND_H
+
 #include <map>
 #include <optional>
-#include "sh_year_month_day.h"
-#include "tzdb.h"
-#include "utils.h"
-#include "seq.h"
+#include "shide/sh_year_month_day.h"
+#include "shide/tzdb.h"
+#include "shide/utils.h"
+#include "shide/seq.h"
 
 using date::local_days;
 using date::local_seconds;
@@ -81,7 +82,7 @@ floor_jdate(const local_days& ld, const Unit& unit, const int n)
         ymd2 = sh_year_month_day{ ymd.year(), ymd.month(), date::day(d) };
         break;
     default:
-        return internal::nan_local_days;
+       return internal::nan_local_days;
     }
 
     return local_days{ ymd2 };
@@ -90,7 +91,7 @@ floor_jdate(const local_days& ld, const Unit& unit, const int n)
 inline
 sys_seconds
 floor_jdatetime(const sys_seconds& tp, const date::time_zone* p_time_zone,
-                const Unit& unit, const int n)
+    const Unit& unit, const int n)
 {
     const auto ls = to_local_seconds(tp, p_time_zone);
     const local_days ld{ date::floor<date::days>(ls) };
@@ -164,7 +165,7 @@ ceiling_jdate(const local_days& ld, const Unit& unit, const int n)
 inline
 sys_seconds
 ceiling_jdatetime(const sys_seconds& tp, const date::time_zone* p_time_zone,
-                  const Unit& unit, const int n)
+    const Unit& unit, const int n)
 {
     if (floor_jdatetime(tp, p_time_zone, unit, n) == tp)
         return tp;
