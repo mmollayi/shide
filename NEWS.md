@@ -4,6 +4,9 @@
 
 * Fixed an issue where `jdatetime` objects did not span the entire predefined value range.
 
+* Due to changes in upstream packages, negative years such as `-1000-01-01` will no longer 
+  parse with `%Y-%m-%d`, and instead require `%5Y-%m-%d` or `%5F` to capture the `-` prefix (#8).
+
 # shide 0.2.1
 
 * Default formatting for `jdatetime` objects is changed to conform to default R behavior.
