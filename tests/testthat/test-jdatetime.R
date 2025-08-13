@@ -39,8 +39,12 @@ test_that("tzone must be a scalar character or NULL", {
 
 test_that("jdatetime covers the whole range intended range", {
     expect_equal(
-        format(jdatetime(c("-1095-01-01 00:00:00", "2326-12-29 23:59:59"), "UTC")),
-        c("-1095-01-01 00:00:00 +0000", "2326-12-29 23:59:59 +0000")
+        format(jdatetime("-1095-01-01", "UTC", format = "%5F")),
+        "-1095-01-01 00:00:00 +0000"
+    )
+    expect_equal(
+        format(jdatetime("2326-12-29 23:59:59", "UTC")),
+        "2326-12-29 23:59:59 +0000"
     )
 })
 

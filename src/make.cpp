@@ -1,5 +1,5 @@
 #include "shide.h"
-#include "make.h"
+#include <shide/make.h>
 
 using cpp11::integers;
 using cpp11::doubles;
@@ -93,6 +93,12 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
 
         fds.ymd = {date::year(year[i]), date::month(month[i]), date::day(day[i])};
         fds.tod = {hours(hour[i]), minutes(minute[i]), seconds(second[i])};
+
+        if (ref[i] == NA_REAL) {
+            out[i] = make_jdatetime(fds, tz, info, choose::NA);
+            continue;
+        }
+
         ss_ref = sys_seconds_from_double(ref[i]);
         out[i] = make_jdatetime(fds, tz, info, ss_ref);
     }

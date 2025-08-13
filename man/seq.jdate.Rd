@@ -7,15 +7,15 @@
 \method{seq}{jdate}(from, to, by, length.out = NULL, along.with = NULL, ...)
 }
 \arguments{
-\item{from}{starting date.  Required.}
+\item{from}{starting date; optional.}
 
-\item{to}{end date.  Optional.}
+\item{to}{end date; optional.}
 
-\item{by}{increment of the sequence.  Optional.  See \sQuote{Details}.}
+\item{by}{increment of the sequence; optional.  See \sQuote{Details}.}
 
 \item{length.out}{integer, optional.  Desired length of the sequence.}
 
-\item{along.with}{take the length from the length of this argument.}
+\item{along.with}{optional; take the length from the length of this argument.}
 
 \item{...}{arguments passed to or from other methods.}
 }

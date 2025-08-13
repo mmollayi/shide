@@ -1,6 +1,7 @@
 #ifndef SEQ_H
 #define SEQ_H
-#include "sh_year_month_day.h"
+
+#include "shide/sh_year_month_day.h"
 
 constexpr
 inline

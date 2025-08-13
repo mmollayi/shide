@@ -1,5 +1,5 @@
 # include "shide.h"
-# include "utils.h"
+# include <shide/utils.h>
 
 double jdate_from_local_days(const date::local_days& ld);
 

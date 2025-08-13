@@ -1,10 +1,8 @@
 #include "shide.h"
+#include <shide/make.h>
+#include <shide/utils.h>
 
 std::string get_current_tzone_cpp();
-sh_fields make_sh_fields(const date::local_seconds& ls);
-date::local_seconds to_local_seconds(const date::sys_seconds& tp,
-                                     const date::time_zone* p_time_zone,
-                                     date::sys_info& info);
 
 [[cpp11::register]]
 cpp11::writable::list
