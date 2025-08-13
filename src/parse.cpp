@@ -1,12 +1,5 @@
 #include "shide.h"
-#include <optional>
-
-enum class choose;
-std::optional<choose> string_to_choose(const std::string& choose_str);
-double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
-                                    date::local_info& info, choose c,
-                                    const date::sys_seconds* ss_ref=nullptr);
-double make_jdate(const sh_year_month_day& ymd);
+#include <shide/make.h>
 
 [[cpp11::register]]
 cpp11::writable::doubles

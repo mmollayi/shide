@@ -1,9 +1,9 @@
 #include "shide.h"
 #include <shide/round.h>
+#include <shide/make.h>
 #include <stdlib.h>
 
 std::string get_current_tzone_cpp();
-double jdate_from_local_days(const date::local_days& ld);
 
 [[cpp11::register]]
 cpp11::writable::doubles

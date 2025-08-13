@@ -34,7 +34,9 @@ string_to_choose(const std::string& choose_str)
     return {};
 }
 
-choose sys_seconds_to_choose(const sys_seconds& tp, const date::time_zone* tz)
+inline
+choose
+sys_seconds_to_choose(const sys_seconds& tp, const date::time_zone* tz)
 {
     date::sys_info info;
     tzdb::get_sys_info(tp, tz, info);
@@ -56,7 +58,9 @@ choose sys_seconds_to_choose(const sys_seconds& tp, const date::time_zone* tz)
     }
 }
 
-double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
+inline
+double 
+jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
     date::local_info& info, choose c, const sys_seconds* ss_ref = nullptr)
 {
     tzdb::get_local_info(ls, tz, info);
@@ -90,7 +94,8 @@ double jdatetime_from_local_seconds(const date::local_seconds& ls, const date::t
 }
 
 constexpr
-std::optional<date::local_seconds> make_local_seconds(const sh_fields& fds)
+std::optional<date::local_seconds>
+make_local_seconds(const sh_fields& fds)
 {
     if (!fds.tod.in_conventional_range())
         return {};
@@ -101,7 +106,9 @@ std::optional<date::local_seconds> make_local_seconds(const sh_fields& fds)
     return local_days(fds.ymd) + fds.tod.to_duration();
 }
 
-double make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
+inline
+double 
+make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
     date::local_info& info, choose c = choose::earliest)
 {
     auto ls = make_local_seconds(fds);
@@ -111,7 +118,9 @@ double make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
     return jdatetime_from_local_seconds(*ls, tz, info, c);
 }
 
-double make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
+inline
+double
+make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
     date::local_info& info, const sys_seconds& ss_ref)
 {
     auto ls = make_local_seconds(fds);
@@ -121,7 +130,9 @@ double make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
     return jdatetime_from_local_seconds(*ls, tz, info, choose{}, &ss_ref);
 }
 
-double make_jdatetime(const sh_fields& fds, const std::string& tz_name,
+inline
+double 
+make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     choose c=choose::earliest)
 {
     const date::time_zone* tz{};
@@ -132,7 +143,9 @@ double make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     return make_jdatetime(fds, tz, info, c);
 }
 
-double make_jdatetime(const sh_fields& fds, const std::string& tz_name,
+inline
+double
+make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     const sys_seconds& ss_ref)
 {
     const date::time_zone* tz{};
@@ -143,13 +156,17 @@ double make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     return make_jdatetime(fds, tz, info, ss_ref);
 }
 
-sh_fields make_sh_fields(const date::local_seconds& tp)
+constexpr
+sh_fields
+make_sh_fields(const date::local_seconds& tp)
 {
     const auto ld = date::floor<date::days>(tp);
     return sh_fields{ sh_year_month_day(ld), hour_minute_second(tp - ld)};
 }
 
-sh_fields make_sh_fields(const date::sys_seconds& tp, const std::string& tz_name)
+inline
+sh_fields
+make_sh_fields(const date::sys_seconds& tp, const std::string& tz_name)
 {
     sh_fields fds{};
     const date::time_zone* tz{};
@@ -159,12 +176,16 @@ sh_fields make_sh_fields(const date::sys_seconds& tp, const std::string& tz_name
     return make_sh_fields(to_local_seconds(tp, tz));
 }
 
-double jdate_from_local_days(const date::local_days& ld)
+constexpr
+double 
+jdate_from_local_days(const date::local_days& ld)
 {
     return static_cast<double>(ld.time_since_epoch().count());
 }
 
-double make_jdate(const sh_year_month_day& ymd)
+constexpr
+double
+make_jdate(const sh_year_month_day& ymd)
 {
     if (!ymd.ok())
     {

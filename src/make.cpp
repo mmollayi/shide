@@ -1,5 +1,5 @@
 #include "shide.h"
-# include <shide/make.h>
+#include <shide/make.h>
 
 using cpp11::integers;
 using cpp11::doubles;

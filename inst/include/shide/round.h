@@ -32,8 +32,11 @@ constexpr int ceiling_component2(const int x, const int n)
 
 enum class Unit { second, minute, hour, day, week, month, quarter, year };
 
-std::optional<Unit> string_to_unit(const std::string& unit_name) {
-    static const std::map<std::string, Unit> unit_map{
+constexpr
+std::optional<Unit>
+string_to_unit(const std::string& unit_name)
+{
+    constexpr std::array<std::pair<std::string_view, Unit>, 8> unit_pair{ {
         {"year", Unit::year},
         {"quarter", Unit::quarter},
         {"month", Unit::month},
@@ -42,15 +45,15 @@ std::optional<Unit> string_to_unit(const std::string& unit_name) {
         {"hour", Unit::hour},
         {"minute", Unit::minute},
         {"second", Unit::second}
-    };
+    } };
 
-    auto it = unit_map.find(unit_name);
-    if (it != unit_map.end()) {
-        return it->second;
+    for (const auto& pair : unit_pair) {
+        if (pair.first == unit_name) {
+            return pair.second;
+        }
     }
-    else {
-        return {};
-    }
+
+    return {};
 }
 
 inline

@@ -16,7 +16,7 @@ namespace detail
 {
 	constexpr
 	inline
-	int
+	int 
 	jalali_jd0(const int year) {
 		using namespace internal;
 		constexpr int breaks[12]{ -708, -221,   -3,    6,  394,  720,
@@ -59,7 +59,7 @@ namespace detail
 
 	constexpr
 	inline
-	int
+	int 
 	approx_year(int jd)
 	{
 		constexpr int calendar_epoch{ internal::JALALI_ZERO + 1 };
@@ -557,10 +557,10 @@ struct sh_fields
 	hour_minute_second    tod{};
 	bool                  has_tod = false;
 
-	sh_fields() = default;
-	sh_fields(sh_year_month_day ymd_) : ymd(ymd_) {}
-	sh_fields(hour_minute_second tod_) : tod(tod_), has_tod(true) {}
-	sh_fields(sh_year_month_day ymd_, hour_minute_second tod_) : ymd(ymd_), tod(tod_),
+	constexpr sh_fields() = default;
+	constexpr sh_fields(sh_year_month_day ymd_) : ymd(ymd_) {}
+	constexpr sh_fields(hour_minute_second tod_) : tod(tod_), has_tod(true) {}
+	constexpr sh_fields(sh_year_month_day ymd_, hour_minute_second tod_) : ymd(ymd_), tod(tod_),
 		has_tod(true) {}
 };
 
