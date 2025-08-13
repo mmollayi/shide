@@ -54,12 +54,15 @@ test_that("jdatetime_update works as expected when input is consulted for resolv
     )
 
     #This should not happen in practice. I just want to document internal code behavior
-    fields <- list(year = 1400L, month = 6L, day = 30L, hour = 23L, minute = 0L, second = 0L)
+    fields <- list(year = 1400L, month = 6L, day = rep(30L, 3), hour = 23L, minute = 0L, second = 0L)
+    fields <- vec_recycle_common(!!!fields, .size = 3)
     expect_identical(
         jdatetime_make_with_reference_cpp(
             fields, tz,
-            jdatetime(NA_real_, tzone = tz)
+            c(dt1, dt2, jdatetime(NA_real_, tzone = tz))
         ) |> jdatetime(tz),
-        jdatetime(NA_real_, tz)
+        c(jdatetime("1400-06-30 23:00:00", tz, ambiguous = "latest"),
+          jdatetime("1400-06-30 23:00:00", tz, ambiguous = "earliest"),
+          jdatetime(NA_real_, tz))
     )
 })
