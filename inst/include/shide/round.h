@@ -1,7 +1,6 @@
 #ifndef ROUND_H
 #define ROUND_H
 
-#include <map>
 #include <optional>
 #include "shide/sh_year_month_day.h"
 #include "shide/tzdb.h"
@@ -56,13 +55,13 @@ string_to_unit(const std::string& unit_name)
     return {};
 }
 
-inline
+constexpr
 local_days
 floor_jdate(const local_days& ld, const Unit& unit, const int n)
 {
     sh_year_month_day ymd{ ld };
     sh_year_month_day ymd2{};
-    int y, m, d;
+    int y{}, m{}, d{};
 
     switch (unit)
     {
@@ -100,7 +99,7 @@ floor_jdatetime(const sys_seconds& tp, const date::time_zone* p_time_zone,
     const local_days ld{ date::floor<date::days>(ls) };
     const auto tod = hour_minute_second{ ls - ld };
     date::local_seconds ls_out{};
-    int h, m, s;
+    int h{}, m{}, s{};
 
     switch (unit)
     {
@@ -128,13 +127,13 @@ floor_jdatetime(const sys_seconds& tp, const date::time_zone* p_time_zone,
     return to_sys_seconds(ls_out, p_time_zone);
 }
 
-inline
+constexpr
 date::local_days
 ceiling_jdate(const local_days& ld, const Unit& unit, const int n)
 {
     sh_year_month_day ymd{ ld };
     sh_year_month_day ymd2{};
-    int y, m, d;
+    int y{}, m{}, d{};
 
     switch (unit)
     {
@@ -177,7 +176,7 @@ ceiling_jdatetime(const sys_seconds& tp, const date::time_zone* p_time_zone,
     const local_days ld{ date::floor<date::days>(ls) };
     const auto tod = hour_minute_second{ ls - ld };
     date::local_seconds ls_out{};
-    int h, m, s;
+    int h{}, m{}, s{};
 
     switch (unit)
     {

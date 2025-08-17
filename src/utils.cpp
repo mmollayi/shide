@@ -1,7 +1,6 @@
-# include "shide.h"
-# include <shide/utils.h>
-
-double jdate_from_local_days(const date::local_days& ld);
+#include "shide.h"
+#include <shide/utils.h>
+#include <shide/make.h>
 
 [[cpp11::register]]
 cpp11::writable::doubles
@@ -55,7 +54,7 @@ local_days_from_sys_seconds_cpp(const cpp11::doubles x, const cpp11::strings& tz
         }
 
         ld = to_local_days(sys_seconds_from_double(x[i]), tz, info);
-        out[i] = jdate_from_local_days(ld);
+        out[i] = make_jdate(ld);
     }
 
     return out;

@@ -18,6 +18,7 @@ jdate_parse_cpp(const cpp11::strings& x, const cpp11::strings& format)
     std::istringstream is;
     std::chrono::minutes* offptr{};
     std::string* abbrev{};
+    std::optional<double> d{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -44,7 +45,8 @@ jdate_parse_cpp(const cpp11::strings& x, const cpp11::strings& format)
         }
 
         auto ymd = sh_year_month_day{fds.ymd.year(), fds.ymd.month(), fds.ymd.day()};
-        out[i] = make_jdate(ymd);
+        d = make_jdate(ymd);
+        out[i] = d.has_value() ? *d : NA_REAL;
     }
 
     return out;
@@ -66,7 +68,6 @@ jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format,
     }
 
     const auto Ambiguous{*opt};
-    date::local_seconds ls;
     const date::time_zone* tz{};
     date::local_info info;
     const std::string tz_name(tzone[0]);
@@ -86,6 +87,9 @@ jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format,
     std::chrono::minutes* offptr{};
     std::string* abbrev{};
     sh_year_month_day ymd{};
+    sh_fields sh_fds{};
+    sh_fds.has_tod = true;
+    std::optional<double> dt{};
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
@@ -126,8 +130,10 @@ jdatetime_parse_cpp(const cpp11::strings& x, const cpp11::strings& format,
             continue;
         }
 
-        ls = local_days(ymd) + fds.tod.to_duration();
-        out[i] = jdatetime_from_local_seconds(ls, tz, info, Ambiguous);
+        sh_fds.ymd = ymd;
+        sh_fds.tod = hour_minute_second(fds.tod.to_duration());
+        dt = make_jdatetime(sh_fds, tz, info, Ambiguous);
+        out[i] = dt.has_value() ? *dt : NA_REAL;
     }
 
     return out;

@@ -15,6 +15,7 @@ doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields) {
 
     const R_xlen_t size = year.size();
     cpp11::writable::doubles out(size);
+    std::optional<double> d{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (year[i] == NA_INTEGER) {
@@ -23,7 +24,8 @@ doubles jdate_make_cpp(cpp11::list_of<cpp11::integers> fields) {
         }
 
         auto ymd = sh_year_month_day{date::year(year[i]), date::month(month[i]), date::day(day[i])};
-        out[i] = make_jdate(ymd);
+        d = make_jdate(ymd);
+        out[i] = d.has_value() ? *d : NA_REAL;
     }
 
     return out;
@@ -38,6 +40,7 @@ jdatetime_make_impl(const integers& year, const integers& month, const integers&
     cpp11::writable::doubles out(size);
     date::local_info info;
     struct sh_fields fds{};
+    std::optional<double> dt{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (year[i] == NA_INTEGER) {
@@ -47,7 +50,8 @@ jdatetime_make_impl(const integers& year, const integers& month, const integers&
 
         fds.ymd = {date::year(year[i]), date::month(month[i]), date::day(day[i])};
         fds.tod = {hours(hour[i]), minutes(minute[i]), seconds(second[i])};
-        out[i] = make_jdatetime(fds, tz, info, c);
+        dt = make_jdatetime(fds, tz, info, c);
+        out[i] = dt.has_value() ? *dt : NA_REAL;
     }
 
     return out;
@@ -84,6 +88,7 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
     date::local_info info;
     date::sys_seconds ss_ref{};
     struct sh_fields fds{};
+    std::optional<double> dt{};
 
     for (R_xlen_t i = 0; i < size; ++i) {
         if (year[i] == NA_INTEGER) {
@@ -94,13 +99,15 @@ doubles jdatetime_make_with_reference_impl(const integers& year, const integers&
         fds.ymd = {date::year(year[i]), date::month(month[i]), date::day(day[i])};
         fds.tod = {hours(hour[i]), minutes(minute[i]), seconds(second[i])};
 
-        if (ref[i] == NA_REAL) {
-            out[i] = make_jdatetime(fds, tz, info, choose::NA);
+        if (std::isnan(ref[i])) {
+            dt = make_jdatetime(fds, tz, info, choose::NA);
+            out[i] = dt.has_value() ? *dt : NA_REAL;
             continue;
         }
 
         ss_ref = sys_seconds_from_double(ref[i]);
-        out[i] = make_jdatetime(fds, tz, info, ss_ref);
+        dt = make_jdatetime(fds, tz, info, ss_ref);
+        out[i] = dt.has_value() ? *dt : NA_REAL;
     }
 
     return out;

@@ -82,12 +82,12 @@ jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zon
             s = ls.time_since_epoch() - info.second.offset;
             break;
         case choose::NA:
-            return NA_REAL;
+            return NAN_DOUBLE;
         }
     }
     else
     {
-        return NA_REAL;
+        return NAN_DOUBLE;
     }
 
     return static_cast<double>(s.count());
@@ -107,50 +107,58 @@ make_local_seconds(const sh_fields& fds)
 }
 
 inline
-double 
+std::optional<double>
 make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
     date::local_info& info, choose c = choose::earliest)
 {
     auto ls = make_local_seconds(fds);
     if (!ls.has_value())
-        return NA_REAL;
+        return {};
 
-    return jdatetime_from_local_seconds(*ls, tz, info, c);
+    const auto dt = jdatetime_from_local_seconds(*ls, tz, info, c);
+    if (std::isnan(dt))
+        return {};
+
+    return dt;
 }
 
 inline
-double
+std::optional<double>
 make_jdatetime(const sh_fields& fds, const date::time_zone* tz,
     date::local_info& info, const sys_seconds& ss_ref)
 {
     auto ls = make_local_seconds(fds);
     if (!ls.has_value())
-        return NA_REAL;
+        return {};
 
-    return jdatetime_from_local_seconds(*ls, tz, info, choose{}, &ss_ref);
+    const auto dt = jdatetime_from_local_seconds(*ls, tz, info, choose{}, &ss_ref);
+    if (std::isnan(dt))
+        return {};
+
+    return dt;
 }
 
 inline
-double 
+std::optional<double>
 make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     choose c=choose::earliest)
 {
     const date::time_zone* tz{};
     if (!tzdb::locate_zone(tz_name, tz))
-        return NA_REAL;
+        return {};
 
     date::local_info info;
     return make_jdatetime(fds, tz, info, c);
 }
 
 inline
-double
+std::optional<double>
 make_jdatetime(const sh_fields& fds, const std::string& tz_name,
     const sys_seconds& ss_ref)
 {
     const date::time_zone* tz{};
     if (!tzdb::locate_zone(tz_name, tz))
-        return NA_REAL;
+        return {};
 
     date::local_info info;
     return make_jdatetime(fds, tz, info, ss_ref);
@@ -185,11 +193,18 @@ jdate_from_local_days(const date::local_days& ld)
 
 constexpr
 double
+make_jdate(const date::local_days& ld)
+{
+     return jdate_from_local_days(ld);
+}
+
+constexpr
+std::optional<double>
 make_jdate(const sh_year_month_day& ymd)
 {
     if (!ymd.ok())
     {
-        return NA_REAL;
+        return {};
     }
 
     return jdate_from_local_days(date::local_days(ymd));

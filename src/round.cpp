@@ -31,7 +31,7 @@ jdate_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name, const int n
         }
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
-        out[i] = jdate_from_local_days(ceiling_jdate(ld, unit, n));
+        out[i] = make_jdate(ceiling_jdate(ld, unit, n));
     }
 
     return out;
@@ -63,7 +63,7 @@ jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int n)
         }
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
-        out[i] = jdate_from_local_days(floor_jdate(ld, unit, n));
+        out[i] = make_jdate(floor_jdate(ld, unit, n));
     }
 
     return out;

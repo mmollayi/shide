@@ -1,8 +1,7 @@
 #include <shide/seq.h>
+#include <shide/make.h>
 #include <cpp11.hpp>
 #include "R_ext/Print.h"
-
-double jdate_from_local_days(const date::local_days& ld);
 
 [[cpp11::register]]
 cpp11::writable::doubles
@@ -28,7 +27,7 @@ jdate_seq_by_month_cpp(const cpp11::sexp& x, const cpp11::integers& dm)
         else
             ld = local_days(first_day_next_month(ymd));
 
-        out[i] = jdate_from_local_days(ld);
+        out[i] = make_jdate(ld);
     }
 
     return out;
@@ -51,7 +50,7 @@ jdate_seq_by_year_cpp(const cpp11::sexp& x, const cpp11::integers& dy)
     for (R_xlen_t i = 1; i < size; ++i)
     {
         ymd += date::years{ dy[i] - dy[i-1] };
-        out[i] = jdate_from_local_days(local_days(ymd));
+        out[i] = make_jdate(local_days(ymd));
     }
 
     return out;
