@@ -2,6 +2,9 @@
 
 * New `seq.jdatetime()` generates regular sequences of Jalali date-times.
 
+* Rounding family of functions (`sh_floor()`, `sh_ceiling()` and `sh_round()`) now accept
+  `jdatetime` inputs.
+
 * Fixed an issue where `jdatetime` objects did not span the entire predefined value range.
 
 * Due to changes in upstream packages, negative years such as `-1000-01-01` will no longer 
