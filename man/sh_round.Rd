@@ -4,7 +4,7 @@
 \alias{sh_round}
 \alias{sh_floor}
 \alias{sh_ceiling}
-\title{Round Jalali dates to a specific unit of time}
+\title{Round Jalali date-times to a specific unit of time}
 \usage{
 sh_round(x, unit = NULL, ...)
 
@@ -13,24 +13,27 @@ sh_floor(x, unit = NULL, ...)
 sh_ceiling(x, unit = NULL, ...)
 }
 \arguments{
-\item{x}{A vector of \code{jdate} objects.}
+\item{x}{A vector of \code{jdate} or \code{jdatetime} objects.}
 
-\item{unit}{A scalar character, containing a date unit or a multiple of a unit.
-Valid date units are \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"} and \code{"year"}. These can
-optionally be followed by "s". If multiple of a unit is used, unit coefficient must be
-a whole number greater than or equal to 1. If \code{NULL}, defaults to \code{"day"}.}
+\item{unit}{A scalar character, containing a date or time unit or a multiple of a unit.
+Valid date units are \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"} and \code{"year"}.
+Valid time units are \code{"second"}, \code{"minute"} and \code{"hour"}. These can
+optionally be followed by "s". For \code{jdate} inputs, only date units may be supplied
+and for \code{jdatetime} inputs, both date and time units work. If multiple of a unit is used,
+unit coefficient must be a whole number greater than or equal to 1.
+If \code{NULL}, defaults to \code{"day"} for \code{jdate} inputs and\code{"second"} for \code{jdatetime} inputs.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 }
 \value{
-A vector of \code{jdate} objects with the same length as x.
+A vector of \code{jdate} or \code{jdatetime} objects with the same length as x.
 }
 \description{
 \itemize{
-\item \code{sh_floor()} takes a \code{jdate} object and rounds it down to the previous unit of time.
-\item \code{sh_ceiling()} takes a \code{jdate} object and rounds it up to the next unit of time.
-\item \code{sh_round()} takes a \code{jdate} object and and rounds it up or down, depending on what is closer.
-For dates which are exactly halfway between two consecutive units, the convention is to round up.
+\item \code{sh_floor()} takes a \code{jdate} or \code{jdatetime} object and rounds it down to the previous unit of time.
+\item \code{sh_ceiling()} takes a \code{jdate} or \code{jdatetime} object and rounds it up to the next unit of time.
+\item \code{sh_round()} takes a \code{jdate} or \code{jdatetime} object and and rounds it up or down, depending on what is closer.
+For dates or date-times which are exactly halfway between two consecutive units, the convention is to round up.
 }
 }
 \examples{
@@ -41,6 +44,11 @@ sh_ceiling(x, "year")
 sh_round(x, "year")
 sh_round(x, "week") == sh_floor(x, "week")
 sh_round(x + 1, "week") == sh_ceiling(x, "week")
+
+x <- jdatetime("1402-12-15 12:30:00", tzone = "Asia/Tehran")
+sh_floor(x, "20 minutes")
+sh_ceiling(x, "20 minutes")
+sh_round(x, "1 hour") == sh_ceiling(x, "1 hour")
 }
 \seealso{
 \code{\link[lubridate:round_date]{lubridate::round_date()}}
