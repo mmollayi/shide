@@ -171,7 +171,7 @@ test_that("sh_ceiling does not round up datetimes that are already on a boundary
     expect_equal(sh_ceiling(dt2, "5 seconds"), dt2)
 })
 
-test_that("sh_round works as expected for each unit", {
+test_that("sh_round.jdate works as expected for each unit", {
     d <- jdate(c("1367-09-06", "1371-03-13"))
     expect_identical(sh_round(d, "day"), jdate(c("1367-09-06", "1371-03-13")))
     expect_identical(sh_round(d, "week"), jdate(c("1367-09-05", "1371-03-16")))
@@ -180,13 +180,78 @@ test_that("sh_round works as expected for each unit", {
     expect_identical(sh_round(d, "year"), jdate(c("1368-01-01", "1371-01-01")))
 })
 
-test_that("sh_round works as expected for each unit", {
-    d <- jdate(c("1367-09-06", "1371-03-13"))
-    expect_identical(sh_round(d, "day"), jdate(c("1367-09-06", "1371-03-13")))
-    expect_identical(sh_round(d, "week"), jdate(c("1367-09-05", "1371-03-16")))
-    expect_identical(sh_round(d, "month"), jdate(c("1367-09-01", "1371-03-01")))
-    expect_identical(sh_round(d, "quarter"), jdate(c("1367-10-01", "1371-04-01")))
-    expect_identical(sh_round(d, "year"), jdate(c("1368-01-01", "1371-01-01")))
+test_that("sh_round.jdatetime works as expected for each unit", {
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1367-09-06 12:27:56", "1371-03-13 14:02:25"), tz)
+
+
+    expect_identical(sh_round(dt), dt)
+    expect_identical(sh_round(dt, "second"), dt)
+    expect_identical(
+        sh_round(dt, "minute"),
+        jdatetime(c("1367-09-06 12:28", "1371-03-13 14:02"), tz, format = "%F %H:%M")
+    )
+
+    expect_identical(
+        sh_round(dt, "hour"),
+        jdatetime(c("1367-09-06 12", "1371-03-13 14"), tz, format = "%F %H")
+    )
+
+    expect_identical(
+        sh_round(dt, "day"), jdatetime(c("1367-09-07", "1371-03-14"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "week"), jdatetime(c("1367-09-05", "1371-03-16"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "month"), jdatetime(c("1367-09-01", "1371-03-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "quarter"), jdatetime(c("1367-10-01", "1371-04-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "year"), jdatetime(c("1368-01-01", "1371-01-01"), tz, format = "%F")
+    )
+})
+
+test_that("sh_round works as expected for multi-units", {
+    tz <- "Asia/Tehran"
+    dt <- jdatetime(c("1386-04-03 07:30:26", "1404-05-28 15:17:20"), tz)
+    d <- jdate(c("1386-04-02", "1404-05-28"))
+
+    expect_identical(sh_round(d, "2 days"), jdate(c("1386-04-03", "1404-05-29")))
+    expect_identical(sh_round(d, "10 days"), jdate(c("1386-04-01", "1404-05-31")))
+    expect_identical(sh_round(d, "4 months"), jdate(c("1386-05-01", "1404-05-01")))
+    expect_identical(sh_round(d, "2 quarters"), jdate(c("1386-07-01", "1404-07-01")))
+    expect_identical(sh_round(d, "2 years"), jdate(c("1386-01-01", "1404-01-01")))
+    expect_identical(sh_round(d, "3 years"), jdate(c("1386-01-01", "1404-01-01")))
+
+    expect_identical(
+        sh_round(dt, "30 seconds"),
+        jdatetime(c("1386-04-03 07:30:30", "1404-05-28 15:17:30"), tz)
+    )
+    expect_identical(
+        sh_round(dt, "20 minutes"),
+        jdatetime(c("1386-04-03 07:40", "1404-05-28 15:20"), tz, format = "%F %H:%M")
+    )
+
+    expect_identical(
+        sh_round(dt, "6 hours"),
+        jdatetime(c("1386-04-03 06", "1404-05-28 18"), tz, format = "%F %H")
+    )
+
+    expect_identical(
+        sh_round(dt, "10 days"), jdatetime(c("1386-04-01", "1404-05-31"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "4 month"), jdatetime(c("1386-05-01", "1404-05-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "2 quarters"), jdatetime(c("1386-07-01", "1404-07-01"), tz, format = "%F")
+    )
+    expect_identical(
+        sh_round(dt, "3 years"), jdatetime(c("1386-01-01", "1404-01-01"), tz, format = "%F")
+    )
 })
 
 test_that("sh_round works as expected for dates that are exactly halfway between two consecutive units", {
