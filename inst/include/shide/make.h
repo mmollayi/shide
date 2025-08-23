@@ -59,7 +59,7 @@ sys_seconds_to_choose(const sys_seconds& tp, const date::time_zone* tz)
 }
 
 inline
-double 
+double
 jdatetime_from_local_seconds(const date::local_seconds& ls, const date::time_zone* tz,
     date::local_info& info, choose c, const sys_seconds* ss_ref = nullptr)
 {
@@ -185,7 +185,7 @@ make_sh_fields(const date::sys_seconds& tp, const std::string& tz_name)
 }
 
 constexpr
-double 
+double
 jdate_from_local_days(const date::local_days& ld)
 {
     return static_cast<double>(ld.time_since_epoch().count());

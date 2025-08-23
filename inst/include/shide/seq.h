@@ -20,4 +20,3 @@ sh_date_is_leap(const sh_year_month_day& ymd) {
 }
 
 #endif
- 
