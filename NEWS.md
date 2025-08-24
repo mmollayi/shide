@@ -1,3 +1,5 @@
+# shide (development version)
+
 # shide 0.3.0
 
 * New `seq.jdatetime()` generates regular sequences of Jalali date-times.
