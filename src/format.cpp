@@ -1,4 +1,5 @@
 #include "shide.h"
+#include <shide/format.h>
 
 std::string get_current_tzone_cpp();
 
@@ -35,9 +36,8 @@ format_jdate_cpp(const cpp11::doubles x,
 
         ld = date::local_days{ date::days(static_cast<int>(x[i]))};
         ymd = sh_year_month_day{ ld };
-        ymd2 = {ymd.year(), ymd.month(), ymd.day()};
 
-        date::to_stream(os, fmt, ymd2);
+        sh_to_stream(os, fmt, ymd);
 
         if (os.fail()) {
             SET_STRING_ELT(out, i, NA_STRING);
