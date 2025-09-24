@@ -41,10 +41,10 @@ extern "C" SEXP _shide_jdate_get_qday_cpp(SEXP x) {
   END_CPP11
 }
 // format.cpp
-cpp11::writable::strings format_jdate_cpp(const cpp11::doubles x, const cpp11::strings& format);
-extern "C" SEXP _shide_format_jdate_cpp(SEXP x, SEXP format) {
+cpp11::writable::strings format_jdate_cpp(const cpp11::doubles x, const cpp11::strings& format, const cpp11::strings& month_nms, const cpp11::strings& month_nms_abbrev, const cpp11::strings& weekday_nms, const cpp11::strings& weekday_nms_abbrev, const cpp11::strings& ampm_nms);
+extern "C" SEXP _shide_format_jdate_cpp(SEXP x, SEXP format, SEXP month_nms, SEXP month_nms_abbrev, SEXP weekday_nms, SEXP weekday_nms_abbrev, SEXP ampm_nms) {
   BEGIN_CPP11
-    return cpp11::as_sexp(format_jdate_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(format)));
+    return cpp11::as_sexp(format_jdate_cpp(cpp11::as_cpp<cpp11::decay_t<const cpp11::doubles>>(x), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(format), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(month_nms), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(month_nms_abbrev), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(weekday_nms), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(weekday_nms_abbrev), cpp11::as_cpp<cpp11::decay_t<const cpp11::strings&>>(ampm_nms)));
   END_CPP11
 }
 // format.cpp
@@ -176,7 +176,7 @@ extern "C" SEXP _shide_get_sys_info_cpp(SEXP x) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_shide_format_jdate_cpp",                  (DL_FUNC) &_shide_format_jdate_cpp,                  2},
+    {"_shide_format_jdate_cpp",                  (DL_FUNC) &_shide_format_jdate_cpp,                  7},
     {"_shide_format_jdatetime_cpp",              (DL_FUNC) &_shide_format_jdatetime_cpp,              2},
     {"_shide_get_local_info_cpp",                (DL_FUNC) &_shide_get_local_info_cpp,                2},
     {"_shide_get_sys_info_cpp",                  (DL_FUNC) &_shide_get_sys_info_cpp,                  1},
