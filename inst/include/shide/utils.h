@@ -6,8 +6,12 @@
 
 using date::sys_seconds;
 using date::local_seconds;
+using date::local_days;
 using date::sys_info;
 using date::local_info;
+using date::year;
+using date::month;
+using date::day;
 
 inline
 local_seconds
@@ -31,6 +35,14 @@ local_days
 to_local_days(const sys_seconds& tp, const date::time_zone* p_time_zone, sys_info& info)
 {
     return date::floor<date::days>(to_local_seconds(tp, p_time_zone, info));
+}
+
+constexpr
+local_days
+to_local_days(const year& y, const month& m, const date::weekday_indexed& wdi)
+{
+    auto d = local_days(sh_year_month_day{ y, m, day(1) });
+    return d + (wdi.weekday() - date::weekday(d) + days{ (wdi.index() - 1) * 7 });
 }
 
 inline
