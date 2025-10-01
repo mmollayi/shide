@@ -54,12 +54,12 @@ make_ampm_names(const cpp11::strings& names) {
 [[cpp11::register]]
 cpp11::writable::strings
 format_jdate_cpp(const cpp11::doubles x,
-                 const cpp11::strings& format,
-                 const cpp11::strings& month_nms,
-                 const cpp11::strings& month_nms_abbrev,
-                 const cpp11::strings& weekday_nms,
-                 const cpp11::strings& weekday_nms_abbrev,
-                 const cpp11::strings& ampm_nms)
+                 const cpp11::strings& format)
+                 //const cpp11::strings& month_nms,
+                 //const cpp11::strings& month_nms_abbrev,
+                 //const cpp11::strings& weekday_nms,
+                 //const cpp11::strings& weekday_nms_abbrev,
+                 //const cpp11::strings& ampm_nms)
 {
     if (format.size() != 1) {
         cpp11::stop("`format` must have size 1.");
@@ -69,8 +69,8 @@ format_jdate_cpp(const cpp11::doubles x,
     cpp11::writable::strings out(size);
     const std::string format_(format[0]);
     const char* fmt = format_.c_str();
-    const auto month_names = make_month_names(month_nms, month_nms_abbrev);
-    const auto weekday_names = make_weekday_names(weekday_nms, weekday_nms_abbrev);
+    //const auto month_names = make_month_names(month_nms, month_nms_abbrev);
+    //const auto weekday_names = make_weekday_names(weekday_nms, weekday_nms_abbrev);
 
     date::local_days ld;
     sh_year_month_day ymd{};
@@ -89,7 +89,7 @@ format_jdate_cpp(const cpp11::doubles x,
         ld = date::local_days{ date::days(static_cast<int>(x[i]))};
         ymd = sh_year_month_day{ ld };
 
-        sh_to_stream(os, fmt, ymd, nullptr, nullptr, month_names.data(), weekday_names.data());
+        sh_to_stream(os, fmt, ymd, nullptr, nullptr);
 
         if (os.fail()) {
             SET_STRING_ELT(out, i, NA_STRING);
