@@ -1,4 +1,53 @@
-calc_steps <- function(span, sep) {
+pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+    stopifnot(min.n <= n)
+    zz <- rx <- range(x, na.rm = TRUE)
+    D <- diff(nzz <- as.numeric(zz))
+    xspan <- as.numeric(diff(zz), units = "secs")
+    steps <- gen_steps_data(xspan, sep)
+    nsteps <- xspan/steps$seconds
+    init.i <- init.i0 <- which.min(abs(nsteps - n))
+    st.i <- steps[init.i,] |> as.list()
+    init.at <- calc_steps(zz, st.i$spec, st.i$start)
+    browser()
+    R <- TRUE
+    L.fail <- R.fail <- FALSE
+    while ((init.n <- length(init.at) - 1L) < min.n) {
+        if (init.i == 1L) {
+            if (R) {
+                nat <- seq_(init.at[length(init.at)], by = st.i$spec,
+                            length = 2)[2]
+                R.fail <- is.na(nat) || !(nat > init.at[length(init.at)])
+                if (!R.fail)
+                    init.at[length(init.at) + 1] <- nat
+            }
+            else {
+                nat <- seq_(init.at[1], by = paste0("-",
+                                                    st.i$spec), length = 2)[2]
+                L.fail <- is.na(nat) || !(nat < init.at[1])
+                if (!L.fail) {
+                    init.at[seq_along(init.at) + 1] <- init.at
+                    init.at[1] <- nat
+                }
+            }
+            if (R.fail && L.fail)
+                stop("failed to add more ticks; 'min.n' too large?")
+            R <- !R
+        }
+        else {
+            init.i <- init.i - 1L
+            st.i <- steps[init.i,] |> as.list()
+            init.at <- calc_steps(zz, st.i$spec, st.i$start)
+        }
+    }
+
+    dn <- length(init.at) - 1L - n
+    i2 <- ifelse(dn > 0L, min(init.i + 1L, nrow(steps)), init.i - 1L)
+    st <- steps[i2,] |> as.list()
+    new.at <- calc_steps(zz, st$spec, st$start)
+    new.n <- length(new.at) - 1L
+}
+
+gen_steps_data <- function(span, sep) {
     MIN <- 60
     HOUR <- MIN * 60
     DAY <- HOUR * 24
@@ -52,9 +101,81 @@ calc_steps <- function(span, sep) {
     do.call("rbind.data.frame", steps)
 }
 
-# pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
-#     stopifnot(min.n <= n)
-#     zz <- rx <- range(x, na.rm = TRUE)
-#     D <- diff(nzz <- as.numeric(zz))
-#     browser()
-# }
+make_output <- function(x, format) {
+    structure(
+        x,
+        # if (isDate) {
+        #     if(round) {
+        #         as.Date(round(x, units = "days"))
+        #     } else {
+        #         x
+        #     }
+        # } else {
+        #     as.POSIXct(x)
+        # }
+
+        labels = format(x, format),
+        format = format)
+}
+
+calc_steps <- function(lim, by, unit) {
+    start <- floor_(lim[1], unit)
+    end <- ceiling_(lim[2], unit)
+
+    steps <- seq_(start, end, by = by)
+    if (anyNA(steps)) {
+        steps <- steps[!is.na(steps)]
+        if (!length(steps))
+            return(steps)
+    }
+
+    r1 <- sum(steps <= lim[1])
+    r2 <- length(steps) + 1 - sum(steps >= lim[2])
+    if (r2 == length(steps) + 1) {
+        stop("this shouldn't have had happen")
+        nat <- seq_(steps[length(steps)], by = by, length = 2)[2]
+        if (is.na(nat) || !(nat > steps[length(steps)]))
+            r2 <- length(steps)
+        else steps[r2] <- nat
+    }
+    steps[r1:r2]
+}
+
+floor_ <- function(x, unit = c("secs", "mins", "hours", "days",
+                               "weeks", "months", "years", "decades", "centuries")) {
+    unit <- match.arg(unit)
+    if (unit %in% c("decades", "centuries"))
+        unit <- switch(unit, "decades" = "10 years", "centuries" = "100 years")
+
+    sh_floor(x, unit)
+}
+
+ceiling_ <- function(x, unit = c("secs", "mins", "hours", "days",
+                                 "weeks", "months", "years", "decades", "centuries")) {
+    unit <- match.arg(unit)
+    if (unit %in% c("decades", "centuries"))
+        unit <- switch(unit, "decades" = "10 years", "centuries" = "100 years")
+
+    sh_ceiling(x, unit)
+}
+
+seq_ <- function(from, to, by, length=NULL) {
+    if(missing(by) || !identical(by, "halfmonth"))
+        return( seq(from, to, by = by, length.out=length) )
+    ## else  by == "halfmonth" => can only go forward (!)
+    l2 <- ifelse(is.null(length), NULL, ceiling(length/2))
+
+    x1 <- seq(from, to, by = "months", length.out = l2)
+    x2 <- x1
+    md <- unique(sh_mday(x1))
+    stopifnot(length(md) == 1)
+
+    if(md <= 14) {
+        sh_mday(x2) <- md + 14L
+    } else {
+        sh_mday(x2) <- 1L
+        sh_month(x2) <- sh_month(x2) + 1L
+    }
+
+    sort(c(x1, x2))
+}
