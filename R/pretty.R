@@ -2,16 +2,19 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     stopifnot(min.n <= n)
     zz <- rx <- range(x, na.rm = TRUE)
     D <- diff(nzz <- as.numeric(zz))
+    if (diff(zz) < as.difftime(n, units = "days")) {
+        browser()
+    }
     xspan <- as.numeric(diff(zz), units = "secs")
     steps <- gen_steps_data(xspan, sep)
     nsteps <- xspan/steps$seconds
     init.i <- init.i0 <- which.min(abs(nsteps - n))
     st.i <- steps[init.i,] |> as.list()
     init.at <- calc_steps(zz, st.i$spec, st.i$start)
-    browser()
+    init.n <- length(init.at) - 1L
     R <- TRUE
     L.fail <- R.fail <- FALSE
-    while ((init.n <- length(init.at) - 1L) < min.n) {
+    while (init.n < min.n) {
         if (init.i == 1L) {
             if (R) {
                 nat <- seq_(init.at[length(init.at)], by = st.i$spec,
@@ -40,11 +43,20 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
         }
     }
 
+    if (init.n == n) {
+        return(make_output(init.at, st.i$format))
+    }
+
+    # if (init.n > n) {
+    #
+    # }
+
     dn <- length(init.at) - 1L - n
     i2 <- ifelse(dn > 0L, min(init.i + 1L, nrow(steps)), init.i - 1L)
     st <- steps[i2,] |> as.list()
     new.at <- calc_steps(zz, st$spec, st$start)
     new.n <- length(new.at) - 1L
+    make_output(init.at, st.i$format)
 }
 
 gen_steps_data <- function(span, sep) {
@@ -160,10 +172,15 @@ ceiling_ <- function(x, unit = c("secs", "mins", "hours", "days",
 }
 
 seq_ <- function(from, to, by, length=NULL) {
+    if (is_jdate(from) && grepl("DSTday", by))
+        by <- sub("DSTday", "day", by)
+
     if(missing(by) || !identical(by, "halfmonth"))
         return( seq(from, to, by = by, length.out=length) )
     ## else  by == "halfmonth" => can only go forward (!)
-    l2 <- ifelse(is.null(length), NULL, ceiling(length/2))
+    l2 <- NULL
+    if (!is.null(length))
+        l2 <- ceiling(length/2)
 
     x1 <- seq(from, to, by = "months", length.out = l2)
     x2 <- x1
