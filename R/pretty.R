@@ -4,7 +4,24 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     D <- diff(nzz <- as.numeric(zz))
     if (diff(zz) < as.difftime(n, units = "days")) {
         browser()
+        r <- n - D
+        m <- max(0, r %/% 2)
+        m2 <- m + (r %% 2)
+        repeat {
+            dd <- seq(zz[1] - m, zz[2] + m2, by = "1 day")
+            if (length(dd) >= min.n)
+                break
+
+            if (m < m2) {
+                m <- m+1
+            } else {
+                m2 <- m2+1
+            }
+        }
+
+        return(make_output(dd, format = paste("%b", "%d", sep = sep)))
     }
+
     xspan <- as.numeric(diff(zz), units = "secs")
     steps <- gen_steps_data(xspan, sep)
     nsteps <- xspan/steps$seconds
