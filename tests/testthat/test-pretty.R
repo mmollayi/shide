@@ -14,4 +14,12 @@ test_that("pretty returns the desired output", {
         format = "%b"
     )
     expect_identical(pretty_jdate(x), out)
+
+    x <- seq(jdate("1401-01-05"), jdate("1401-01-06"), by = 1)
+    out <- structure(
+        jdate(c("1401-01-03", "1401-01-04", "1401-01-05", "1401-01-06", "1401-01-07", "1401-01-08")),
+        labels = c("Far 03", "Far 04", "Far 05", "Far 06", "Far 07", "Far 08"),
+        format = "%b %d"
+    )
+    expect_identical(pretty_jdate(x), out)
 })
