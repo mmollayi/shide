@@ -31,7 +31,12 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
         return(make_output(sq, step_i$format))
     }
 
-    dn <- length(sq) - 1L - n
+    dn <- len - n
+
+    if (dn > 0L && i < i0) {
+        return(make_output(sq, step_i$format))
+    }
+
     i2 <- ifelse(dn > 0L, min(i + 1L, nrow(steps)), i - 1L)
     st <- steps[i2,] |> as.list()
     new.at <- calc_steps(rng, st$spec, st$start)
