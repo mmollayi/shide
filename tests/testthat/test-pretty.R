@@ -30,6 +30,7 @@ test_that("pretty returns the desired output", {
         labels = c("Far", "Ord", "Kho", "Tir", "Mor"),
         format = "%b"
     )
+    expect_identical(pretty_jdate(x), out)
 
     x <- jdate(c("1404-01-03", "1404-02-31"))
     out <- structure(

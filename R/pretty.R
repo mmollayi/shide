@@ -3,19 +3,13 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     rng <- range(x, na.rm = TRUE)
     rng_diff <- diff(rng)
     if (rng_diff < as.difftime(n, units = "days")) {
-        r <- as.numeric(as.difftime(n, units = "days") - rng_diff)
-        m1 <- r %/% 2
-        m2 <- m1 + (r %% 2)
-        dd <- seq(rng[1] - m1, rng[2] + m2, by = "1 day")
-        if (length(dd) < min.n)
-            stop("This should've never happened")
-
-        return(make_output(dd, format = paste("%b", "%d", sep = sep)))
+        sq <- make_sub_n_days_seq(rng, n)
+        return(make_output(sq, format = paste("%b", "%d", sep = sep)))
     }
 
-    xspan <- as.numeric(diff(rng), units = "secs")
+    xspan <- as.numeric(rng_diff, units = "secs")
     steps <- gen_steps_data(xspan, sep)
-    nsteps <- xspan/steps$seconds
+    nsteps <- xspan / steps$seconds
     i <- i0 <- which.min(abs(nsteps - n))
     step_i <- steps[i,] |> as.list()
     sq <- calc_steps(rng, step_i$spec, step_i$start)
@@ -185,4 +179,11 @@ seq_ <- function(from, to, by, length=NULL) {
     }
 
     sort(c(x1, x2))
+}
+
+make_sub_n_days_seq <- function(rng, n) {
+    r <- as.numeric(as.difftime(n, units = "days") - diff(rng))
+    m1 <- r %/% 2
+    m2 <- m1 + (r %% 2)
+    seq(rng[1] - m1, rng[2] + m2, by = "1 day")
 }
