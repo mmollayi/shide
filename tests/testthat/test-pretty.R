@@ -39,4 +39,12 @@ test_that("pretty returns the desired output", {
         format = "%b %d"
     )
     expect_identical(pretty_jdate(x, n = 5, min.n = 5), out)
+
+    x <- jdate(c("1401-04-10", "1401-08-30"))
+    out <- structure(
+        jdate(c("1401-04-01", "1401-07-01", "1401-10-01")),
+        labels = c("Tir", "Meh", "Dey"),
+        format = "%b"
+    )
+    expect_identical(pretty_jdate(x, n = 3), out)
 })

@@ -27,22 +27,23 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
         len <- length(sq) - 1L
     }
 
-    if (len == n) {
-        return(make_output(sq, step_i$format))
-    }
-
+    i_is_modified <- i < i0
     dn <- len - n
-
-    if (dn > 0L && i < i0) {
+    if (dn == 0L) {
         return(make_output(sq, step_i$format))
     }
 
+    if (dn > 0L && i_is_modified) {
+        return(make_output(sq, step_i$format))
+    }
+
+    # too many ticks or too few ticks
     i2 <- ifelse(dn > 0L, min(i + 1L, nrow(steps)), i - 1L)
-    st <- steps[i2,] |> as.list()
-    new.at <- calc_steps(rng, st$spec, st$start)
-    new.n <- length(new.at) - 1L
-    if (abs(new.n - n) < abs(dn)) {
-        return(make_output(new.at, st$format))
+    step_i2 <- steps[i2,] |> as.list()
+    sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
+    len2 <- length(sq2) - 1L
+    if (abs(len2 - n) < abs(dn)) {
+        return(make_output(sq2, step_i2$format))
     } else {
         return(make_output(sq, step_i$format))
     }
