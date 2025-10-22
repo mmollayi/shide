@@ -48,4 +48,12 @@ test_that("pretty returns the desired output", {
         format = "%b"
     )
     expect_identical(pretty_jdate(x, n = 3), out)
+
+    x <- jdate(c("1367-09-06", "1404-07-30"))
+    out <- structure(
+        seq(jdate("1360-01-01"), by = "10 years", length.out = 6),
+        labels = c("1360", "1370", "1380", "1390", "1400", "1410"),
+        format = "%Y"
+    )
+    expect_identical(pretty_jdate(x, n = 6), out)
 })
