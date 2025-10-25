@@ -1,4 +1,4 @@
-test_that("pretty returns the desired output", {
+test_that("pretty returns desired outputs for various jdate inputs", {
     x <- jdate(c("1401-01-05", "1401-12-25"))
     out <- structure(
         jdate(c("1401-01-01", "1401-04-01", "1401-07-01", "1401-10-01", "1402-01-01")),
@@ -56,4 +56,15 @@ test_that("pretty returns the desired output", {
         format = "%Y"
     )
     expect_identical(pretty_jdate(x, n = 6), out)
+})
+
+test_that("pretty returns desired outputs for various jdatetime inputs", {
+    tz <- "Asia/Tehran"
+    x <- jdatetime(c("1404-01-01 00:00:00", "1404-01-01 12:00:00"), tz)
+    out <- structure(
+        seq(x[1], by = "3 hours", length.out = 5),
+        labels = c("00:00", "03:00", "06:00", "09:00", "12:00"),
+        format = "%H:%M"
+    )
+    expect_identical(pretty_jdatetime(x, n = 5), out)
 })

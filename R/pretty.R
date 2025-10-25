@@ -43,6 +43,46 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     }
 }
 
+pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+    stopifnot(min.n <= n)
+    rng <- range(x, na.rm = TRUE)
+    rng_diff <- diff(rng)
+    xspan <- as.numeric(rng_diff, units = "secs")
+    steps <- gen_steps_data(xspan, sep)
+    nsteps <- xspan / steps$seconds
+    i <- i0 <- which.min(abs(nsteps - n))
+    step_i <- steps[i,] |> as.list()
+    sq <- calc_steps(rng, step_i$spec, step_i$start)
+    len <- length(sq) - 1L
+    while (len < min.n) {
+        i <- i - 1L
+        step_i <- steps[i,] |> as.list()
+        sq <- calc_steps(rng, step_i$spec, step_i$start)
+        len <- length(sq) - 1L
+    }
+
+    i_is_modified <- i < i0
+    dn <- len - n
+    if (dn == 0L) {
+        return(make_output(sq, step_i$format))
+    }
+
+    if (dn > 0L && i_is_modified) {
+        return(make_output(sq, step_i$format))
+    }
+
+    # too many ticks or too few ticks
+    i2 <- ifelse(dn > 0L, min(i + 1L, nrow(steps)), i - 1L)
+    step_i2 <- steps[i2,] |> as.list()
+    sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
+    len2 <- length(sq2) - 1L
+    if (abs(len2 - n) < abs(dn)) {
+        return(make_output(sq2, step_i2$format))
+    } else {
+        return(make_output(sq, step_i$format))
+    }
+}
+
 gen_steps_data <- function(span, sep) {
     MIN <- 60
     HOUR <- MIN * 60
