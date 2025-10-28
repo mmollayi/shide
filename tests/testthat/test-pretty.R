@@ -70,9 +70,25 @@ test_that("pretty returns desired outputs for various jdatetime inputs", {
 
     x <- jdatetime(c("1404-01-01 00:00:00", "1404-01-01 12:00:00"), tz)
     out <- structure(
-        seq(x[1], by = "1 hours", length.out = 13),
-        labels = format(seq(x[1], by = "1 hours", length.out = 13), "%H:%M"),
+        seq(x[1], by = "hours", length.out = 13),
+        labels = format(seq(x[1], by = "hours", length.out = 13), "%H:%M"),
         format = "%H:%M"
     )
     expect_identical(pretty_jdatetime(x, n = 6, min.n = 5), out)
+
+    x <- jdatetime(c("1404-01-01 00:00:00", "1404-01-02 01:00:00"), tz)
+    out <- structure(
+        seq(x[1], by = "hours", length.out = 26),
+        labels = format(seq(x[1], by = "hours", length.out = 26), "%b %d %H:%M"),
+        format = "%b %d %H:%M"
+    )
+    expect_identical(pretty_jdatetime(x, n = 20), out)
+
+    x <- jdatetime(c("1404-01-01 00:00:00", "1404-01-01 00:00:04"), tz)
+    out <- structure(
+        seq(x[1], by = "secs", length.out = 5),
+        labels = c("00", "01", "02", "03", "04"),
+        format = "%S"
+    )
+    expect_identical(pretty_jdatetime(x, n = 5), out)
 })

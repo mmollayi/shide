@@ -71,6 +71,10 @@ pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
         return(make_output(sq, step_i$format))
     }
 
+    if (dn < 0L && i == 1L) {
+        return(make_output(sq, step_i$format))
+    }
+
     # too many ticks or too few ticks
     i2 <- ifelse(dn > 0L, min(i + 1L, nrow(steps)), i - 1L)
     step_i2 <- steps[i2,] |> as.list()
@@ -180,8 +184,14 @@ calc_steps <- function(lim, by, unit) {
 floor_ <- function(x, unit = c("secs", "mins", "hours", "days",
                                "weeks", "months", "years", "decades", "centuries")) {
     unit <- match.arg(unit)
-    if (unit %in% c("decades", "centuries"))
-        unit <- switch(unit, "decades" = "10 years", "centuries" = "100 years")
+    if (unit %in% c("secs", "mins", "decades", "centuries"))
+        unit <- switch(
+            unit,
+            "secs" = "seconds",
+            "mins" = "minutes",
+            "decades" = "10 years",
+            "centuries" = "100 years"
+        )
 
     sh_floor(x, unit)
 }
@@ -189,8 +199,14 @@ floor_ <- function(x, unit = c("secs", "mins", "hours", "days",
 ceiling_ <- function(x, unit = c("secs", "mins", "hours", "days",
                                  "weeks", "months", "years", "decades", "centuries")) {
     unit <- match.arg(unit)
-    if (unit %in% c("decades", "centuries"))
-        unit <- switch(unit, "decades" = "10 years", "centuries" = "100 years")
+    if (unit %in% c("secs", "mins", "decades", "centuries"))
+        unit <- switch(
+            unit,
+            "secs" = "seconds",
+            "mins" = "minutes",
+            "decades" = "10 years",
+            "centuries" = "100 years"
+        )
 
     sh_ceiling(x, unit)
 }
