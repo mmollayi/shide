@@ -5,7 +5,7 @@ test_that("pretty returns desired outputs for various jdate inputs", {
         labels = c("Far", "Tir", "Meh", "Dey", "Far"),
         format = "%b"
     )
-    expect_identical(pretty_jdate(x), out)
+    expect_identical(pretty_jdate(x, n = 5), out)
 
     x <- jdate(c("1401-01-05", "1401-05-02"))
     out <- structure(
@@ -13,7 +13,7 @@ test_that("pretty returns desired outputs for various jdate inputs", {
         labels = c("Far", "Ord", "Kho", "Tir", "Mor", "Sha"),
         format = "%b"
     )
-    expect_identical(pretty_jdate(x), out)
+    expect_identical(pretty_jdate(x, n = 5), out)
 
     # test for the case rng_diff < as.difftime(n, units = "days")
     x <- jdate(c("1401-01-05", "1401-01-06"))
@@ -22,7 +22,7 @@ test_that("pretty returns desired outputs for various jdate inputs", {
         labels = c("Far 03", "Far 04", "Far 05", "Far 06", "Far 07", "Far 08"),
         format = "%b %d"
     )
-    expect_identical(pretty_jdate(x), out)
+    expect_identical(pretty_jdate(x, n = 5), out)
 
     x <- jdate(c("1401-01-05", "1401-04-10"))
     out <- structure(
@@ -30,7 +30,16 @@ test_that("pretty returns desired outputs for various jdate inputs", {
         labels = c("Far", "Ord", "Kho", "Tir", "Mor"),
         format = "%b"
     )
-    expect_identical(pretty_jdate(x), out)
+    expect_identical(pretty_jdate(x, n = 5), out)
+
+    x <- jdate(c("1401-01-05", "1401-04-10"))
+    out <- structure(
+        jdate(c("1401-01-01", "1401-01-15", "1401-02-01", "1401-02-15", "1401-03-01",
+                "1401-03-15", "1401-04-01", "1401-04-15")),
+        labels = c("Far 01", "Far 15", "Ord 01", "Ord 15", "Kho 01", "Kho 15", "Tir 01", "Tir 15"),
+        format = "%b %d"
+    )
+    expect_identical(pretty_jdate(x, n = 5, min.n = 5), out)
 
     x <- jdate(c("1404-01-03", "1404-02-31"))
     out <- structure(

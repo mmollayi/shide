@@ -36,7 +36,10 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     step_i2 <- steps[i2,] |> as.list()
     sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
     len2 <- length(sq2) - 1L
-    if (abs(len2 - n) < abs(dn)) {
+
+    if (len2 < min.n) {
+        return(make_output(sq, step_i$format))
+    } else if (abs(len2 - n) < abs(dn)) {
         return(make_output(sq2, step_i2$format))
     } else {
         return(make_output(sq, step_i$format))
