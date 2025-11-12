@@ -3,7 +3,8 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     rng <- range(x, na.rm = TRUE)
     rng_diff <- diff(rng)
     if (rng_diff < as.difftime(n, units = "days")) {
-        sq <- make_sub_n_days_seq(rng, n)
+        rng <- widen_range(rng, n, "days")
+        sq <- seq(rng[1], rng[2], by = "days")
         return(make_output(sq, format = paste("%b", "%d", sep = sep)))
     }
 
@@ -49,7 +50,13 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
 pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     stopifnot(min.n <= n)
     rng <- range(x, na.rm = TRUE)
+    rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
     rng_diff <- diff(rng)
+    if (rng_diff < as.difftime(n, units = "secs")) {
+        rng <- widen_range(rng, n, "secs")
+        rng_diff <- diff(rng)
+    }
+
     xspan <- as.numeric(rng_diff, units = "secs")
     steps <- gen_steps_data(xspan, sep)
     nsteps <- xspan / steps$seconds
@@ -240,9 +247,10 @@ seq_ <- function(from, to, by, length=NULL) {
     sort(c(x1, x2))
 }
 
-make_sub_n_days_seq <- function(rng, n) {
-    r <- as.numeric(as.difftime(n, units = "days") - diff(rng))
+widen_range <- function(rng, n, resolution) {
+    resolution <- rlang::arg_match(resolution, c("days", "secs"))
+    r <- as.numeric(as.difftime(n, units = resolution) - diff(rng))
     m1 <- r %/% 2
     m2 <- m1 + (r %% 2)
-    seq(rng[1] - m1, rng[2] + m2, by = "1 day")
+    c(rng[1] - m1, rng[2] + m2)
 }
