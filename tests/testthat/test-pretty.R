@@ -65,6 +65,14 @@ test_that("pretty returns desired outputs for various jdate inputs", {
         format = "%Y"
     )
     expect_identical(pretty_jdate(x, n = 6), out)
+
+    x <- jdate("1404-08-19")
+    out <- structure(
+        jdate(c("1404-08-18", "1404-08-19", "1404-08-20")),
+        labels = c("Aba 18", "Aba 19", "Aba 20"),
+        format = "%b %d"
+    )
+    expect_identical(pretty_jdate(x, n = 2), out)
 })
 
 test_that("pretty returns desired outputs for various jdatetime inputs", {
@@ -98,8 +106,8 @@ test_that("pretty returns desired outputs for various jdatetime inputs", {
 
     x <- jdatetime(c("1404-01-01 00:00:00", "1404-01-01 00:00:04"), tz)
     out <- structure(
-        seq(x[1], by = "secs", length.out = 5),
-        labels = c("00", "01", "02", "03", "04"),
+        seq(x[1], by = "secs", length.out = 6),
+        labels = c("00", "01", "02", "03", "04", "05"),
         format = "%S"
     )
     expect_identical(pretty_jdatetime(x, n = 5), out)
@@ -111,4 +119,12 @@ test_that("pretty returns desired outputs for various jdatetime inputs", {
         format = "%H:%M"
     )
     expect_identical(pretty_jdatetime(x, n = 4), out)
+
+    x <- jdatetime("1404-08-21 18:06:33", tz)
+    out <- structure(
+        seq(x[1] - 1, by = "secs", length.out = 3),
+        labels = c("32", "33", "34"),
+        format = "%S"
+    )
+    expect_identical(pretty_jdatetime(x, n = 2), out)
 })
