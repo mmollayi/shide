@@ -1,10 +1,11 @@
 pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     stopifnot(min.n <= n)
+    resolution <- c("days", "secs")[as.logical(inherits(x, c("jdate", "jdatetime"), which = TRUE))]
     rng <- range(x, na.rm = TRUE)
     rng_diff <- diff(rng)
-    if (rng_diff < as.difftime(n, units = "days")) {
-        rng <- widen_range(rng, n, "days")
-        sq <- seq(rng[1], rng[2], by = "days")
+    if (rng_diff < as.difftime(n, units = resolution)) {
+        rng <- widen_range(rng, n, resolution)
+        sq <- seq(rng[1], rng[2], by = resolution)
         return(make_output(sq, format = paste("%b", "%d", sep = sep)))
     }
 
@@ -49,11 +50,12 @@ pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
 
 pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     stopifnot(min.n <= n)
+    resolution <- c("days", "secs")[as.logical(inherits(x, c("jdate", "jdatetime"), which = TRUE))]
     rng <- range(x, na.rm = TRUE)
     rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
     rng_diff <- diff(rng)
-    if (rng_diff < as.difftime(n, units = "secs")) {
-        rng <- widen_range(rng, n, "secs")
+    if (rng_diff < as.difftime(n, units = resolution)) {
+        rng <- widen_range(rng, n, resolution)
         rng_diff <- diff(rng)
     }
 
@@ -154,16 +156,6 @@ gen_steps_data <- function(span, sep) {
 make_output <- function(x, format) {
     structure(
         x,
-        # if (isDate) {
-        #     if(round) {
-        #         as.Date(round(x, units = "days"))
-        #     } else {
-        #         x
-        #     }
-        # } else {
-        #     as.POSIXct(x)
-        # }
-
         labels = format(x, format),
         format = format)
 }
