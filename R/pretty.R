@@ -1,61 +1,19 @@
-pretty_jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     stopifnot(min.n <= n)
     resolution <- c("days", "secs")[as.logical(inherits(x, c("jdate", "jdatetime"), which = TRUE))]
     rng <- range(x, na.rm = TRUE)
+    # to remove subsecond
+    if (resolution == "secs")
+        rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
+
     rng_diff <- diff(rng)
     if (rng_diff < as.difftime(n, units = resolution)) {
         rng <- widen_range(rng, n, resolution)
-        sq <- seq(rng[1], rng[2], by = resolution)
-        return(make_output(sq, format = paste("%b", "%d", sep = sep)))
-    }
+        if (resolution == "days") {
+            sq <- seq(rng[1], rng[2], by = resolution)
+            return(make_output(sq, format = paste("%b", "%d", sep = sep)))
+        }
 
-    xspan <- as.numeric(rng_diff, units = "secs")
-    steps <- gen_steps_data(xspan, sep)
-    nsteps <- xspan / steps$seconds
-    i <- i0 <- which.min(abs(nsteps - n))
-    step_i <- steps[i,] |> as.list()
-    sq <- calc_steps(rng, step_i$spec, step_i$start)
-    len <- length(sq) - 1L
-    while (len < min.n) {
-        i <- i - 1L
-        step_i <- steps[i,] |> as.list()
-        sq <- calc_steps(rng, step_i$spec, step_i$start)
-        len <- length(sq) - 1L
-    }
-
-    i_is_modified <- i < i0
-    dn <- len - n
-    if (dn == 0L) {
-        return(make_output(sq, step_i$format))
-    }
-
-    if (dn > 0L && i_is_modified) {
-        return(make_output(sq, step_i$format))
-    }
-
-    # too many ticks or too few ticks
-    i2 <- ifelse(dn > 0L, min(i + 1L, nrow(steps)), i - 1L)
-    step_i2 <- steps[i2,] |> as.list()
-    sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
-    len2 <- length(sq2) - 1L
-
-    if (len2 < min.n) {
-        return(make_output(sq, step_i$format))
-    } else if (abs(len2 - n) < abs(dn)) {
-        return(make_output(sq2, step_i2$format))
-    } else {
-        return(make_output(sq, step_i$format))
-    }
-}
-
-pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
-    stopifnot(min.n <= n)
-    resolution <- c("days", "secs")[as.logical(inherits(x, c("jdate", "jdatetime"), which = TRUE))]
-    rng <- range(x, na.rm = TRUE)
-    rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
-    rng_diff <- diff(rng)
-    if (rng_diff < as.difftime(n, units = resolution)) {
-        rng <- widen_range(rng, n, resolution)
         rng_diff <- diff(rng)
     }
 
@@ -83,7 +41,7 @@ pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
         return(make_output(sq, step_i$format))
     }
 
-    if (dn < 0L && i == 1L) {
+    if (resolution == "secs" && dn < 0L && i == 1L) {
         return(make_output(sq, step_i$format))
     }
 
@@ -92,7 +50,10 @@ pretty_jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     step_i2 <- steps[i2,] |> as.list()
     sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
     len2 <- length(sq2) - 1L
-    if (abs(len2 - n) < abs(dn)) {
+
+    if (len2 < min.n) {
+        return(make_output(sq, step_i$format))
+    } else if (abs(len2 - n) < abs(dn)) {
         return(make_output(sq2, step_i2$format))
     } else {
         return(make_output(sq, step_i$format))
