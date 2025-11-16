@@ -1,5 +1,20 @@
+#' @method pretty jdate
+#' @export
+pretty.jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+    sh_pretty(x, n, min.n, sep, ...)
+}
+
+#' @method pretty jdatetime
+#' @export
+pretty.jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+    sh_pretty(x, n, min.n, sep, ...)
+}
+
 sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     stopifnot(min.n <= n)
+    if (all(is.na(x)))
+        return(structure(NA_character_, labels = NA_character_, format = NA_character_))
+
     resolution <- c("days", "secs")[as.logical(inherits(x, c("jdate", "jdatetime"), which = TRUE))]
     rng <- range(x, na.rm = TRUE)
     # to remove subsecond
@@ -19,11 +34,13 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
 
     xspan <- as.numeric(rng_diff, units = "secs")
     steps <- gen_steps_data(xspan, sep)
+    # crudely work out number of steps in the given interval
     nsteps <- xspan / steps$seconds
     i <- i0 <- which.min(abs(nsteps - n))
     step_i <- steps[i,] |> as.list()
     sq <- calc_steps(rng, step_i$spec, step_i$start)
     len <- length(sq) - 1L
+    # bump it up if below acceptable threshold
     while (len < min.n) {
         i <- i - 1L
         step_i <- steps[i,] |> as.list()
@@ -33,14 +50,15 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
 
     i_is_modified <- i < i0
     dn <- len - n
+    # perfect
     if (dn == 0L) {
         return(make_output(sq, step_i$format))
     }
-
+    # too many ticks
     if (dn > 0L && i_is_modified) {
         return(make_output(sq, step_i$format))
     }
-
+    # too few, but i = 1
     if (resolution == "secs" && dn < 0L && i == 1L) {
         return(make_output(sq, step_i$format))
     }
@@ -50,7 +68,7 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     step_i2 <- steps[i2,] |> as.list()
     sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
     len2 <- length(sq2) - 1L
-
+    # work out whether sq2 or sq is better
     if (len2 < min.n) {
         return(make_output(sq, step_i$format))
     } else if (abs(len2 - n) < abs(dn)) {
@@ -103,7 +121,7 @@ gen_steps_data <- function(span, sep) {
         list(spec = "1000 years", seconds = 1000*YEAR)
     )
 
-    ## carry forward 'format' and 'start' to following steps
+    # carry forward 'format' and 'start' to following steps
     for (i in seq_along(steps)) {
         if (is.null(steps[[i]]$start))
             steps[[i]]$start <- steps[[i-1]]$start
@@ -118,9 +136,11 @@ make_output <- function(x, format) {
     structure(
         x,
         labels = format(x, format),
-        format = format)
+        format = format
+    )
 }
 
+# calculate actual number of ticks in the given interval
 calc_steps <- function(lim, by, unit) {
     start <- floor_(lim[1], unit)
     end <- ceiling_(lim[2], unit)
@@ -180,7 +200,7 @@ seq_ <- function(from, to, by, length=NULL) {
 
     if(missing(by) || !identical(by, "halfmonth"))
         return( seq(from, to, by = by, length.out=length) )
-    ## else  by == "halfmonth" => can only go forward (!)
+    # else  by == "halfmonth" => can only go forward (!)
     l2 <- NULL
     if (!is.null(length))
         l2 <- ceiling(length/2)
