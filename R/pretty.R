@@ -1,16 +1,29 @@
+#' Pretty breakpoints for Jalali date-times
+#'
+#' Generates a sequence of about n+1 equally spaced nice,
+#' human-friendly time breaks which cover the given range.
+#'
+#' @param x A vector of `jdate` or `jdatetime` objects.
+#' @param n Integer giving the desired number of intervals.
+#' @param min.n Nonnegative integer giving the minimal number of intervals.
+#' @param sep A character string, serving as a separator for certain formats
+#'     (e.g., between month and year).
+#' @inheritParams rlang::args_dots_empty
 #' @method pretty jdate
 #' @export
 pretty.jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
-    sh_pretty(x, n, min.n, sep, ...)
+    check_dots_empty()
+    sh_pretty(x, n, min.n, sep)
 }
 
 #' @method pretty jdatetime
 #' @export
 pretty.jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
-    sh_pretty(x, n, min.n, sep, ...)
+    check_dots_empty()
+    sh_pretty(x, n, min.n, sep)
 }
 
-sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ") {
     stopifnot(min.n <= n)
     if (all(is.na(x)))
         return(structure(NA_character_, labels = NA_character_, format = NA_character_))
