@@ -1,3 +1,6 @@
+# This code is adapted from pretty.Date() in the grDevices package
+# of R (R Core Team).
+
 #' Pretty breakpoints for Jalali date-times
 #'
 #' Generates a sequence of about n+1 equally spaced nice,
@@ -9,6 +12,20 @@
 #' @param sep A character string, serving as a separator for certain formats
 #'     (e.g., between month and year).
 #' @inheritParams rlang::args_dots_empty
+#' @section Implementation notes:
+#' This method is implemented following the logic of `pretty.Date()`
+#' from the \pkg{grDevices} package in base R.
+#' @return A vector of Jalali date-times, with two additional attributes:
+#'
+#' * "labels": A character vector of formatted labels corresponding to the breaks.
+#' * "format": The format specification that was used.
+#' @seealso [grDevices::pretty.Date()]
+#' @examples
+#' x <- seq(jdate("1404-01-02"), jdate("1404-03-03"), by = "week")
+#' pretty(x, n = 5, min.n = 5)
+#'
+#' x <- jdatetime("1404-08-21 18:06:33", "Asia/Tehran")
+#' pretty(x, n = 5)
 #' @method pretty jdate
 #' @export
 pretty.jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
@@ -16,6 +33,7 @@ pretty.jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
     sh_pretty(x, n, min.n, sep)
 }
 
+#' @rdname pretty.jdate
 #' @method pretty jdatetime
 #' @export
 pretty.jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
