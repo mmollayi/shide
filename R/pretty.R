@@ -52,6 +52,9 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ") {
     if (resolution == "secs")
         rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
 
+    if (n == 0)
+        return(sh_pretty_n0(rng))
+
     rng_diff <- diff(rng)
     if (rng_diff < as.difftime(n, units = resolution)) {
         rng <- widen_range(rng, n, resolution)
@@ -257,4 +260,16 @@ widen_range <- function(rng, n, resolution) {
     m1 <- r %/% 2
     m2 <- m1 + (r %% 2)
     c(rng[1] - m1, rng[2] + m2)
+}
+
+sh_pretty_n0 <- function(rng, sep) {
+    if (rng[1] == rng[2]) {
+        fmt <- c(
+            "%Y-%m-%d",
+            "%Y-%m-%d %H:%M:%S"
+        )[as.logical(inherits(rng, c("jdate", "jdatetime"), which = TRUE))]
+        return(make_output(rng[1], fmt))
+    }
+
+    sh_pretty(rng, n = 1, sep)
 }
