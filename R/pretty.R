@@ -8,13 +8,19 @@
 #'
 #' @param x A vector of `jdate` or `jdatetime` objects.
 #' @param n Integer giving the desired number of intervals.
-#' @param min.n Nonnegative integer giving the minimal number of intervals.
+#' @param min.n Non-negative integer giving the minimal number of intervals.
 #' @param sep A character string, serving as a separator for certain formats
 #'     (e.g., between month and year).
 #' @inheritParams rlang::args_dots_empty
 #' @section Implementation notes:
 #' This method is implemented following the logic of `pretty.Date()`
-#' from the \pkg{grDevices} package in base R.
+#' from the \pkg{grDevices} package in base R. It largely follows the behavior of
+#' `pretty.Date()` in determining breakpoints and constructing formatted labels.
+#' One intentional difference concerns the case `n = 0`. In this implementation:
+#'
+#' * If `length(x) = 1`, the scalar input value is returned unchanged and the format specification
+#' is "%Y-%m-%d".
+#' * If `length(x) > 1`, the function falls back to `pretty(x, n = 1)`.
 #' @return A vector of Jalali date-times, with two additional attributes:
 #'
 #' * "labels": A character vector of formatted labels corresponding to the breaks.
@@ -53,7 +59,7 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ") {
         rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
 
     if (n == 0)
-        return(sh_pretty_n0(rng))
+        return(sh_pretty_n0(rng, sep))
 
     rng_diff <- diff(rng)
     if (rng_diff < as.difftime(n, units = resolution)) {

@@ -73,6 +73,17 @@ test_that("pretty returns desired outputs for various jdate inputs", {
         format = "%b %d"
     )
     expect_identical(sh_pretty(x, n = 2), out)
+
+    x <- jdate("1404-08-19")
+    out <- structure(
+        x,
+        labels = "1404-08-19",
+        format = "%Y-%m-%d"
+    )
+    expect_identical(sh_pretty(x, n = 0), out)
+
+    x <- jdate(c("1404-08-19", "1404-08-29"))
+    expect_identical(sh_pretty(x, n = 0), sh_pretty(x, n = 1))
 })
 
 test_that("pretty returns desired outputs for various jdatetime inputs", {

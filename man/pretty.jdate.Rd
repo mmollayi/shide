@@ -14,7 +14,7 @@
 
 \item{n}{Integer giving the desired number of intervals.}
 
-\item{min.n}{Nonnegative integer giving the minimal number of intervals.}
+\item{min.n}{Non-negative integer giving the minimal number of intervals.}
 
 \item{sep}{A character string, serving as a separator for certain formats
 (e.g., between month and year).}
@@ -35,7 +35,14 @@ human-friendly time breaks which cover the given range.
 \section{Implementation notes}{
 
 This method is implemented following the logic of \code{pretty.Date()}
-from the \pkg{grDevices} package in base R.
+from the \pkg{grDevices} package in base R. It largely follows the behavior of
+\code{pretty.Date()} in determining breakpoints and constructing formatted labels.
+One intentional difference concerns the case \code{n = 0}. In this implementation:
+\itemize{
+\item If \code{length(x) = 1}, the scalar input value is returned unchanged and the format specification
+is "\%Y-\%m-\%d".
+\item If \code{length(x) > 1}, the function falls back to \code{pretty(x, n = 1)}.
+}
 }
 
 \examples{
