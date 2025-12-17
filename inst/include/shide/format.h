@@ -149,7 +149,6 @@ sh_to_stream(std::ostream& os, const char* fmt, const sh_fields& fds,
             break;
         case 'b':
         case 'B':
-        case 'h':
             if (command)
             {
                 tm.tm_mon = static_cast<int>(extract_month(os, fds)) - 1;
@@ -204,41 +203,22 @@ sh_to_stream(std::ostream& os, const char* fmt, const sh_fields& fds,
             else
                 os << *fmt;
             break;
-        case 'D': 
-            if (command)
-            {
-                if (!fds.ymd.ok())
-                    os.setstate(std::ios::failbit);
-                auto const& ymd = fds.ymd;
-                save_ostream<char> _(os);
-                os.imbue(std::locale::classic());
-                os.fill('0');
-                os.flags(std::ios::dec | std::ios::right);
-                os.width(4);
-                os << static_cast<int>(ymd.year()) << char{ '/' };
-                os.width(2);
-                os << static_cast<unsigned>(ymd.month()) << char{ '/' };
-                os.width(2);
-                os << static_cast<unsigned>(ymd.day());
-                command = nullptr;
-            }
-            else
-                os << *fmt;
-            break;
         case 'F':
+        case 'J':
             if (command)
             {
                 if (!fds.ymd.ok())
                     os.setstate(std::ios::failbit);
                 auto const& ymd = fds.ymd;
                 save_ostream<char> _(os);
+                const auto sep = (*fmt == 'F') ? '-' : '/';
                 os.imbue(std::locale::classic());
                 os.fill('0');
                 os.flags(std::ios::dec | std::ios::right);
                 os.width(4);
-                os << static_cast<int>(ymd.year()) << char{ '-' };
+                os << static_cast<int>(ymd.year()) << sep;
                 os.width(2);
-                os << static_cast<unsigned>(ymd.month()) << char{ '-' };
+                os << static_cast<unsigned>(ymd.month()) << sep;
                 os.width(2);
                 os << static_cast<unsigned>(ymd.day());
                 command = nullptr;
@@ -431,6 +411,7 @@ sh_to_stream(std::ostream& os, const char* fmt, const sh_fields& fds,
                 if (y < 10)
                     os << char{ '0' };
                 os << y;
+                command = nullptr;
             }
             else
                 os << *fmt;
