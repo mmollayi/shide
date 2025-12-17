@@ -1,5 +1,6 @@
 #include "shide.h"
 #include <shide/format.h>
+#include <shide/make.h>
 
 std::string get_current_tzone_cpp();
 using string_pair_ptr = std::pair<const std::string*, const std::string*>;
@@ -89,7 +90,7 @@ format_jdate_cpp(const cpp11::doubles x,
         ld = date::local_days{ date::days(static_cast<int>(x[i]))};
         ymd = sh_year_month_day{ ld };
 
-        sh_to_stream(os, fmt, ymd, nullptr, nullptr);
+        sh_to_stream(os, fmt, sh_fields{ ymd }, nullptr, nullptr);
 
         if (os.fail()) {
             SET_STRING_ELT(out, i, NA_STRING);
@@ -129,9 +130,6 @@ format_jdatetime_cpp(const cpp11::sexp x,
 
     date::local_seconds ls;
     date::sys_seconds ss;
-    date::local_days ld;
-    sh_year_month_day ymd{};
-    date::year_month_day ymd2{};
     date::sys_info info;
 
     const R_xlen_t size = xx.size();
@@ -155,13 +153,8 @@ format_jdatetime_cpp(const cpp11::sexp x,
         ss = sys_seconds_from_double(xx[i]);
         tzdb::get_sys_info(ss, tz, info);
         ls = date::local_seconds{(ss + info.offset).time_since_epoch()};
-        ld = date::floor<date::days>(ls);
-        auto tod = date::hh_mm_ss<std::chrono::seconds>{ ls - date::local_seconds{ ld } };
-        ymd = sh_year_month_day{ ld };
-        ymd2 = {ymd.year(), ymd.month(), ymd.day()};
-
-        date::fields<std::chrono::seconds> fds{ ymd2, tod };
-        date::to_stream(os, fmt, fds, &tz_name, &info.offset);
+        auto fds = make_sh_fields(ls);
+        sh_to_stream(os, fmt, fds, &tz_name, &info.offset);
 
         if (os.fail()) {
             SET_STRING_ELT(out, i, NA_STRING);
