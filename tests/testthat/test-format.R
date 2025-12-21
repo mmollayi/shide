@@ -23,7 +23,10 @@ test_that("individual formatting flags work as expected", {
         "%Y" = "1404",
         "%y" = "04",
         "%z" = "+0330",
-        "%Z" = "Asia/Tehran"
+        "%Z" = "Asia/Tehran",
+        "%%" = "%",
+        "%n" = "\n",
+        "%t" = "\t"
     )
 
     out <- vapply(
@@ -44,4 +47,17 @@ test_that("formatting jdate objects with %z or %Z returns NA", {
 test_that("%I and %p agree at midnight and noon", {
     x <- jdatetime_make(1404, 9, 6, c(0, 12), 0, 0)
     expect_identical(format(x, "%I %p"), c("12 AM", "12 PM"))
+})
+
+test_that("common composite formats work", {
+    x <- jdatetime_make(1404, 9, 6, 13, 48, 4)
+
+    expect_identical(format(x, "%Y/%m/%d"), "1404/09/06")
+    expect_identical(format(x, "%Y/%m/%d %R"), "1404/09/06 13:48")
+    expect_identical(format(x, "%A %Y/%m/%d"), "Thursday 1404/09/06")
+    expect_identical(format(x, "%J %T"), "1404/09/06 13:48:04")
+    expect_identical(format(x, "%J %I:%M %p"), "1404/09/06 01:48 PM")
+    expect_identical(format(x, "%d %B %Y"), "06 Azar 1404")
+    expect_identical(format(x, "Date: %J"), "Date: 1404/09/06")
+    expect_identical(format(x, "%F at %R"), "1404-09-06 at 13:48")
 })
