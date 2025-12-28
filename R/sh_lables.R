@@ -1,4 +1,17 @@
-sh_lables <- function(month, month_abbr = month, weekday, weekday_abbr = weekday, am_pm) {
+#' Create labels for date and time components
+#'
+#' `sh_labels()` allows users to define custom textual representations for months, weekdays
+#' and AM/PM indicators, used by `shide` when parsing and formatting dates and times.
+#'
+#' @param month,month_abbr Character vectors of length 12 giving full and abbreviated
+#'    month names, respectively, ordered from Farvardin to Esfand.
+#' @param weekday,weekday_abbr Character vectors of length 7 giving full and
+#'    abbreviated weekday names, respectively, ordered from Saturday to Friday.
+#' @param am_pm A character vector of length 2 giving the AM and PM labels.
+#' @returns An object of class `shide_labels` that stores labels for
+#'    months, weekdays, and AM/PM.
+#' @export
+sh_labels <- function(month, month_abbr = month, weekday, weekday_abbr = weekday, am_pm) {
     if (!is_character(month, n = 12L)) {
         cli::cli_abort("{.var month} must be a character vector of length 12.")
     }
