@@ -52,3 +52,16 @@ print.shide_labels <- function(x, ...) {
         sep = ""
     )
 }
+
+shide_labels_default <- local({
+    months <- c("Farvardin", "Ordibehesht", "Khordad", "Tir", "Mordad",
+                "Shahrivar", "Mehr", "Aban", "Azar", "Dey", "Bahman", "Esfand")
+
+    month_abbrs <- c("Far", "Ord", "Kho", "Tir", "Mor", "Sha",
+                     "Meh", "Aba", "Aza", "Dey", "Bah", "Esf")
+
+    weekdays <- c("Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
+    weekday_abbrs <- c("Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri")
+    ampm <- c("AM", "PM")
+    sh_labels(months, month_abbrs, weekdays, weekday_abbrs, ampm)
+})

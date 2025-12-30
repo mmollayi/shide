@@ -20,12 +20,12 @@ jdate_get_qday_cpp <- function(x) {
   .Call(`_shide_jdate_get_qday_cpp`, x)
 }
 
-format_jdate_cpp <- function(x, format) {
-  .Call(`_shide_format_jdate_cpp`, x, format)
+format_jdate_cpp <- function(x, format, month_nms, month_nms_abbrev, weekday_nms, weekday_nms_abbrev) {
+  .Call(`_shide_format_jdate_cpp`, x, format, month_nms, month_nms_abbrev, weekday_nms, weekday_nms_abbrev)
 }
 
-format_jdatetime_cpp <- function(x, format) {
-  .Call(`_shide_format_jdatetime_cpp`, x, format)
+format_jdatetime_cpp <- function(x, format, month_nms, month_nms_abbrev, weekday_nms, weekday_nms_abbrev, ampm_nms) {
+  .Call(`_shide_format_jdatetime_cpp`, x, format, month_nms, month_nms_abbrev, weekday_nms, weekday_nms_abbrev, ampm_nms)
 }
 
 year_is_leap_cpp <- function(x) {
