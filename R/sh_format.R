@@ -1,10 +1,10 @@
 #' @export
-sh_format <- function(x, format = NULL, labels = NULL, ...) {
+sh_format <- function(x, ...) {
     UseMethod("sh_format")
 }
 
 #' @export
-sh_format.jdate <- function(x, format = NULL, labels = NULL, ...) {
+sh_format.jdate <- function(x, format = NULL, ..., labels = NULL) {
     format <- format %||% "%Y-%m-%d"
     if (is.null(labels)) {
         labels <- shide_labels_default
@@ -21,7 +21,7 @@ sh_format.jdate <- function(x, format = NULL, labels = NULL, ...) {
 }
 
 #' @export
-sh_format.jdatetime <- function(x, format = NULL, labels = NULL, ...) {
+sh_format.jdatetime <- function(x, format = NULL, ..., labels = NULL) {
     format <- format %||% "%Y-%m-%d %T %z"
     if (is.null(labels)) {
         labels <- shide_labels_default
