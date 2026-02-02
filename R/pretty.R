@@ -175,7 +175,7 @@ gen_steps_data <- function(span, sep) {
 make_output <- function(x, format) {
     structure(
         x,
-        labels = format(x, format),
+        labels = sh_format(x, format),
         format = format
     )
 }
@@ -194,12 +194,15 @@ calc_steps <- function(lim, by, unit) {
 
     r1 <- sum(steps <= lim[1])
     r2 <- length(steps) + 1 - sum(steps >= lim[2])
+    # not covering at right -> add point at right
     if (r2 == length(steps) + 1) {
-        stop("this shouldn't have had happen")
-        nat <- seq_(steps[length(steps)], by = by, length = 2)[2]
-        if (is.na(nat) || !(nat > steps[length(steps)]))
+        new_step <- seq_(steps[length(steps)], by = by, length = 2)[2]
+        # failed
+        if (is.na(new_step) || !(new_step > steps[length(steps)])) {
             r2 <- length(steps)
-        else steps[r2] <- nat
+        } else {
+            steps[r2] <- new_step
+        }
     }
     steps[r1:r2]
 }

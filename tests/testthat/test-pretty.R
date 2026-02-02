@@ -149,4 +149,16 @@ test_that("pretty returns desired outputs for various jdatetime inputs", {
         format = "%b %d %H:%M"
     )
     expect_identical(sh_pretty(x, n = 7, min.n = 7), out)
+
+    # test for the case where new point is added in calc_steps()
+    x <- jdatetime(c("1404-11-13 00:00:00", "1404-11-21 00:00:01"), tz)
+    out <- structure(
+        seq(x[1], by = "2 days", length.out = 6),
+        labels = format(
+            seq(x[1], by = "2 days", length.out = 6),
+            "%b %d"
+        ),
+        format = "%b %d"
+    )
+    expect_identical(sh_pretty(x, n = 5), out)
 })
