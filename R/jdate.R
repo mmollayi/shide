@@ -72,10 +72,7 @@ is_jdate <- function(x) {
 
 #' @export
 format.jdate <- function(x, format = NULL, ...) {
-    format <- format %||% "%Y-%m-%d"
-    out <- format_jdate_cpp(x, format)
-    names(out) <- names(x)
-    out
+    sh_format(x, format, ...)
 }
 
 #' @export
