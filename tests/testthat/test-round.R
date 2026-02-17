@@ -276,6 +276,14 @@ test_that("parse_unit works as expected", {
         rep(list(list(n = 1, unit = "day")), 8)
     )
 
+    expect_identical(
+        lapply(
+            c("sec", "secs", "1sec", "1secs", "1.secs", "1 sec", "1 secs", " 1 secs ",
+              "second", "seconds", "1second"),
+            parse_unit, resolution = "secs"
+        ),
+        rep(list(list(n = 1, unit = "second")), 11)
+    )
 })
 
 test_that("parse_unit errors as expected", {

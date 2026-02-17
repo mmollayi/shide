@@ -119,3 +119,14 @@ test_that("nonexistent times result in `NA`", {
         jdatetime_make(c(1399, NA), 12, 2, tzone = tz)
     )
 })
+
+test_that("parse_by works as expected", {
+    expect_identical(
+        lapply(
+            c("sec", "secs", "1sec", "1secs", "1.secs", "1 sec", "1 secs", " 1 secs ",
+              "second", "seconds", "1second", "1s", "s"),
+            parse_by, resolution = "secs"
+        ),
+        rep(list(list(n = 1, unit = "secs")), 13)
+    )
+})

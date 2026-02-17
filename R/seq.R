@@ -198,9 +198,6 @@ jdate_seq_impl <- function(from, to, length.out, unit, n) {
     jdate(res)
 }
 
-jdate_seq_units <- c("days", "weeks", "months", "quarters", "years")
-jdatetime_seq_units <- c("secs", "mins", "hours", jdate_seq_units, "DSTdays")
-
 parse_by <- function(by, resolution) {
     if (missing(by)) {
         return(list(n = 1, unit = resolution))
@@ -230,7 +227,9 @@ parse_by <- function(by, resolution) {
 
     if (is.character(by)) {
         by2 <- parse_unit_cpp(by)
-        seq_units <- switch(resolution, "days" = jdate_seq_units, "secs" = jdatetime_seq_units)
+        seq_units <- switch(resolution, "days" = units$jdate_seq, "secs" = units$jdatetime_seq)
+        by2$unit <- sub(pattern = "^seconds?$", replacement = "sec", by2$unit)
+        by2$unit <- sub(pattern = "^minutes?$", replacement = "min", by2$unit)
         valid <- pmatch(by2$unit, seq_units)
 
         if (is.na(valid)) {
