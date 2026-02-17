@@ -105,23 +105,19 @@ sh_ceiling.jdatetime <- function(x, unit = NULL, ...) {
 
 parse_unit <- function(unit, resolution) {
     resolution <- rlang::arg_match(resolution, c("days", "secs"))
-    if (!rlang::is_scalar_character(unit)) {
+    if (!rlang::is_scalar_character(unit) || is.na(unit)) {
         cli::cli_abort("{.var unit} must be a scalar character.")
     }
 
     nu <- parse_unit_cpp(unit)
-    base_units <- switch(resolution, "days" = jdate_round_units, "secs" = jdatetime_round_units)
+    nu$unit <- standardize_units(nu$unit)
+    if (is.na(nu$unit))
+        cli::cli_abort("Invalid unit specification.")
+
+    base_units <- switch(resolution, "days" = units$jdate_round, "secs" = units$jdatetime_round)
     i <- match(nu$unit, base_units)
-
-    if (is.na(i)) {
-        i <- match(nu$unit, paste0(base_units, "s"))
-
-        if (is.na(i)) {
-            cli::cli_abort("Invalid unit specification.")
-        } else {
-            nu$unit <- base_units[i]
-        }
-    }
+    if (is.na(i))
+        cli::cli_abort("Invalid unit specification.")
 
     if (trunc(nu$n) != nu$n) {
         cli::cli_abort("Fractional units are not supported.")
@@ -131,17 +127,20 @@ parse_unit <- function(unit, resolution) {
         cli::cli_abort("Unit coefficient must be greater than or equal to 1.")
     }
 
-    if (nu$n > unit_upper_limits[base_units[i]]) {
-        cli::cli_abort("Rounding with {nu$unit} > {unit_upper_limits[base_units[i]]} is
+    if (nu$n > units$upper_limits[base_units[i]]) {
+        cli::cli_abort("Rounding with {nu$unit} > {units$upper_limits[base_units[i]]} is
                        not supported.")
     }
 
     nu
 }
 
-unit_upper_limits <- c(
-    second = 60, minute = 60, hour = 24, day = 31, week = 1, month = 12, quarter = 4, year = 2326
-)
+standardize_units <- function(x) {
+    patterns <- paste0("^", names(units$lookup), "s?$")
+    idx <- vapply(patterns, grepl, x = x, FUN.VALUE = logical(1), USE.NAMES = FALSE)
+    idx <- which(idx)
+    if (length(idx) == 0)
+        return(NA_character_)
 
-jdate_round_units <- c("day", "week", "month", "quarter", "year")
-jdatetime_round_units <- c("second", "minute", "hour", jdate_round_units)
+    unname(units$lookup[idx])
+}
