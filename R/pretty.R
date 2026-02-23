@@ -175,7 +175,7 @@ gen_steps_data <- function(span, sep) {
 make_output <- function(x, format) {
     structure(
         x,
-        labels = sh_format(x, format),
+        labels = format(x, format),
         format = format
     )
 }

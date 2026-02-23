@@ -71,7 +71,7 @@ is_jdate <- function(x) {
 }
 
 #' @export
-format.jdate <- function(x, format = NULL, ...) {
+format.jdate <- function(x, format = NULL, ..., labels = NULL) {
     format <- format %||% "%Y-%m-%d"
     if (is.null(labels)) {
         labels <- shide_labels_default

@@ -103,11 +103,10 @@ is_jdatetime <- function(x) {
     inherits(x, "jdatetime")
 }
 
+#' @param labels An object of class `shide_labels` created from [sh_labels()]
 #' @export
 format.jdatetime <- function(x, format = NULL, tz = NULL, ..., labels = NULL) {
     format <- format %||% "%Y-%m-%d %T"
-    if (usetz)
-        format <- paste0(format, " %Z")
 
     if (!is.null(tz))
         x <- as_jdatetime(x, tz)
