@@ -71,23 +71,6 @@ is_jdate <- function(x) {
 }
 
 #' @export
-format.jdate <- function(x, format = NULL, ..., labels = NULL) {
-    format <- format %||% "%Y-%m-%d"
-    if (is.null(labels)) {
-        labels <- shide_labels_default
-    } else {
-        if (!inherits(labels, "shide_labels")) {
-            cli::cli_abort("{.var labels} must be a {.cls shide_lables} object.")
-        }
-    }
-
-    out <- format_jdate_cpp(x, format, labels$month,
-                            labels$month_abbr, labels$weekday, labels$weekday_abbr)
-    names(out) <- names(x)
-    out
-}
-
-#' @export
 obj_print_data.jdate <- function(x, ...) {
     if (length(x) == 0) return()
     print(format(x))

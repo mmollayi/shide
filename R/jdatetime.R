@@ -103,28 +103,6 @@ is_jdatetime <- function(x) {
     inherits(x, "jdatetime")
 }
 
-#' @param labels An object of class `shide_labels` created from [sh_labels()]
-#' @export
-format.jdatetime <- function(x, format = NULL, tz = NULL, ..., labels = NULL) {
-    format <- format %||% "%Y-%m-%d %T"
-
-    if (!is.null(tz))
-        x <- as_jdatetime(x, tz)
-
-    if (is.null(labels)) {
-        labels <- shide_labels_default
-    } else {
-        if (!inherits(labels, "shide_labels")) {
-            cli::cli_abort("{.var labels} must be a {.cls shide_lables} object.")
-        }
-    }
-
-    out <- format_jdatetime_cpp(x, format, labels$month, labels$month_abbr,
-                                labels$weekday, labels$weekday_abbr, labels$am_pm)
-    names(out) <- names(x)
-    out
-}
-
 #' @export
 is.numeric.jdatetime <- function(x) {
     FALSE
