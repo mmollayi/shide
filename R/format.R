@@ -18,6 +18,7 @@ NULL
 #' @rdname shide-format
 #' @export
 format.jdate <- function(x, format = NULL, ..., labels = NULL) {
+    check_character(format, allow_na = FALSE, allow_null = TRUE)
     format <- format %||% "%Y-%m-%d"
     if (is.null(labels)) {
         labels <- shide_labels_default
@@ -36,6 +37,7 @@ format.jdate <- function(x, format = NULL, ..., labels = NULL) {
 #' @rdname shide-format
 #' @export
 format.jdatetime <- function(x, format = NULL, tz = NULL, ..., labels = NULL) {
+    check_character(format, allow_na = FALSE, allow_null = TRUE)
     format <- format %||% "%Y-%m-%d %T"
 
     if (!is.null(tz))
