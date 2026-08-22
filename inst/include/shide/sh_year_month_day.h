@@ -2,6 +2,8 @@
 #define SH_YEAR_MONTH_DAY_H
 #include "shide/date.h"
 
+using date::weekday;
+
 namespace internal
 {
 	constexpr int JALALI_ZERO{ 1947954 };
@@ -79,6 +81,7 @@ using days = date::days;
 using months = date::months;
 using years = date::years;
 using local_days = date::local_days;
+using sys_days = date::sys_days;
 using date::literals::last;
 
 class sh_year_month_day;
@@ -117,6 +120,7 @@ public:
 	constexpr date::month month() const NOEXCEPT;
 	constexpr date::day   day()   const NOEXCEPT;
 
+	constexpr operator sys_days() const NOEXCEPT;
 	constexpr explicit operator local_days() const NOEXCEPT;
 	constexpr bool ok() const NOEXCEPT;
 
@@ -210,6 +214,13 @@ sh_year_month_day::to_days() const NOEXCEPT
 	auto const m = static_cast<int>(static_cast<unsigned>(m_));
 	auto const d = static_cast<int>(static_cast<unsigned>(d_));
 	return days{ jalali_jd0(y) + MONTH_DATA_CUM[m - 1] + d - JD_UNIX_EPOCH };
+}
+
+constexpr
+inline
+sh_year_month_day::operator sys_days() const NOEXCEPT
+{
+	return sys_days{ to_days() };
 }
 
 constexpr
@@ -529,15 +540,18 @@ public:
 private:
 
 	friend
-		std::ostringstream&
-		operator<<(std::ostringstream& os, hour_minute_second const& tod)
+		std::ostream&
+		operator<<(std::ostream& os, hour_minute_second const& tod)
 	{
 		if (tod.h_ < std::chrono::hours{ 10 })
 			os << '0';
 		os << tod.h_.count() << ':';
 		if (tod.m_ < std::chrono::minutes{ 10 })
 			os << '0';
-		os << tod.m_.count() << ':' << tod.s_.count();
+		os << tod.m_.count() << ':';
+		if (tod.s_ < std::chrono::seconds{ 10 })
+			os << '0';
+		os << tod.s_.count();
 		return os;
 	}
 };
@@ -554,14 +568,25 @@ hour_minute_second::hour_minute_second(const std::chrono::hours& h, const std::c
 struct sh_fields
 {
 	sh_year_month_day     ymd{ date::nanyear, date::month(0), date::day(0) };
+	weekday				  wd{ 8u };
 	hour_minute_second    tod{};
 	bool                  has_tod = false;
 
 	constexpr sh_fields() = default;
 	constexpr sh_fields(sh_year_month_day ymd_) : ymd(ymd_) {}
+	constexpr sh_fields(weekday wd_) : wd(wd_) {}
 	constexpr sh_fields(hour_minute_second tod_) : tod(tod_), has_tod(true) {}
+	constexpr sh_fields(sh_year_month_day ymd_, weekday wd_) : ymd(ymd_), wd(wd_) {}
 	constexpr sh_fields(sh_year_month_day ymd_, hour_minute_second tod_) : ymd(ymd_), tod(tod_),
 		has_tod(true) {}
+
+	constexpr sh_fields(weekday wd_, hour_minute_second tod_) : wd(wd_), tod(tod_), has_tod(true) {}
+	constexpr sh_fields(sh_year_month_day ymd_, weekday wd_, hour_minute_second tod_)
+		: ymd(ymd_)
+		, wd(wd_)
+		, tod(tod_)
+		, has_tod(true)
+	{}
 };
 
 constexpr
@@ -587,7 +612,7 @@ inline
 days
 sh_wday(const date::local_days& ld)
 {
-	date::weekday wd{ ld };
+	weekday wd{ ld };
 	return days{ (wd.c_encoding() + 1) % 7 + 1 };
 }
 
