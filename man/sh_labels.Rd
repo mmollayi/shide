@@ -4,16 +4,22 @@
 \alias{sh_labels}
 \title{Create labels for date and time components}
 \usage{
-sh_labels(month, month_abbr = month, weekday, weekday_abbr = weekday, am_pm)
+sh_labels(
+  month = NULL,
+  month_abbr = NULL,
+  weekday = NULL,
+  weekday_abbr = NULL,
+  am_pm = NULL
+)
 }
 \arguments{
-\item{month, month_abbr}{Character vectors of length 12 giving full and abbreviated
+\item{month, month_abbr}{Optional character vectors of length 12 giving full and abbreviated
 month names, respectively, ordered from Farvardin to Esfand.}
 
-\item{weekday, weekday_abbr}{Character vectors of length 7 giving full and
+\item{weekday, weekday_abbr}{Optional character vectors of length 7 giving full and
 abbreviated weekday names, respectively, ordered from Saturday to Friday.}
 
-\item{am_pm}{A character vector of length 2 giving the AM and PM labels.}
+\item{am_pm}{An optional character vector of length 2 giving the AM and PM labels.}
 }
 \value{
 An object of class \code{shide_labels} that stores labels for
