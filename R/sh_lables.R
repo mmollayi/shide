@@ -10,6 +10,15 @@
 #' @param am_pm An optional character vector of length 2 giving the AM and PM labels.
 #' @returns An object of class `shide_labels` that stores labels for
 #'    months, weekdays, and AM/PM.
+#' @examples
+#' # Create the default label set
+#' labels <- sh_labels()
+#'
+#' # Override multiple components
+#' labels <- sh_labels(
+#'    month = paste0("Month-", seq_len(12)),
+#'    am_pm = c("morning", "evening")
+#' )
 #' @export
 sh_labels <- function(
     month = NULL,

@@ -29,3 +29,13 @@ months, weekdays, and AM/PM.
 \code{sh_labels()} allows users to define custom textual representations for months, weekdays
 and AM/PM indicators, used by \code{shide} when parsing and formatting dates and times.
 }
+\examples{
+# Create the default label set
+labels <- sh_labels()
+
+# Override multiple components
+labels <- sh_labels(
+   month = paste0("Month-", seq_len(12)),
+   am_pm = c("morning", "evening")
+)
+}

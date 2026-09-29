@@ -14,7 +14,8 @@
 \item{x}{A \code{jdate} or \code{jdatetime} vector.}
 
 \item{format}{A character string specifying the output format. If \code{NULL},
-a default format is used.}
+a default format is used. See "Format directives" for a complete list
+of supported directives.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -29,6 +30,62 @@ A character vector representing the formatted dates or date-times.
 \description{
 Format objects of class \code{jdate} and \code{jdatetime} into character vectors
 using a specified format string and optional localized labels.
+}
+\section{Format directives}{
+
+The \code{format} string may contain ordinary characters and formatting
+directives. Ordinary characters are copied unchanged to the output.
+Formatting directives begin with \verb{\%} and are replaced by the corresponding
+date or time component.
+\itemize{
+\item \%a: Abbreviated weekday name.
+\item \%A: Full weekday name.
+\item \%b: Abbreviated month name.
+\item \%B: Full month name.
+\item \%C: Year divided by 100 using floored division, zero-padded if the result is a single digit (00–99).
+\item \%d: Day of the month as a zero-padded decimal number (01-31).
+\item \%e: Day of the month as a space-padded decimal number ( 1-31).
+\item \%F: Equivalent to \%Y-\%m-\%d.
+\item \%J: Equivalent to \%Y/\%m/\%d.
+\item \%H: Hour as a zero-padded decimal number using a 24-hour clock (00-23).
+\item \%I: Hour as a zero-padded decimal number using a 12-hour clock (01-12).
+\item \%j: Day of the year as a zero-padded decimal number (001-366).
+\item \%m: Month as a zero-padded decimal number (01-12).
+\item \%M: Minute as a zero-padded decimal number (00-59).
+\item \%n: Newline character.
+\item \%p: AM/PM indicator.
+\item \%r: Equivalent to \%I:\%M:\%S \%p.
+\item \%R: Equivalent to \%H:\%M.
+\item \%S: Second as a zero-padded decimal number (00-59).
+\item \%t: Tab character.
+\item \%T: Equivalent to \%H:\%M:\%S.
+\item \%y: Last two decimal digits of the year, zero-padded if the result is a single digit (00-99).
+\item \%Y: Year as a four-digits zero-padded decimal number (0000-9999).
+\item \%z: Signed offset from UTC in the form \code{+HHMM} or \code{-HHMM}.
+\item \%Z: Time zone abbreviation or name.
+\item \%\%: A \% character.
+}
+}
+
+\examples{
+x <- jdate("1405-06-29")
+format(x, "\%Y/\%m/\%d")
+format(x, "\%J")
+format(x, "\%A, \%d \%B \%Y")
+
+# Use custom labels
+labels <- sh_labels(
+   weekday = c(
+       "Shanbe", "Yekshanbe", "Doshanbe", "Seshanbe",
+       "Chaharshanbe", "Panjshanbe", "Adine"
+   )
+)
+format(x, "\%A, \%d \%B \%Y", labels = labels)
+
+x <- jdatetime("1405-06-29 12:00:00", tzone = "Asia/Tehran")
+# Format the same instant in different time zones.
+format(x, "\%F \%T \%Z (\%z)")
+format(x, "\%F \%T \%Z (\%z)", tz = "UTC")
 }
 \seealso{
 \code{\link[base:strptime]{base::strftime()}}
