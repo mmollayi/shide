@@ -34,39 +34,68 @@
 #' pretty(x, n = 5)
 #' @method pretty jdate
 #' @export
-pretty.jdate <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+pretty.jdate <- function(
+    x,
+    n = 5,
+    min.n = n %/% 2,
+    sep = " ",
+    ...,
+    labels = NULL
+) {
     check_dots_empty()
-    sh_pretty(x, n, min.n, sep)
+    sh_pretty(x, n, min.n, sep, labels = labels)
 }
 
 #' @rdname pretty.jdate
 #' @method pretty jdatetime
 #' @export
-pretty.jdatetime <- function(x, n = 5, min.n = n%/%2, sep = " ", ...) {
+pretty.jdatetime <- function(
+    x,
+    n = 5,
+    min.n = n %/% 2,
+    sep = " ",
+    ...,
+    labels = NULL
+) {
     check_dots_empty()
-    sh_pretty(x, n, min.n, sep)
+    sh_pretty(x, n, min.n, sep, labels = labels)
 }
 
-sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ") {
+sh_pretty <- function(x, n = 5, min.n = n %/% 2, sep = " ", labels = NULL) {
     stopifnot(min.n <= n)
-    if (all(is.na(x)))
-        return(structure(NA_character_, labels = NA_character_, format = NA_character_))
+    if (all(is.na(x))) {
+        return(structure(
+            NA_character_,
+            labels = NA_character_,
+            format = NA_character_
+        ))
+    }
 
-    resolution <- c("days", "secs")[as.logical(inherits(x, c("jdate", "jdatetime"), which = TRUE))]
+    resolution <- c("days", "secs")[as.logical(inherits(
+        x,
+        c("jdate", "jdatetime"),
+        which = TRUE
+    ))]
     rng <- range(x, na.rm = TRUE)
     # to remove subsecond
-    if (resolution == "secs")
+    if (resolution == "secs") {
         rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
+    }
 
-    if (n == 0)
+    if (n == 0) {
         return(sh_pretty_n0(rng, sep))
+    }
 
     rng_diff <- diff(rng)
     if (rng_diff < as.difftime(n, units = resolution)) {
         rng <- widen_range(rng, n, resolution)
         if (resolution == "days") {
             sq <- seq(rng[1], rng[2], by = resolution)
-            return(make_output(sq, format = paste("%b", "%d", sep = sep)))
+            return(make_output(
+                sq,
+                format = paste("%b", "%d", sep = sep),
+                labels = labels
+            ))
         }
 
         rng_diff <- diff(rng)
@@ -77,13 +106,13 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ") {
     # crudely work out number of steps in the given interval
     nsteps <- xspan / steps$seconds
     i <- i0 <- which.min(abs(nsteps - n))
-    step_i <- steps[i,] |> as.list()
+    step_i <- steps[i, ] |> as.list()
     sq <- calc_steps(rng, step_i$spec, step_i$start)
     len <- length(sq) - 1L
     # bump it up if below acceptable threshold
     while (len < min.n) {
         i <- i - 1L
-        step_i <- steps[i,] |> as.list()
+        step_i <- steps[i, ] |> as.list()
         sq <- calc_steps(rng, step_i$spec, step_i$start)
         len <- length(sq) - 1L
     }
@@ -92,29 +121,29 @@ sh_pretty <- function(x, n = 5, min.n = n%/%2, sep = " ") {
     dn <- len - n
     # perfect
     if (dn == 0L) {
-        return(make_output(sq, step_i$format))
+        return(make_output(sq, step_i$format, labels = labels))
     }
     # too many ticks
     if (dn > 0L && i_is_modified) {
-        return(make_output(sq, step_i$format))
+        return(make_output(sq, step_i$format, labels = labels))
     }
     # too few, but i = 1
     if (resolution == "secs" && dn < 0L && i == 1L) {
-        return(make_output(sq, step_i$format))
+        return(make_output(sq, step_i$format, labels = labels))
     }
 
     # too many ticks or too few ticks
     i2 <- ifelse(dn > 0L, min(i + 1L, nrow(steps)), i - 1L)
-    step_i2 <- steps[i2,] |> as.list()
+    step_i2 <- steps[i2, ] |> as.list()
     sq2 <- calc_steps(rng, step_i2$spec, step_i2$start)
     len2 <- length(sq2) - 1L
     # work out whether sq2 or sq is better
     if (len2 < min.n) {
-        return(make_output(sq, step_i$format))
+        return(make_output(sq, step_i$format, labels = labels))
     } else if (abs(len2 - n) < abs(dn)) {
-        return(make_output(sq2, step_i2$format))
+        return(make_output(sq2, step_i2$format, labels = labels))
     } else {
-        return(make_output(sq, step_i$format))
+        return(make_output(sq, step_i$format, labels = labels))
     }
 }
 
@@ -126,56 +155,78 @@ gen_steps_data <- function(span, sep) {
     MONTH <- YEAR / 12
 
     steps <- list(
-        list(spec = "1 sec",      seconds = 1, start = "mins", format = "%S"),
-        list(spec = "2 secs",     seconds = 2),
-        list(spec = "5 secs",     seconds = 5),
-        list(spec = "10 secs",    seconds = 10),
-        list(spec = "15 secs",    seconds = 15),
-        list(spec = "30 secs",    seconds = 30, format = "%H:%M:%S"),
-        list(spec = "1 min",      seconds = 1*MIN, format = "%H:%M"),
-        list(spec = "2 mins",     seconds = 2*MIN, start = "hours"),
-        list(spec = "5 mins",     seconds = 5*MIN),
-        list(spec = "10 mins",    seconds = 10*MIN),
-        list(spec = "15 mins",    seconds = 15*MIN),
-        list(spec = "30 mins",    seconds = 30*MIN),
-        list(spec = "1 hour",     seconds = 1*HOUR, format = ifelse(span <= DAY, "%H:%M", paste("%b %d", "%H:%M", sep = sep))),
-        list(spec = "3 hours",    seconds = 3*HOUR, start = "days"),
-        list(spec = "6 hours",    seconds = 6*HOUR, format = paste("%b %d", "%H:%M", sep = sep)),
-        list(spec = "12 hours",   seconds = 12*HOUR),
-        list(spec = "1 DSTday",   seconds = 1*DAY, format = paste("%b", "%d", sep = sep)),
-        list(spec = "2 DSTdays",  seconds = 2*DAY),
-        list(spec = "1 week",     seconds = 7*DAY, start = "weeks"),
-        list(spec = "halfmonth",  seconds = MONTH/2, start = "months"),
-        list(spec = "1 month",    seconds = 1*MONTH, format = ifelse(span < YEAR, "%b", paste("%b", "%Y", sep = sep))),
-        list(spec = "3 months",   seconds = 3*MONTH, start = "years"),
-        list(spec = "6 months",   seconds = 6*MONTH, format = "%Y-%m"),
-        list(spec = "1 year",     seconds = 1*YEAR, format = "%Y"),
-        list(spec = "2 years",    seconds = 2*YEAR, start = "decades"),
-        list(spec = "5 years",    seconds = 5*YEAR),
-        list(spec = "10 years",   seconds = 10*YEAR),
-        list(spec = "20 years",   seconds = 20*YEAR, start = "centuries"),
-        list(spec = "50 years",   seconds = 50*YEAR),
-        list(spec = "100 years",  seconds = 100*YEAR),
-        list(spec = "200 years",  seconds = 200*YEAR),
-        list(spec = "500 years",  seconds = 500*YEAR),
-        list(spec = "1000 years", seconds = 1000*YEAR)
+        list(spec = "1 sec", seconds = 1, start = "mins", format = "%S"),
+        list(spec = "2 secs", seconds = 2),
+        list(spec = "5 secs", seconds = 5),
+        list(spec = "10 secs", seconds = 10),
+        list(spec = "15 secs", seconds = 15),
+        list(spec = "30 secs", seconds = 30, format = "%H:%M:%S"),
+        list(spec = "1 min", seconds = 1 * MIN, format = "%H:%M"),
+        list(spec = "2 mins", seconds = 2 * MIN, start = "hours"),
+        list(spec = "5 mins", seconds = 5 * MIN),
+        list(spec = "10 mins", seconds = 10 * MIN),
+        list(spec = "15 mins", seconds = 15 * MIN),
+        list(spec = "30 mins", seconds = 30 * MIN),
+        list(
+            spec = "1 hour",
+            seconds = 1 * HOUR,
+            format = ifelse(
+                span <= DAY,
+                "%H:%M",
+                paste("%b %d", "%H:%M", sep = sep)
+            )
+        ),
+        list(spec = "3 hours", seconds = 3 * HOUR, start = "days"),
+        list(
+            spec = "6 hours",
+            seconds = 6 * HOUR,
+            format = paste("%b %d", "%H:%M", sep = sep)
+        ),
+        list(spec = "12 hours", seconds = 12 * HOUR),
+        list(
+            spec = "1 DSTday",
+            seconds = 1 * DAY,
+            format = paste("%b", "%d", sep = sep)
+        ),
+        list(spec = "2 DSTdays", seconds = 2 * DAY),
+        list(spec = "1 week", seconds = 7 * DAY, start = "weeks"),
+        list(spec = "halfmonth", seconds = MONTH / 2, start = "months"),
+        list(
+            spec = "1 month",
+            seconds = 1 * MONTH,
+            format = ifelse(span < YEAR, "%b", paste("%b", "%Y", sep = sep))
+        ),
+        list(spec = "3 months", seconds = 3 * MONTH, start = "years"),
+        list(spec = "6 months", seconds = 6 * MONTH, format = "%Y-%m"),
+        list(spec = "1 year", seconds = 1 * YEAR, format = "%Y"),
+        list(spec = "2 years", seconds = 2 * YEAR, start = "decades"),
+        list(spec = "5 years", seconds = 5 * YEAR),
+        list(spec = "10 years", seconds = 10 * YEAR),
+        list(spec = "20 years", seconds = 20 * YEAR, start = "centuries"),
+        list(spec = "50 years", seconds = 50 * YEAR),
+        list(spec = "100 years", seconds = 100 * YEAR),
+        list(spec = "200 years", seconds = 200 * YEAR),
+        list(spec = "500 years", seconds = 500 * YEAR),
+        list(spec = "1000 years", seconds = 1000 * YEAR)
     )
 
     # carry forward 'format' and 'start' to following steps
     for (i in seq_along(steps)) {
-        if (is.null(steps[[i]]$start))
-            steps[[i]]$start <- steps[[i-1]]$start
-        if (is.null(steps[[i]]$format))
-            steps[[i]]$format <- steps[[i-1]]$format
+        if (is.null(steps[[i]]$start)) {
+            steps[[i]]$start <- steps[[i - 1]]$start
+        }
+        if (is.null(steps[[i]]$format)) {
+            steps[[i]]$format <- steps[[i - 1]]$format
+        }
     }
 
     do.call("rbind.data.frame", steps)
 }
 
-make_output <- function(x, format) {
+make_output <- function(x, format, labels = NULL) {
     structure(
         x,
-        labels = format(x, format),
+        labels = format(x, format, labels = labels),
         format = format
     )
 }
@@ -188,8 +239,9 @@ calc_steps <- function(lim, by, unit) {
     steps <- seq_(start, end, by = by)
     if (anyNA(steps)) {
         steps <- steps[!is.na(steps)]
-        if (!length(steps))
+        if (!length(steps)) {
             return(steps)
+        }
     }
 
     r1 <- sum(steps <= lim[1])
@@ -207,10 +259,22 @@ calc_steps <- function(lim, by, unit) {
     steps[r1:r2]
 }
 
-floor_ <- function(x, unit = c("secs", "mins", "hours", "days",
-                               "weeks", "months", "years", "decades", "centuries")) {
+floor_ <- function(
+    x,
+    unit = c(
+        "secs",
+        "mins",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years",
+        "decades",
+        "centuries"
+    )
+) {
     unit <- match.arg(unit)
-    if (unit %in% c("secs", "mins", "decades", "centuries"))
+    if (unit %in% c("secs", "mins", "decades", "centuries")) {
         unit <- switch(
             unit,
             "secs" = "seconds",
@@ -218,14 +282,27 @@ floor_ <- function(x, unit = c("secs", "mins", "hours", "days",
             "decades" = "10 years",
             "centuries" = "100 years"
         )
+    }
 
     sh_floor(x, unit)
 }
 
-ceiling_ <- function(x, unit = c("secs", "mins", "hours", "days",
-                                 "weeks", "months", "years", "decades", "centuries")) {
+ceiling_ <- function(
+    x,
+    unit = c(
+        "secs",
+        "mins",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years",
+        "decades",
+        "centuries"
+    )
+) {
     unit <- match.arg(unit)
-    if (unit %in% c("secs", "mins", "decades", "centuries"))
+    if (unit %in% c("secs", "mins", "decades", "centuries")) {
         unit <- switch(
             unit,
             "secs" = "seconds",
@@ -233,27 +310,31 @@ ceiling_ <- function(x, unit = c("secs", "mins", "hours", "days",
             "decades" = "10 years",
             "centuries" = "100 years"
         )
+    }
 
     sh_ceiling(x, unit)
 }
 
-seq_ <- function(from, to, by, length=NULL) {
-    if (is_jdate(from) && grepl("DSTday", by))
+seq_ <- function(from, to, by, length = NULL) {
+    if (is_jdate(from) && grepl("DSTday", by)) {
         by <- sub("DSTday", "day", by)
+    }
 
-    if(missing(by) || !identical(by, "halfmonth"))
-        return( seq(from, to, by = by, length.out=length) )
+    if (missing(by) || !identical(by, "halfmonth")) {
+        return(seq(from, to, by = by, length.out = length))
+    }
     # else  by == "halfmonth" => can only go forward (!)
     l2 <- NULL
-    if (!is.null(length))
-        l2 <- ceiling(length/2)
+    if (!is.null(length)) {
+        l2 <- ceiling(length / 2)
+    }
 
     x1 <- seq(from, to, by = "months", length.out = l2)
     x2 <- x1
     md <- unique(sh_mday(x1))
     stopifnot(length(md) == 1)
 
-    if(md <= 14) {
+    if (md <= 14) {
         sh_mday(x2) <- md + 14L
     } else {
         sh_mday(x2) <- 1L
@@ -271,7 +352,7 @@ widen_range <- function(rng, n, resolution) {
     c(rng[1] - m1, rng[2] + m2)
 }
 
-sh_pretty_n0 <- function(rng, sep) {
+sh_pretty_n0 <- function(rng, sep, labels = NULL) {
     if (rng[1] == rng[2]) {
         fmt <- c(
             "%Y-%m-%d",
@@ -280,5 +361,5 @@ sh_pretty_n0 <- function(rng, sep) {
         return(make_output(rng[1], fmt))
     }
 
-    sh_pretty(rng, n = 1, sep)
+    sh_pretty(rng, n = 1, sep, labels = labels)
 }
