@@ -61,7 +61,7 @@ If \code{NULL}, defaults to \code{"earliest"}; as this seems to be base R's beha
 }
 \details{
 Numeric components are recycled to their common size using
-\link[vctrs:theory-faq-recycling]{tidyverse recycling rules}.
+\link[vctrs:vector_recycling_rules]{tidyverse recycling rules}.
 }
 \examples{
 ## At least 'year' must be supplied

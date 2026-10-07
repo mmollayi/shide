@@ -53,7 +53,7 @@ Get/set the time components of \code{jdatetime} objects
 }
 \details{
 For assignment, \code{x} and \code{value} are recycled to their common size using
-\link[vctrs:theory-faq-recycling]{tidyverse recycling rules}.
+\link[vctrs:vector_recycling_rules]{tidyverse recycling rules}.
 }
 \examples{
 x <- jdatetime("1402-12-14 19:13:31")

@@ -5,9 +5,9 @@
 \alias{pretty.jdatetime}
 \title{Pretty breakpoints for Jalali date-times}
 \usage{
-\method{pretty}{jdate}(x, n = 5, min.n = n\%/\%2, sep = " ", ...)
+\method{pretty}{jdate}(x, n = 5, min.n = n\%/\%2, sep = " ", ..., labels = NULL)
 
-\method{pretty}{jdatetime}(x, n = 5, min.n = n\%/\%2, sep = " ", ...)
+\method{pretty}{jdatetime}(x, n = 5, min.n = n\%/\%2, sep = " ", ..., labels = NULL)
 }
 \arguments{
 \item{x}{A vector of \code{jdate} or \code{jdatetime} objects.}
@@ -20,6 +20,8 @@
 (e.g., between month and year).}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{labels}{An object of class \code{shide_labels} created from \code{\link[=sh_labels]{sh_labels()}}}
 }
 \value{
 A vector of Jalali date-times, with two additional attributes:
@@ -48,6 +50,10 @@ is "\%Y-\%m-\%d".
 \examples{
 x <- seq(jdate("1404-01-02"), jdate("1404-03-03"), by = "week")
 pretty(x, n = 5, min.n = 5)
+# Use custom labels
+labels <- sh_labels(month_abbr = paste0("Mon-", 1:12))
+breaks <- pretty(x, labels = labels)
+attr(breaks, "labels")
 
 x <- jdatetime("1404-08-21 18:06:33", "Asia/Tehran")
 pretty(x, n = 5)

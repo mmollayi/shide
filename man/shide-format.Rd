@@ -88,5 +88,5 @@ format(x, "\%F \%T \%Z (\%z)")
 format(x, "\%F \%T \%Z (\%z)", tz = "UTC")
 }
 \seealso{
-\code{\link[base:strptime]{base::strftime()}}
+\code{\link[base:strftime]{base::strftime()}}
 }

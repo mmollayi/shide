@@ -12,6 +12,7 @@
 #' @param sep A character string, serving as a separator for certain formats
 #'     (e.g., between month and year).
 #' @inheritParams rlang::args_dots_empty
+#' @inheritParams shide-format labels
 #' @section Implementation notes:
 #' This method is implemented following the logic of `pretty.Date()`
 #' from the \pkg{grDevices} package in base R. It largely follows the behavior of
@@ -29,6 +30,10 @@
 #' @examples
 #' x <- seq(jdate("1404-01-02"), jdate("1404-03-03"), by = "week")
 #' pretty(x, n = 5, min.n = 5)
+#' # Use custom labels
+#' labels <- sh_labels(month_abbr = paste0("Mon-", 1:12))
+#' breaks <- pretty(x, labels = labels)
+#' attr(breaks, "labels")
 #'
 #' x <- jdatetime("1404-08-21 18:06:33", "Asia/Tehran")
 #' pretty(x, n = 5)

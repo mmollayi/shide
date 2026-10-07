@@ -19,5 +19,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Mohsen Mollayi \email{mmollayi@gmail.com} [copyright holder]
 
+Authors:
+\itemize{
+  \item Mohsen Mollayi \email{mmollayi@gmail.com} [copyright holder]
+}
+
 }
 \keyword{internal}
