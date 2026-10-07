@@ -61,3 +61,23 @@ test_that("common composite formats work", {
     expect_identical(format(x, "Date: %J"), "Date: 1404/09/06")
     expect_identical(format(x, "%F at %R"), "1404-09-06 at 13:48")
 })
+
+test_that("format.jdate() can use custom labels", {
+    x <- jdate("1405-07-15")
+    expect_identical(
+        format(x, "%a, %d %b", labels = test_labels),
+        "Wd-5, 15 Mon-7"
+    )
+    expect_identical(
+        format(x, "%A, %d %B", labels = test_labels),
+        "Weekday-5, 15 Month-7"
+    )
+})
+
+test_that("format.jdatetime() can use custom labels", {
+    x <- jdatetime_make(1405, 7, 15, 11, tzone = "Asia/Tehran")
+    expect_identical(
+        format(x, "%A, %d %B at %H %p", labels = test_labels),
+        "Weekday-5, 15 Month-7 at 11 A"
+    )
+})
