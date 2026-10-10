@@ -87,6 +87,12 @@ format_jdate_cpp(const cpp11::doubles x,
             continue;
         }
 
+        if (std::isinf(x[i])) {
+            const char* str = x[i] > 0 ? "Inf" : "-Inf";
+            SET_STRING_ELT(out, i, Rf_mkChar(str));
+            continue;
+        }
+
         os.str(std::string());
         os.clear();
 
@@ -156,6 +162,12 @@ format_jdatetime_cpp(const cpp11::sexp x,
     for (R_xlen_t i = 0; i < size; ++i) {
         if (std::isnan(xx[i])) {
             SET_STRING_ELT(out, i, NA_STRING);
+            continue;
+        }
+
+        if (std::isinf(xx[i])) {
+            const char* str = xx[i] > 0 ? "Inf" : "-Inf";
+            SET_STRING_ELT(out, i, Rf_mkChar(str));
             continue;
         }
 
