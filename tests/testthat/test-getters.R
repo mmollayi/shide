@@ -23,7 +23,10 @@ test_that("sh_month extracts correct month", {
 })
 
 test_that("days getters extracts correct days", {
-    dt <- jdatetime(c("1402-11-10 22:24:15", "1403-12-30 12:00:00"), tz = "Asia/Tehran")
+    dt <- jdatetime(
+        c("1402-11-10 22:24:15", "1403-12-30 12:00:00"),
+        tz = "Asia/Tehran"
+    )
     d <- as_jdate(dt)
 
     expect_equal(sh_day(dt), c(10, 30))
@@ -76,3 +79,10 @@ test_that("sh_tzone accessor works as expected", {
     expect_error(sh_tzone(d))
 })
 
+test_that("accessors return NA for infinite dates and datetimes", {
+    expect_identical(sh_year(jdate(c(-Inf, Inf))), c(NA_integer_, NA_integer_))
+    expect_identical(
+        sh_year(jdatetime(c(-Inf, Inf))),
+        c(NA_integer_, NA_integer_)
+    )
+})

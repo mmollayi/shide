@@ -16,7 +16,7 @@ jdate_get_fields_cpp(const cpp11::sexp x)
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
-        if (std::isnan(xx[i]))
+        if (!std::isfinite(xx[i]))
         {
             year[i] = NA_INTEGER;
             month[i] = NA_INTEGER;
@@ -67,7 +67,7 @@ jdatetime_get_fields_cpp(const cpp11::sexp x)
 
     for (R_xlen_t i = 0; i < size; ++i)
     {
-        if (std::isnan(xx[i]))
+        if (!std::isfinite(xx[i]))
         {
             year[i] = NA_INTEGER;
             month[i] = NA_INTEGER;
