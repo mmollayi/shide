@@ -63,7 +63,6 @@ format_jdate_cpp(const cpp11::doubles x,
                  const cpp11::strings& month_nms_abbrev,
                  const cpp11::strings& weekday_nms,
                  const cpp11::strings& weekday_nms_abbrev)
-                 //const cpp11::strings& ampm_nms)
 {
     if (format.size() != 1) {
         cpp11::stop("`format` must have size 1.");

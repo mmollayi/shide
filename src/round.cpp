@@ -30,6 +30,12 @@ jdate_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name, const int n
             continue;
         }
 
+        if (std::isinf(xx[i]))
+        {
+            out[i] = xx[i];
+            continue;
+        }    
+
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
         out[i] = make_jdate(ceiling_jdate(ld, unit, n));
     }
@@ -61,6 +67,12 @@ jdate_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int n)
             out[i] = NA_REAL;
             continue;
         }
+
+        if (std::isinf(xx[i]))
+        {
+            out[i] = xx[i];
+            continue;
+        }        
 
         ld = date::local_days{ date::days(static_cast<int>(xx[i])) };
         out[i] = make_jdate(floor_jdate(ld, unit, n));
@@ -101,6 +113,12 @@ jdatetime_floor_cpp(const cpp11::sexp x, const std::string& unit_name, const int
             continue;
         }
 
+        if (std::isinf(xx[i]))
+        {
+            out[i] = xx[i];
+            continue;
+        }    
+
         ss = floor_jdatetime(sys_seconds_from_double(xx[i]), tz, unit, n);
         out[i] = static_cast<double>(ss.time_since_epoch().count());
     }
@@ -139,6 +157,12 @@ jdatetime_ceiling_cpp(const cpp11::sexp x, const std::string& unit_name, const i
             out[i] = NA_REAL;
             continue;
         }
+
+        if (std::isinf(xx[i]))
+        {
+            out[i] = xx[i];
+            continue;
+        }    
 
         ss = ceiling_jdatetime(sys_seconds_from_double(xx[i]), tz, unit, n);
         out[i] = static_cast<double>(ss.time_since_epoch().count());
