@@ -19,7 +19,9 @@ tzone_union <- function(x, y) {
 get_current_tzone <- function() {
     tz <- Sys.timezone()
     if (is.na(tz) || !nzchar(tz)) {
-        warning("System timezone name is unknown. Please set environment variable TZ. Using UTC.")
+        warning(
+            "System timezone name is unknown. Please set environment variable TZ. Using UTC."
+        )
         tz <- "UTC"
     }
     tz
@@ -64,21 +66,4 @@ df_list_propagate_missing <- function(x) {
     x <- vec_assign(x, incomplete, NA)
 
     vec_unstructure(x)
-}
-
-format_jdate <- function(x, fmt) {
-    month_names <- c("Farvardin", "Ordibehesht", "Khordad",
-                     "Tir", "Mordad", "Shahrivar", "Mehr",
-                     "Aban", "Azar", "Dey", "Bahman", "Esfand")
-    month_names_abbrev <- c("Far", "Ord", "Kho", "Tir", "Mor", "Sha",
-                            "Mehran", "Aba", "Aza", "Dey", "Bah", "Esf")
-
-    weekday_names <- c("Sunday", "Monday", "Tuesday", "Wednesday",
-                       "Thursday", "Friday", "Saturday")
-
-    weekday_names_abbrev <- c("Sun", "Mon", "Tue", "Wed",
-                              "Thu", "Fri", "Sat")
-    ampm_names <- c("am", "pm")
-
-    format_jdate_cpp(x, fmt, month_names, month_names_abbrev, weekday_names, weekday_names_abbrev, ampm_names)
 }
