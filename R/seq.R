@@ -47,14 +47,26 @@
 #' seq(jdate("1402-06-31"), by = "6 months", length.out = 2)
 #' @export
 seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
-    args <- validate_seq_args("jdate", from, to, by, length.out, along.with, ...)
+    args <- validate_seq_args(
+        "jdate",
+        from,
+        to,
+        by,
+        length.out,
+        along.with,
+        ...
+    )
     from <- args$from
     to <- args$to
     by <- args$by
     length.out <- args$length.out
 
     if (missing(by)) {
-        res <- seq.int(as.integer(from), as.integer(to), length.out = length.out)
+        res <- seq.int(
+            as.integer(from),
+            as.integer(to),
+            length.out = length.out
+        )
         return(jdate(res))
     }
 
@@ -93,8 +105,23 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
 #' seq(jdatetime_make(1400, 1, 1, 12, tzone = "Asia/Tehran"), by = "1 week", length.out = 2)
 #' seq(jdatetime_make(1400, 1, 1, 12, tzone = "Asia/Tehran"), by = "7 DSTdays", length.out = 2)
 #' @export
-seq.jdatetime <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
-    args <- validate_seq_args("jdatetime", from, to, by, length.out, along.with, ...)
+seq.jdatetime <- function(
+    from,
+    to,
+    by,
+    length.out = NULL,
+    along.with = NULL,
+    ...
+) {
+    args <- validate_seq_args(
+        "jdatetime",
+        from,
+        to,
+        by,
+        length.out,
+        along.with,
+        ...
+    )
     from <- args$from
     to <- args$to
     by <- args$by
@@ -102,7 +129,11 @@ seq.jdatetime <- function(from, to, by, length.out = NULL, along.with = NULL, ..
     tz <- tzone(from)
 
     if (missing(by)) {
-        res <- seq.int(as.integer(from), as.integer(to), length.out = length.out)
+        res <- seq.int(
+            as.integer(from),
+            as.integer(to),
+            length.out = length.out
+        )
         return(jdatetime(res, tzone = tz))
     }
 
@@ -133,10 +164,16 @@ seq.jdatetime <- function(from, to, by, length.out = NULL, along.with = NULL, ..
     if (unit == c("DSTdays")) {
         if (!missing(to)) {
             ## We might have a short day, so need to over-estimate.
-            length.out <- 2L + floor((unclass(to) - unclass(from))/(n * 86400))
+            length.out <- 2L +
+                floor((unclass(to) - unclass(from)) / (n * 86400))
         }
 
-        d <- jdate_seq_impl(as_jdate(from), length.out = length.out, unit = "days", n = n)
+        d <- jdate_seq_impl(
+            as_jdate(from),
+            length.out = length.out,
+            unit = "days",
+            n = n
+        )
     }
 
     d_fields <- jdate_get_fields_cpp(d)
@@ -203,7 +240,7 @@ parse_by <- function(by, resolution) {
         return(list(n = 1, unit = resolution))
     }
 
-    if (length(by) != 1L){
+    if (length(by) != 1L) {
         cli::cli_abort("{.var by} must be of length 1.")
     }
 
@@ -216,9 +253,14 @@ parse_by <- function(by, resolution) {
     }
 
     if (inherits(by, "difftime")) {
-        if ((resolution == "days") && (!attr(by, "units") %in% c("days", "weeks"))) {
-            cli::cli_abort("Only `days` and `weeks` units are supported
-                           for {.var by} of class difftime.")
+        if (
+            (resolution == "days") &&
+                (!attr(by, "units") %in% c("days", "weeks"))
+        ) {
+            cli::cli_abort(
+                "Only `days` and `weeks` units are supported
+                           for {.var by} of class difftime."
+            )
         }
 
         by <- vec_cast(by, new_duration(units = resolution))
@@ -227,7 +269,11 @@ parse_by <- function(by, resolution) {
 
     if (is.character(by)) {
         by2 <- parse_unit_cpp(by)
-        seq_units <- switch(resolution, "days" = units$jdate_seq, "secs" = units$jdatetime_seq)
+        seq_units <- switch(
+            resolution,
+            "days" = units$jdate_seq,
+            "secs" = units$jdatetime_seq
+        )
         by2$unit <- sub(pattern = "^seconds?$", replacement = "sec", by2$unit)
         by2$unit <- sub(pattern = "^minutes?$", replacement = "min", by2$unit)
         valid <- pmatch(by2$unit, seq_units)
@@ -237,7 +283,10 @@ parse_by <- function(by, resolution) {
         }
 
         if (valid <= match("weeks", seq_units)) {
-            by <- vec_cast(new_duration(by2$n, seq_units[valid]), new_duration(units = resolution))
+            by <- vec_cast(
+                new_duration(by2$n, seq_units[valid]),
+                new_duration(units = resolution)
+            )
             by <- vec_data(by)
             return(list(n = by, unit = resolution))
         }
@@ -252,28 +301,20 @@ parse_by <- function(by, resolution) {
     cli::cli_abort("Invalid {.var by} specification.")
 }
 
-validate_seq_args <- function(class, from, to, by, length.out = NULL, along.with = NULL, ...) {
+validate_seq_args <- function(
+    class,
+    from,
+    to,
+    by,
+    length.out = NULL,
+    along.with = NULL,
+    ...
+) {
     check_dots_empty()
-
-    if (missing(from)) {
-        cli::cli_abort("{.var from} must be specified.")
-    }
-
-    if (!inherits(from, class)) {
-        cli::cli_abort("{.var from} must be a {.cls {class}} object.")
-    }
-
-    if (length(from) != 1L) {
-        cli::cli_abort("{.var from} must be of length 1.")
-    }
+    sh_check_value(from, class)
 
     if (!missing(to)) {
-        if (!inherits(to, class)) {
-            cli::cli_abort("{.var to} must be a {.cls {class}} object.")
-        }
-        if (length(to) != 1L) {
-            cli::cli_abort("{.var to} must be of length 1.")
-        }
+        sh_check_value(to, class)
     }
 
     if (!is.null(along.with)) {
@@ -288,10 +329,16 @@ validate_seq_args <- function(class, from, to, by, length.out = NULL, along.with
 
     status <- c(!missing(to), !missing(by), !is.null(length.out))
     if (sum(status) != 2L) {
-        cli::cli_abort("exactly two of {.var to}, {.var by} and
-                       {.var length.out} / {.var along.with} must be specified.")
+        cli::cli_abort(
+            "exactly two of {.var to}, {.var by} and
+                       {.var length.out} / {.var along.with} must be specified."
+        )
     }
 
-    list(from = from, to = rlang::maybe_missing(to),
-         by = rlang::maybe_missing(by), length.out = length.out)
+    list(
+        from = from,
+        to = rlang::maybe_missing(to),
+        by = rlang::maybe_missing(by),
+        length.out = length.out
+    )
 }

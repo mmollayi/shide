@@ -67,3 +67,56 @@ df_list_propagate_missing <- function(x) {
 
     vec_unstructure(x)
 }
+
+sh_check_value <- function(
+    x,
+    what = c("jdate", "jdatetime"),
+    ...,
+    allow_infinite = FALSE,
+    allow_na = FALSE,
+    arg = rlang::caller_arg(x),
+    call = rlang::caller_env()
+) {
+    what <- rlang::arg_match(
+        what,
+        values = c("jdate", "jdatetime"),
+        multiple = TRUE
+    )
+    valid_class <- ("jdate" %in% what && is_jdate(x)) ||
+        ("jdatetime" %in% what && is_jdatetime(x))
+
+    if (missing(x) || !valid_class) {
+        stop_input_type(
+            x,
+            what,
+            ...,
+            allow_na = allow_na,
+            allow_null = FALSE,
+            arg = arg,
+            call = call
+        )
+    }
+
+    if (length(x) != 1L) {
+        cli::cli_abort(
+            "{.arg {arg}} must have length 1.",
+            call = call
+        )
+    }
+
+    if (is.na(x) && !allow_na) {
+        cli::cli_abort(
+            "{.arg {arg}} must not be missing.",
+            call = call
+        )
+    }
+
+    if (is.infinite(x) && !allow_infinite) {
+        cli::cli_abort(
+            "{.arg {arg}} must not be infinite.",
+            call = call
+        )
+    }
+
+    invisible(NULL)
+}

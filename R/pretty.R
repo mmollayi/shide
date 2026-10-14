@@ -82,6 +82,10 @@ sh_pretty <- function(x, n = 5, min.n = n %/% 2, sep = " ", labels = NULL) {
         which = TRUE
     ))]
     rng <- range(x, na.rm = TRUE)
+    if (any(is.infinite(rng))) {
+        cli::cli_abort("`x` must have a finite range.")
+    }
+
     # to remove subsecond
     if (resolution == "secs") {
         rng <- c(sh_floor(rng[1]), sh_ceiling(rng[2]))
