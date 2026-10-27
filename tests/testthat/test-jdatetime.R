@@ -20,6 +20,7 @@ test_that("can create a jdatetime", {
         structure(0, class = c("jdatetime", "vctrs_vctr"), tzone = "")
     )
     expect_identical(jdatetime(0L), jdatetime(0))
+    expect_identical(as.numeric(jdatetime(c(-Inf, Inf))), c(-Inf, Inf))
 })
 
 test_that("input names are retained", {
@@ -102,7 +103,6 @@ test_that("jdatetime casts work as expected", {
     expect_identical(vec_cast(NA, jdatetime(tzone = "UTC")), na_dt)
     expect_identical(vec_cast(na_dt, na_dt), na_dt)
     expect_identical(vec_cast(as_jdate(na_dt), na_dt), na_dt)
-
 })
 
 test_that("casting to another time zone retains the underlying data", {
@@ -132,20 +132,35 @@ test_that("jdatetime vs jdate-jdatetime arithmetic works as expected", {
     dt1 <- jdatetime("1403-02-31 00:00:00", tzone = "Asia/Tokyo")
     dt2 <- as_jdatetime(d)
 
-    expect_error(vec_arith("+", dt1, dt1), class = "vctrs_error_incompatible_op")
+    expect_error(
+        vec_arith("+", dt1, dt1),
+        class = "vctrs_error_incompatible_op"
+    )
     expect_identical(vec_arith("-", dt1, dt1), dt1 - dt1)
 
     expect_error(vec_arith("+", dt1, d), class = "vctrs_error_incompatible_op")
-    expect_identical(vec_arith("-", dt1, d), difftime(dt1, as_jdatetime(d), units = "secs"))
+    expect_identical(
+        vec_arith("-", dt1, d),
+        difftime(dt1, as_jdatetime(d), units = "secs")
+    )
 
     expect_identical(vec_arith("-", dt2, d), as.difftime(0, units = "secs"))
+})
+
+test_that("jdatetime arithmetic handles infinite values", {
+    expect_true(is.na(jdatetime(Inf) - jdatetime(Inf)))
+    identical(
+        jdatetime(-Inf) + as.difftime(1, units = "secs"),
+        jdatetime(-Inf)
+    )
 })
 
 # math ----------------------------------------------------------------------------------------
 
 test_that("jdatetime math works as expected", {
-    testthat::expect_true(is.finite(jdatetime(0)))
-    testthat::expect_false(is.infinite(jdatetime(0)))
+    expect_true(is.finite(jdatetime(0)))
+    expect_false(is.infinite(jdatetime(0)))
+    expect_true(is.infinite(jdatetime(Inf)))
     expect_error(vec_math("sum", jdatetime()))
 })
 
@@ -159,57 +174,76 @@ test_that("jdatetime parser works as expected", {
     )
 
     expect_equal(
-        vec_data(jdatetime("1403-01-28 16:38:51", tzone = tz,
-                           format = "%F %X")),
+        vec_data(jdatetime(
+            "1403-01-28 16:38:51",
+            tzone = tz,
+            format = "%F %X"
+        )),
         1713272931
     )
     expect_equal(
-        vec_data(jdatetime("1403-01-28 17", tzone = tz,
-                           format = "%F %H")),
+        vec_data(jdatetime("1403-01-28 17", tzone = tz, format = "%F %H")),
         1713274200
     )
     expect_equal(
-        vec_data(jdatetime("1403-01-28 17", tzone = tz,
-                           format = "%F %M")),
+        vec_data(jdatetime("1403-01-28 17", tzone = tz, format = "%F %M")),
         1713214020
     )
     expect_equal(
-        vec_data(jdatetime("1403-01-28 17", tzone = tz,
-                           format = "%F %S")),
+        vec_data(jdatetime("1403-01-28 17", tzone = tz, format = "%F %S")),
         1713213017
     )
     expect_equal(
-        vec_data(jdatetime("1403-01-29 08:55:31", tzone = tz,
-                           format = "%F %T")),
+        vec_data(jdatetime(
+            "1403-01-29 08:55:31",
+            tzone = tz,
+            format = "%F %T"
+        )),
         1713331531
     )
     expect_equal(
-        vec_data(jdatetime("1403-01-29 08:55", tzone = tz,
-                           format = "%F %R")),
+        vec_data(jdatetime("1403-01-29 08:55", tzone = tz, format = "%F %R")),
         1713331500
     )
 })
 
 test_that("jdatetime parser fails as expected", {
     tz <- "Asia/Tehran"
-    expect_identical(jdatetime("1403-02-01 24", tz, format = "%F %H"), jdatetime(NA_real_, tz))
-    expect_identical(jdatetime("1403-02-01 60", tz, format = "%F %M"), jdatetime(NA_real_, tz))
-    expect_identical(jdatetime("1403-02-01 60", tz, format = "%F %S"), jdatetime(NA_real_, tz))
-    expect_identical(jdatetime("1403-02-01 24:11:19", tz, format = "%F %T"),
-                     jdatetime(NA_real_, tz))
+    expect_identical(
+        jdatetime("1403-02-01 24", tz, format = "%F %H"),
+        jdatetime(NA_real_, tz)
+    )
+    expect_identical(
+        jdatetime("1403-02-01 60", tz, format = "%F %M"),
+        jdatetime(NA_real_, tz)
+    )
+    expect_identical(
+        jdatetime("1403-02-01 60", tz, format = "%F %S"),
+        jdatetime(NA_real_, tz)
+    )
+    expect_identical(
+        jdatetime("1403-02-01 24:11:19", tz, format = "%F %T"),
+        jdatetime(NA_real_, tz)
+    )
 
-    expect_identical(jdatetime("1403-02-01 16:60:19", tz, format = "%F %T"),
-                     jdatetime(NA_real_, tz))
+    expect_identical(
+        jdatetime("1403-02-01 16:60:19", tz, format = "%F %T"),
+        jdatetime(NA_real_, tz)
+    )
 
-    expect_identical(jdatetime("1403-02-01 16:11:60", tz, format = "%F %T"),
-                     jdatetime(NA_real_, tz))
+    expect_identical(
+        jdatetime("1403-02-01 16:11:60", tz, format = "%F %T"),
+        jdatetime(NA_real_, tz)
+    )
 })
 
 test_that("ambiguous time resolution works as expected", {
     tz <- "Asia/Tehran"
     expect_equal(
-        vec_data(c(jdatetime("1401-06-30 23:00:00", tz, ambiguous = "earliest"),
-                   jdatetime("1401-06-30 23:00:00", tz, ambiguous = "latest"))),
+        vec_data(c(
+            jdatetime("1401-06-30 23:00:00", tz, ambiguous = "earliest"),
+            jdatetime("1401-06-30 23:00:00", tz, ambiguous = "latest")
+        )),
         c(1663785000, 1663788600)
     )
     expect_identical(

@@ -6,9 +6,13 @@ test_that("jdates have informative types", {
 # constructor ---------------------------------------------------------------
 
 test_that("can create a jdate", {
-    expect_identical(jdate(), structure(double(), class = c("jdate", "vctrs_vctr")))
+    expect_identical(
+        jdate(),
+        structure(double(), class = c("jdate", "vctrs_vctr"))
+    )
     expect_identical(jdate(0), structure(0, class = c("jdate", "vctrs_vctr")))
     expect_identical(jdate(0), jdate(0L))
+    expect_identical(as.numeric(jdate(c(-Inf, Inf))), c(-Inf, Inf))
 })
 
 test_that("input names are retained", {
@@ -91,11 +95,17 @@ test_that("jdate vs jdate-jdatetime arithmetic works as expected", {
     expect_identical(vec_arith("-", d, dt2), as.difftime(0, units = "secs"))
 })
 
+test_that("jdate arithmetic handles infinite values", {
+    expect_true(is.na(jdate(Inf) - jdate(Inf)))
+    identical(jdate(-Inf) + as.difftime(1, units = "days"), jdate(-Inf))
+})
+
 # math ----------------------------------------------------------------------------------------
 
 test_that("jdate math works as expected", {
-    testthat::expect_true(is.finite(jdate(0)))
-    testthat::expect_false(is.infinite(jdate(0)))
+    expect_true(is.finite(jdate(0)))
+    expect_false(is.infinite(jdate(0)))
+    expect_true(is.infinite(jdate(Inf)))
     expect_error(vec_math("sum", jdate()))
 })
 
@@ -130,11 +140,17 @@ test_that("jdate parser fails as expected", {
 test_that("negative years parse as expected", {
     expect_identical(jdate("-1000-01-01"), jdate(NA_real_))
     expect_identical(jdate("-1000-01-01", "%F"), jdate(NA_real_))
-    expect_identical(jdate("-1000-01-01", format = "%5Y-%m-%d"), jdate_make(-1000))
+    expect_identical(
+        jdate("-1000-01-01", format = "%5Y-%m-%d"),
+        jdate_make(-1000)
+    )
     expect_identical(jdate("-1000-01-01", format = "%5F"), jdate_make(-1000))
 })
 
 test_that("jdate_make works as expected", {
-    expect_identical(jdate_make(1401:1402, 1, 1), jdate(c("1401-01-01", "1402-01-01")))
+    expect_identical(
+        jdate_make(1401:1402, 1, 1),
+        jdate(c("1401-01-01", "1402-01-01"))
+    )
     expect_error(jdate_make(1401:1403, 1:2, 1))
 })
