@@ -8,7 +8,7 @@
 #' @param x A vector of `jdate` or `jdatetime` objects.
 #' @param unit A scalar character, containing a date or time unit or a multiple of a unit.
 #'    Valid date units are `"day"`, `"week"`, `"month"`, `"quarter"` and `"year"`.
-#'    Valid time units are `"second"`, `"minute"` and `"hour"`. These can
+#'    Valid time units are `"sec"`/`"second"`, `"min"`/`"minute"` and `"hour"`. These can
 #'    optionally be followed by "s". For `jdate` inputs, only date units may be supplied
 #'    and for `jdatetime` inputs, both date and time units work. If multiple of a unit is used,
 #'    unit coefficient must be a whole number greater than or equal to 1.
@@ -111,13 +111,19 @@ parse_unit <- function(unit, resolution) {
 
     nu <- parse_unit_cpp(unit)
     nu$unit <- standardize_units(nu$unit)
-    if (is.na(nu$unit))
+    if (is.na(nu$unit)) {
         cli::cli_abort("Invalid unit specification.")
+    }
 
-    base_units <- switch(resolution, "days" = units$jdate_round, "secs" = units$jdatetime_round)
+    base_units <- switch(
+        resolution,
+        "days" = units$jdate_round,
+        "secs" = units$jdatetime_round
+    )
     i <- match(nu$unit, base_units)
-    if (is.na(i))
+    if (is.na(i)) {
         cli::cli_abort("Invalid unit specification.")
+    }
 
     if (trunc(nu$n) != nu$n) {
         cli::cli_abort("Fractional units are not supported.")
@@ -128,8 +134,10 @@ parse_unit <- function(unit, resolution) {
     }
 
     if (nu$n > units$upper_limits[base_units[i]]) {
-        cli::cli_abort("Rounding with {nu$unit} > {units$upper_limits[base_units[i]]} is
-                       not supported.")
+        cli::cli_abort(
+            "Rounding with {nu$unit} > {units$upper_limits[base_units[i]]} is
+                       not supported."
+        )
     }
 
     nu
@@ -137,10 +145,17 @@ parse_unit <- function(unit, resolution) {
 
 standardize_units <- function(x) {
     patterns <- paste0("^", names(units$lookup), "s?$")
-    idx <- vapply(patterns, grepl, x = x, FUN.VALUE = logical(1), USE.NAMES = FALSE)
+    idx <- vapply(
+        patterns,
+        grepl,
+        x = x,
+        FUN.VALUE = logical(1),
+        USE.NAMES = FALSE
+    )
     idx <- which(idx)
-    if (length(idx) == 0)
+    if (length(idx) == 0) {
         return(NA_character_)
+    }
 
     unname(units$lookup[idx])
 }

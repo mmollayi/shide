@@ -17,7 +17,7 @@ sh_ceiling(x, unit = NULL, ...)
 
 \item{unit}{A scalar character, containing a date or time unit or a multiple of a unit.
 Valid date units are \code{"day"}, \code{"week"}, \code{"month"}, \code{"quarter"} and \code{"year"}.
-Valid time units are \code{"second"}, \code{"minute"} and \code{"hour"}. These can
+Valid time units are \code{"sec"}/\code{"second"}, \code{"min"}/\code{"minute"} and \code{"hour"}. These can
 optionally be followed by "s". For \code{jdate} inputs, only date units may be supplied
 and for \code{jdatetime} inputs, both date and time units work. If multiple of a unit is used,
 unit coefficient must be a whole number greater than or equal to 1.

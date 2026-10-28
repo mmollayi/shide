@@ -29,9 +29,9 @@ The method for \link{seq} for objects of class \code{jdatetime}.
 \code{by} can be specified in several ways:
 \itemize{
 \item A number, taken to be in seconds.
-\item A object of class \link{difftime}.
-\item A character string, containing one of "sec", "min", "hour", "day", "DSTday",
-"week", "month", "quarter" or "year".
+\item An object of class \link{difftime}.
+\item A character string, containing one of "sec"/"second", "min"/"minute",
+"hour", "day", "DSTday","week", "month", "quarter" or "year".
 This can optionally be preceded by a (positive or negative) integer
 and a space, or followed by "s".
 }

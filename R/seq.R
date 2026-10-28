@@ -85,9 +85,9 @@ seq.jdate <- function(from, to, by, length.out = NULL, along.with = NULL, ...) {
 #' @details
 #' `by` can be specified in several ways:
 #' * A number, taken to be in seconds.
-#' * A object of class [difftime].
-#' * A character string, containing one of "sec", "min", "hour", "day", "DSTday",
-#'   "week", "month", "quarter" or "year".
+#' * An object of class [difftime].
+#' * A character string, containing one of "sec"/"second", "min"/"minute",
+#'   "hour", "day", "DSTday","week", "month", "quarter" or "year".
 #'   This can optionally be preceded by a (positive or negative) integer
 #'   and a space, or followed by "s".
 #'
